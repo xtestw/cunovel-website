@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { js_beautify, html_beautify, css_beautify } from 'js-beautify';
+import { js as jsBeautify, css as cssBeautify, html as htmlBeautify } from 'js-beautify';
 import { format as sqlFormat } from 'sql-formatter';
 import './CodeFormatter.css';
 
@@ -13,7 +13,6 @@ const CodeFormatter = () => {
 
   // 支持的语言列表
   const languages = [
-
     { value: 'sql', label: 'SQL' },
     { value: 'javascript', label: 'JavaScript' },
     { value: 'html', label: 'HTML' },
@@ -60,12 +59,15 @@ const CodeFormatter = () => {
         case 'javascript':
         case 'typescript':
         case 'jsx':
-          result = js_beautify(code, options);
+          try {
+            result = jsBeautify(code, options);
+          } catch (e) {
+            throw new Error('JavaScript 语法错误: ' + e.message);
+          }
           break;
 
         case 'json':
           try {
-            // 先解析确保是有效的 JSON
             const parsed = JSON.parse(code);
             result = JSON.stringify(parsed, null, useTabs ? '\t' : ' '.repeat(indentSize));
           } catch (e) {
@@ -75,30 +77,41 @@ const CodeFormatter = () => {
 
         case 'html':
         case 'xml':
-          result = html_beautify(code, {
-            ...options,
-            unformatted: ['code', 'pre', 'em', 'strong', 'span']
-          });
+          try {
+            result = htmlBeautify(code, {
+              ...options,
+              unformatted: ['code', 'pre', 'em', 'strong', 'span']
+            });
+          } catch (e) {
+            throw new Error('HTML/XML 语法错误: ' + e.message);
+          }
           break;
 
         case 'css':
         case 'scss':
         case 'less':
-          result = css_beautify(code, {
-            ...options,
-            newline_between_rules: true,
-            selector_separator_newline: true
-          });
+          try {
+            result = cssBeautify(code, {
+              ...options,
+              newline_between_rules: true,
+              selector_separator_newline: true
+            });
+          } catch (e) {
+            throw new Error('CSS 语法错误: ' + e.message);
+          }
           break;
 
         case 'sql':
-          // SQL 格式化
-          result = sqlFormat(code, {
-            language: 'sql',  // 可以是 'sql', 'mysql', 'postgresql' 等
-            indent: useTabs ? '\t' : ' '.repeat(indentSize),
-            uppercase: true,  // 关键字大写
-            linesBetweenQueries: 2  // 查询语句之间的空行数
-          });
+          try {
+            result = sqlFormat(code, {
+              language: 'sql',
+              indent: useTabs ? '\t' : ' '.repeat(indentSize),
+              uppercase: true,
+              linesBetweenQueries: 2
+            });
+          } catch (e) {
+            throw new Error('SQL 语法错误: ' + e.message);
+          }
           break;
 
         default:
