@@ -120,6 +120,21 @@
           "invalidTimestamp": "Invalid timestamp",
           "calculationError": "Calculation error"
         }
+      },
+      "textCounter": {
+        "placeholder": "Enter or paste text here...",
+        "results": {
+          "characters": "Total Characters",
+          "charactersNoSpace": "Characters (no spaces)",
+          "words": "Words",
+          "lines": "Lines",
+          "paragraphs": "Paragraphs",
+          "chinese": "Chinese Characters",
+          "english": "English Characters",
+          "numbers": "Numbers",
+          "spaces": "Spaces",
+          "punctuation": "Punctuation Marks"
+        }
       }
     }
   },

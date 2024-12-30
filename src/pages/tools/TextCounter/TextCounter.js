@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './TextCounter.css';
+import { useTranslation } from 'react-i18next';
 
 const TextCounter = () => {
+  const { t } = useTranslation();
   const [text, setText] = useState('');
   const [stats, setStats] = useState({
     characters: 0,
@@ -42,50 +44,50 @@ const TextCounter = () => {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="在此输入或粘贴文本..."
+          placeholder={t('nav.tools.textCounter.placeholder')}
           className="text-input"
         />
       </div>
       <div className="stats-section">
         <div className="stats-grid">
           <div className="stat-item">
-            <label>总字符数:</label>
+            <label>{t('nav.tools.textCounter.results.characters')}:</label>
             <span>{stats.characters}</span>
           </div>
           <div className="stat-item">
-            <label>不含空格字符数:</label>
+            <label>{t('nav.tools.textCounter.results.charactersNoSpace')}:</label>
             <span>{stats.charactersNoSpace}</span>
           </div>
           <div className="stat-item">
-            <label>单词数:</label>
+            <label>{t('nav.tools.textCounter.results.words')}:</label>
             <span>{stats.words}</span>
           </div>
           <div className="stat-item">
-            <label>行数:</label>
+            <label>{t('nav.tools.textCounter.results.lines')}:</label>
             <span>{stats.lines}</span>
           </div>
           <div className="stat-item">
-            <label>段落数:</label>
+            <label>{t('nav.tools.textCounter.results.paragraphs')}:</label>
             <span>{stats.paragraphs}</span>
           </div>
           <div className="stat-item">
-            <label>中文字数:</label>
+            <label>{t('nav.tools.textCounter.results.chinese')}:</label>
             <span>{stats.chinese}</span>
           </div>
           <div className="stat-item">
-            <label>英文字母数:</label>
+            <label>{t('nav.tools.textCounter.results.english')}:</label>
             <span>{stats.english}</span>
           </div>
           <div className="stat-item">
-            <label>数字个数:</label>
+            <label>{t('nav.tools.textCounter.results.numbers')}:</label>
             <span>{stats.numbers}</span>
           </div>
           <div className="stat-item">
-            <label>空格数:</label>
+            <label>{t('nav.tools.textCounter.results.spaces')}:</label>
             <span>{stats.spaces}</span>
           </div>
           <div className="stat-item">
-            <label>标点符号数:</label>
+            <label>{t('nav.tools.textCounter.results.punctuation')}:</label>
             <span>{stats.punctuation}</span>
           </div>
         </div>

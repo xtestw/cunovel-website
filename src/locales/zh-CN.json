@@ -120,6 +120,21 @@
           "invalidTimestamp": "无效的时间戳",
           "calculationError": "计算错误"
         }
+      },
+      "textCounter": {
+        "placeholder": "在此输入或粘贴文本...",
+        "results": {
+          "characters": "总字符数",
+          "charactersNoSpace": "不含空格字符数",
+          "words": "单词数",
+          "lines": "行数",
+          "paragraphs": "段落数",
+          "chinese": "中文字数",
+          "english": "英文字母数",
+          "numbers": "数字个数",
+          "spaces": "空格数",
+          "punctuation": "标点符号数"
+        }
       }
     }
   },
