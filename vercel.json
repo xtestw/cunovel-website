@@ -21,6 +21,27 @@
       "dest": "/static/$1"
     },
     {
+      "src": "/json_format.html",
+      "status": 301,
+      "headers": {
+        "Location": "/tools/json/formatter"
+      }
+    },
+    {
+      "src": "/diff.html",
+      "status": 301,
+      "headers": {
+        "Location": "/tools/text/compare"
+      }
+    },
+    {
+      "src": "/url.html",
+      "status": 301,
+      "headers": {
+        "Location": "/tools/encode/url"
+      }
+    },
+    {
       "src": "/favicon.ico",
       "dest": "/favicon.ico"
     },
