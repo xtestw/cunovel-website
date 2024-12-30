@@ -55,6 +55,29 @@
         "caniuse": "兼容性查询",
         "regex101": "正则测试",
         "bundlephobia": "包大小查询"
+      },
+      "jsonCompare": {
+        "title": "JSON 对比",
+        "firstJson": "第一个 JSON",
+        "secondJson": "第二个 JSON",
+        "inputPlaceholder1": "输入第一个 JSON",
+        "inputPlaceholder2": "输入第二个 JSON",
+        "compareButton": "比较",
+        "differencesList": "差异列表",
+        "noDifferences": "两个 JSON 完全相同",
+        "error": "JSON 格式错误，请检查输入",
+        "table": {
+          "path": "路径",
+          "diffType": "差异类型",
+          "firstValue": "第一个 JSON 的值",
+          "secondValue": "第二个 JSON 的值"
+        },
+        "diffTypes": {
+          "missing_in_first": "仅在第二个 JSON 中存在",
+          "missing_in_second": "仅在第一个 JSON 中存在",
+          "type_mismatch": "类型不匹配",
+          "value_mismatch": "值不同"
+        }
       }
     }
   },

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './JsonCompare.css';
+import { useTranslation } from 'react-i18next';
 
 const JsonCompare = () => {
+  const { t } = useTranslation();
   const [json1, setJson1] = useState('');
   const [json2, setJson2] = useState('');
   const [differences, setDifferences] = useState(null);
@@ -72,7 +74,7 @@ const JsonCompare = () => {
       const diffs = compareObjects(obj1, obj2);
       setDifferences(diffs);
     } catch (e) {
-      setError('JSON 格式错误，请检查输入');
+      setError(t('nav.tools.jsonCompare.error'));
       setDifferences(null);
     }
   };
@@ -83,56 +85,50 @@ const JsonCompare = () => {
   };
 
   const getDiffTypeText = (type) => {
-    switch (type) {
-      case 'missing_in_first': return '仅在第二个 JSON 中存在';
-      case 'missing_in_second': return '仅在第一个 JSON 中存在';
-      case 'type_mismatch': return '类型不匹配';
-      case 'value_mismatch': return '值不同';
-      default: return '';
-    }
+    return t(`nav.tools.jsonCompare.diffTypes.${type}`);
   };
 
   return (
     <div className="json-compare-container">
       <div className="input-section">
         <div className="json-input-group">
-          <h3>第一个 JSON</h3>
+          <h3>{t('nav.tools.jsonCompare.firstJson')}</h3>
           <textarea
             value={json1}
             onChange={(e) => setJson1(e.target.value)}
-            placeholder="输入第一个 JSON"
+            placeholder={t('nav.tools.jsonCompare.inputPlaceholder1')}
             className="json-input"
           />
         </div>
         <div className="json-input-group">
-          <h3>第二个 JSON</h3>
+          <h3>{t('nav.tools.jsonCompare.secondJson')}</h3>
           <textarea
             value={json2}
             onChange={(e) => setJson2(e.target.value)}
-            placeholder="输入第二个 JSON"
+            placeholder={t('nav.tools.jsonCompare.inputPlaceholder2')}
             className="json-input"
           />
         </div>
       </div>
       <div className="compare-button-container">
         <button onClick={handleCompare} className="compare-button">
-          比较
+          {t('nav.tools.jsonCompare.compareButton')}
         </button>
       </div>
       {error && <div className="error-message">{error}</div>}
       {differences && (
         <div className="differences-section">
-          <h3>差异列表</h3>
+          <h3>{t('nav.tools.jsonCompare.differencesList')}</h3>
           {differences.length === 0 ? (
-            <div className="no-differences">两个 JSON 完全相同</div>
+            <div className="no-differences">{t('nav.tools.jsonCompare.noDifferences')}</div>
           ) : (
             <table className="differences-table">
               <thead>
                 <tr>
-                  <th>路径</th>
-                  <th>差异类型</th>
-                  <th>第一个 JSON 的值</th>
-                  <th>第二个 JSON 的值</th>
+                  <th>{t('nav.tools.jsonCompare.table.path')}</th>
+                  <th>{t('nav.tools.jsonCompare.table.diffType')}</th>
+                  <th>{t('nav.tools.jsonCompare.table.firstValue')}</th>
+                  <th>{t('nav.tools.jsonCompare.table.secondValue')}</th>
                 </tr>
               </thead>
               <tbody>

@@ -55,6 +55,29 @@
         "caniuse": "Can I Use",
         "regex101": "Regex Tester",
         "bundlephobia": "Bundle Size"
+      },
+      "jsonCompare": {
+        "title": "JSON Compare",
+        "firstJson": "First JSON",
+        "secondJson": "Second JSON",
+        "inputPlaceholder1": "Enter first JSON",
+        "inputPlaceholder2": "Enter second JSON",
+        "compareButton": "Compare",
+        "differencesList": "Differences List",
+        "noDifferences": "The two JSONs are identical",
+        "error": "JSON format error, please check your input",
+        "table": {
+          "path": "Path",
+          "diffType": "Difference Type",
+          "firstValue": "First JSON Value",
+          "secondValue": "Second JSON Value"
+        },
+        "diffTypes": {
+          "missing_in_first": "Only exists in second JSON",
+          "missing_in_second": "Only exists in first JSON",
+          "type_mismatch": "Type mismatch",
+          "value_mismatch": "Value mismatch"
+        }
       }
     }
   },
