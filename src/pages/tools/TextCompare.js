@@ -18,24 +18,24 @@ function TextCompare() {
 
   return (
     <div className="tool-component">
-      <h2>文本对比工具</h2>
+      <h2>{t('nav.tools.textCompare.title')}</h2>
       <div className="text-compare-container">
         <div className="text-inputs">
           <div className="text-input-area">
-            <h3>文本 1</h3>
+            <h3>{t('nav.tools.textCompare.text1.title')}</h3>
             <textarea
               value={text1}
               onChange={(e) => setText1(e.target.value)}
-              placeholder="请输入第一段文本"
+              placeholder={t('nav.tools.textCompare.text1.placeholder')}
               spellCheck="false"
             />
           </div>
           <div className="text-input-area">
-            <h3>文本 2</h3>
+            <h3>{t('nav.tools.textCompare.text2.title')}</h3>
             <textarea
               value={text2}
               onChange={(e) => setText2(e.target.value)}
-              placeholder="请输入第二段文本"
+              placeholder={t('nav.tools.textCompare.text2.placeholder')}
               spellCheck="false"
             />
           </div>
@@ -59,8 +59,8 @@ function TextCompare() {
                   wordBreak: 'break-all',
                 },
               }}
-              leftTitle="文本 1"
-              rightTitle="文本 2"
+              leftTitle={t('nav.tools.textCompare.diffViewer.leftTitle')}
+              rightTitle={t('nav.tools.textCompare.diffViewer.rightTitle')}
             />
           </div>
         )}

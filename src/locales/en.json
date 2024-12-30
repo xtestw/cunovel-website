@@ -135,6 +135,21 @@
           "spaces": "Spaces",
           "punctuation": "Punctuation Marks"
         }
+      },
+      "textCompare": {
+        "title": "Text Compare Tool",
+        "text1": {
+          "title": "Text 1",
+          "placeholder": "Enter first text"
+        },
+        "text2": {
+          "title": "Text 2",
+          "placeholder": "Enter second text"
+        },
+        "diffViewer": {
+          "leftTitle": "Text 1",
+          "rightTitle": "Text 2"
+        }
       }
     }
   },

@@ -135,6 +135,21 @@
           "spaces": "空格数",
           "punctuation": "标点符号数"
         }
+      },
+      "textCompare": {
+        "title": "文本对比工具",
+        "text1": {
+          "title": "文本 1",
+          "placeholder": "请输入第一段文本"
+        },
+        "text2": {
+          "title": "文本 2",
+          "placeholder": "请输入第二段文本"
+        },
+        "diffViewer": {
+          "leftTitle": "文本 1",
+          "rightTitle": "文本 2"
+        }
       }
     }
   },
