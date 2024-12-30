@@ -76,7 +76,7 @@ function App() {
             </Route>
             <Route path="/ai-nav" element={<AINav />} />
             <Route path="/" element={<Navigate to="/tools/json/formatter" replace />} />
-            {/* <Route path="/tools" element={<Navigate to="/tools/json/formatter" replace />} /> */}
+            <Route path="*" element={<Navigate to="/tools/json/formatter" replace />} />
           </Routes>
         </Content>
         <footer className="App-footer">
