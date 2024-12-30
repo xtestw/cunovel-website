@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './TimeStamp.css';
+import { useTranslation } from 'react-i18next';
 
 // 获取所有可用的时区
 const timeZones = Intl.supportedValuesOf('timeZone');
 
 const TimeStamp = () => {
+  const { t } = useTranslation();
   const [currentTimestamp, setCurrentTimestamp] = useState(Date.now());
   const [selectedTimeZone, setSelectedTimeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [inputTimestamp, setInputTimestamp] = useState('');
@@ -77,13 +79,19 @@ const TimeStamp = () => {
     handleDateToTimestamp();
   }, [dateInput, timeInput]);
 
+  // 格式化时间差值的文本
+  const formatTimeDiff = (days, hours, minutes, seconds) => {
+    const { units } = t('nav.tools.timeStamp.timestampDiff', { returnObjects: true });
+    return `${days}${units.days} ${hours % 24}${units.hours} ${minutes % 60}${units.minutes} ${seconds % 60}${units.seconds}`;
+  };
+
   return (
     <div className="timestamp-container">
       {/* 当前时区和时间信息 */}
       <div className="section current-time">
-        <h3>时区信息</h3>
+        <h3>{t('nav.tools.timeStamp.timezoneInfo.title')}</h3>
         <div className="timezone-selector">
-          <label>选择时区:</label>
+          <label>{t('nav.tools.timeStamp.timezoneInfo.selectLabel')}</label>
           <select 
             value={selectedTimeZone}
             onChange={(e) => setSelectedTimeZone(e.target.value)}
@@ -98,15 +106,15 @@ const TimeStamp = () => {
         </div>
         <div className="info-grid">
           <div className="info-item">
-            <label>当前时间戳(ms):</label>
+            <label>{t('nav.tools.timeStamp.timezoneInfo.currentTimestamp')}:</label>
             <span>{currentTimestamp}</span>
           </div>
           <div className="info-item">
-            <label>当前时间戳(s):</label>
+            <label>{t('nav.tools.timeStamp.timezoneInfo.currentTimestampSeconds')}:</label>
             <span>{Math.floor(currentTimestamp / 1000)}</span>
           </div>
           <div className="info-item">
-            <label>当前时间:</label>
+            <label>{t('nav.tools.timeStamp.timezoneInfo.currentTime')}:</label>
             <span>{formatDate(currentTimestamp, 'ms', selectedTimeZone)}</span>
           </div>
         </div>
@@ -114,14 +122,14 @@ const TimeStamp = () => {
 
       {/* 时间戳转换 */}
       <div className="section timestamp-convert">
-        <h3>时间戳转换</h3>
+        <h3>{t('nav.tools.timeStamp.converter.title')}</h3>
         <div className="convert-group">
           <div className="input-with-unit">
             <input
               type="text"
               value={inputTimestamp}
               onChange={(e) => setInputTimestamp(e.target.value)}
-              placeholder="输入时间戳"
+              placeholder={t('nav.tools.timeStamp.converter.inputPlaceholder')}
               className="timestamp-input"
             />
             <select 
@@ -129,27 +137,27 @@ const TimeStamp = () => {
               onChange={(e) => setTimestampUnit(e.target.value)}
               className="unit-select"
             >
-              <option value="ms">毫秒</option>
-              <option value="s">秒</option>
+              <option value="ms">{t('nav.tools.timeStamp.converter.units.milliseconds')}</option>
+              <option value="s">{t('nav.tools.timeStamp.converter.units.seconds')}</option>
             </select>
           </div>
           <button 
             onClick={() => setConvertedTime(formatDate(inputTimestamp, timestampUnit, selectedTimeZone))}
             className="convert-button"
           >
-            转换
+            {t('nav.tools.timeStamp.converter.convertButton')}
           </button>
         </div>
         {convertedTime && (
           <div className="converted-time">
-            转换结果: {convertedTime}
+            {t('nav.tools.timeStamp.converter.result')}: {convertedTime}
           </div>
         )}
       </div>
 
       {/* 日期转时间戳 */}
       <div className="section date-to-timestamp">
-        <h3>日期转时间戳</h3>
+        <h3>{t('nav.tools.timeStamp.dateToTimestamp.title')}</h3>
         <div className="date-inputs">
           <input
             type="date"
@@ -166,11 +174,11 @@ const TimeStamp = () => {
         </div>
         <div className="timestamp-results">
           <div className="result-item">
-            <label>毫秒时间戳:</label>
+            <label>{t('nav.tools.timeStamp.dateToTimestamp.timestampMs')}:</label>
             <span>{dateTimestamp.ms}</span>
           </div>
           <div className="result-item">
-            <label>秒时间戳:</label>
+            <label>{t('nav.tools.timeStamp.dateToTimestamp.timestampS')}:</label>
             <span>{dateTimestamp.s}</span>
           </div>
         </div>
@@ -178,20 +186,20 @@ const TimeStamp = () => {
 
       {/* 时间戳差值计算 */}
       <div className="section timestamp-diff">
-        <h3>时间戳差值</h3>
+        <h3>{t('nav.tools.timeStamp.timestampDiff.title')}</h3>
         <div className="diff-inputs">
           <input
             type="text"
             value={timestamp1}
             onChange={(e) => setTimestamp1(e.target.value)}
-            placeholder="时间戳1(毫秒)"
+            placeholder={t('nav.tools.timeStamp.timestampDiff.timestamp1')}
             className="timestamp-input"
           />
           <input
             type="text"
             value={timestamp2}
             onChange={(e) => setTimestamp2(e.target.value)}
-            placeholder="时间戳2(毫秒)"
+            placeholder={t('nav.tools.timeStamp.timestampDiff.timestamp2')}
             className="timestamp-input"
           />
           <button onClick={() => {
@@ -202,17 +210,17 @@ const TimeStamp = () => {
               const minutes = Math.floor(seconds / 60);
               const hours = Math.floor(minutes / 60);
               const days = Math.floor(hours / 24);
-              setTimeDiff(`${days}天 ${hours % 24}小时 ${minutes % 60}分钟 ${seconds % 60}秒`);
+              setTimeDiff(formatTimeDiff(days, hours, minutes, seconds));
             } catch (e) {
-              setTimeDiff('计算错误');
+              setTimeDiff(t('nav.tools.timeStamp.errors.calculationError'));
             }
           }} className="calculate-button">
-            计算差值
+            {t('nav.tools.timeStamp.timestampDiff.calculateButton')}
           </button>
         </div>
         {timeDiff && (
           <div className="diff-result">
-            时间差: {timeDiff}
+            {t('nav.tools.timeStamp.timestampDiff.difference')}: {timeDiff}
           </div>
         )}
       </div>

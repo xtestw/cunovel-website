@@ -78,6 +78,48 @@
           "type_mismatch": "类型不匹配",
           "value_mismatch": "值不同"
         }
+      },
+      "timeStamp": {
+        "title": "时间戳转换",
+        "timezoneInfo": {
+          "title": "时区信息",
+          "selectLabel": "选择时区:",
+          "currentTimestamp": "当前时间戳(ms)",
+          "currentTimestampSeconds": "当前时间戳(s)",
+          "currentTime": "当前时间"
+        },
+        "converter": {
+          "title": "时间戳转换",
+          "inputPlaceholder": "输入时间戳",
+          "convertButton": "转换",
+          "result": "转换结果",
+          "units": {
+            "milliseconds": "毫秒",
+            "seconds": "秒"
+          }
+        },
+        "dateToTimestamp": {
+          "title": "日期转时间戳",
+          "timestampMs": "毫秒时间戳",
+          "timestampS": "秒时间戳"
+        },
+        "timestampDiff": {
+          "title": "时间戳差值",
+          "timestamp1": "时间戳1(毫秒)",
+          "timestamp2": "时间戳2(毫秒)",
+          "calculateButton": "计算差值",
+          "difference": "时间差",
+          "units": {
+            "days": "天",
+            "hours": "小时",
+            "minutes": "分钟",
+            "seconds": "秒"
+          }
+        },
+        "errors": {
+          "invalidTimestamp": "无效的时间戳",
+          "calculationError": "计算错误"
+        }
       }
     }
   },

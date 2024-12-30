@@ -78,6 +78,48 @@
           "type_mismatch": "Type mismatch",
           "value_mismatch": "Value mismatch"
         }
+      },
+      "timeStamp": {
+        "title": "Timestamp Converter",
+        "timezoneInfo": {
+          "title": "Timezone Information",
+          "selectLabel": "Select Timezone:",
+          "currentTimestamp": "Current Timestamp (ms)",
+          "currentTimestampSeconds": "Current Timestamp (s)",
+          "currentTime": "Current Time"
+        },
+        "converter": {
+          "title": "Timestamp Converter",
+          "inputPlaceholder": "Enter timestamp",
+          "convertButton": "Convert",
+          "result": "Conversion Result",
+          "units": {
+            "milliseconds": "Milliseconds",
+            "seconds": "Seconds"
+          }
+        },
+        "dateToTimestamp": {
+          "title": "Date to Timestamp",
+          "timestampMs": "Millisecond Timestamp",
+          "timestampS": "Second Timestamp"
+        },
+        "timestampDiff": {
+          "title": "Timestamp Difference",
+          "timestamp1": "Timestamp 1 (ms)",
+          "timestamp2": "Timestamp 2 (ms)",
+          "calculateButton": "Calculate Difference",
+          "difference": "Time Difference",
+          "units": {
+            "days": "days",
+            "hours": "hours",
+            "minutes": "minutes",
+            "seconds": "seconds"
+          }
+        },
+        "errors": {
+          "invalidTimestamp": "Invalid timestamp",
+          "calculationError": "Calculation error"
+        }
       }
     }
   },
