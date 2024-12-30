@@ -361,6 +361,45 @@
           "sql": "SQL syntax error: ",
           "copyFailed": "Copy failed: "
         }
+      },
+      "aiNav": {
+        "title": "AI Navigation",
+        "categories": {
+          "chat": {
+            "title": "AI Chat",
+            "items": {
+              "chatgpt": {
+                "name": "ChatGPT",
+                "desc": "AI chatbot developed by OpenAI"
+              },
+              "claude": {
+                "name": "Claude",
+                "desc": "AI assistant developed by Anthropic"
+              },
+              "gemini": {
+                "name": "Gemini",
+                "desc": "Google's AI model"
+              }
+            }
+          },
+          "image": {
+            "title": "AI Image",
+            "items": {
+              "midjourney": {
+                "name": "Midjourney",
+                "desc": "AI art and image generation"
+              },
+              "stableDiffusion": {
+                "name": "Stable Diffusion",
+                "desc": "Open source AI image generation model"
+              },
+              "dalle": {
+                "name": "DALL·E",
+                "desc": "OpenAI's image generation AI"
+              }
+            }
+          }
+        }
       }
     }
   },

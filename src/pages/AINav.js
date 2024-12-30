@@ -1,29 +1,56 @@
 import React from 'react';
 import './AINav.css';
+import { useTranslation } from 'react-i18next';
 
 function AINav() {
+  const { t } = useTranslation();
+
   const aiTools = [
     {
-      category: "AI聊天",
+      category: t('nav.tools.aiNav.categories.chat.title'),
       items: [
-        { name: "ChatGPT", url: "https://chat.openai.com", desc: "OpenAI开发的AI对话模型" },
-        { name: "Claude", url: "https://claude.ai", desc: "Anthropic开发的AI助手" },
-        { name: "Gemini", url: "https://gemini.google.com", desc: "Google的AI模型" }
+        { 
+          name: t('nav.tools.aiNav.categories.chat.items.chatgpt.name'), 
+          url: "https://chat.openai.com", 
+          desc: t('nav.tools.aiNav.categories.chat.items.chatgpt.desc')
+        },
+        { 
+          name: t('nav.tools.aiNav.categories.chat.items.claude.name'), 
+          url: "https://claude.ai", 
+          desc: t('nav.tools.aiNav.categories.chat.items.claude.desc')
+        },
+        { 
+          name: t('nav.tools.aiNav.categories.chat.items.gemini.name'), 
+          url: "https://gemini.google.com", 
+          desc: t('nav.tools.aiNav.categories.chat.items.gemini.desc')
+        }
       ]
     },
     {
-      category: "AI绘画",
+      category: t('nav.tools.aiNav.categories.image.title'),
       items: [
-        { name: "Midjourney", url: "https://www.midjourney.com", desc: "AI艺术和图像生成" },
-        { name: "Stable Diffusion", url: "https://stability.ai", desc: "开源的AI图像生成模型" },
-        { name: "DALL·E", url: "https://openai.com/dall-e-3", desc: "OpenAI的图像生成AI" }
+        { 
+          name: t('nav.tools.aiNav.categories.image.items.midjourney.name'), 
+          url: "https://www.midjourney.com", 
+          desc: t('nav.tools.aiNav.categories.image.items.midjourney.desc')
+        },
+        { 
+          name: t('nav.tools.aiNav.categories.image.items.stableDiffusion.name'), 
+          url: "https://stability.ai", 
+          desc: t('nav.tools.aiNav.categories.image.items.stableDiffusion.desc')
+        },
+        { 
+          name: t('nav.tools.aiNav.categories.image.items.dalle.name'), 
+          url: "https://openai.com/dall-e-3", 
+          desc: t('nav.tools.aiNav.categories.image.items.dalle.desc')
+        }
       ]
     }
   ];
 
   return (
     <div className="ai-nav-page">
-      <h1>AI导航</h1>
+      <h1>{t('nav.tools.aiNav.title')}</h1>
       <div className="ai-categories">
         {aiTools.map((category, index) => (
           <div key={index} className="category-section">

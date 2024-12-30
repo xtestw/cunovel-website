@@ -361,6 +361,45 @@
           "sql": "SQL 语法错误: ",
           "copyFailed": "复制失败: "
         }
+      },
+      "aiNav": {
+        "title": "AI导航",
+        "categories": {
+          "chat": {
+            "title": "AI聊天",
+            "items": {
+              "chatgpt": {
+                "name": "ChatGPT",
+                "desc": "OpenAI开发的AI对话模型"
+              },
+              "claude": {
+                "name": "Claude",
+                "desc": "Anthropic开发的AI助手"
+              },
+              "gemini": {
+                "name": "Gemini",
+                "desc": "Google的AI模型"
+              }
+            }
+          },
+          "image": {
+            "title": "AI绘画",
+            "items": {
+              "midjourney": {
+                "name": "Midjourney",
+                "desc": "AI艺术和图像生成"
+              },
+              "stableDiffusion": {
+                "name": "Stable Diffusion",
+                "desc": "开源的AI图像生成模型"
+              },
+              "dalle": {
+                "name": "DALL·E",
+                "desc": "OpenAI的图像生成AI"
+              }
+            }
+          }
+        }
       }
     }
   },
