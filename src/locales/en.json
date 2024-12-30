@@ -1,0 +1,141 @@
+{
+  "common": {
+    "toolbox": "Toolbox",
+    "aiNav": "AI Navigation",
+    "feedback": "Feedback",
+    "chromePlugin": "Chrome Extension"
+  },
+  "nav": {
+    "categories": {
+      "json": "JSON Tools",
+      "time": "Time Tools",
+      "text": "Text Tools",
+      "encode": "Encoding Tools",
+      "image": "Image Tools",
+      "code": "Code Tools"
+    },
+    "tools": {
+      "json": {
+        "formatter": "JSON Formatter",
+        "compare": "JSON Compare"
+      },
+      "time": {
+        "timestamp": "Timestamp Converter"
+      },
+      "text": {
+        "compare": "Text Compare",
+        "process": "Text Process",
+        "counter": "Word Counter",
+        "regex": "Regex Matcher"
+      },
+      "encode": {
+        "base64": "Base64 Converter",
+        "url": "URL Encoder"
+      },
+      "image": {
+        "nav": "Features",
+        "compress": "Image Compress",
+        "resize": "Resize Image",
+        "crop": "Crop Image",
+        "convertJpg": "Convert to JPG",
+        "convertFromJpg": "Convert from JPG",
+        "edit": "Image Editor",
+        "upscale": "Image Upscale",
+        "removeBg": "Remove Background",
+        "watermark": "Add Watermark"
+      },
+      "code": {
+        "formatter": "Code Formatter",
+        "minifier": "Code Minifier",
+        "babel": "Babel Transform",
+        "typescript": "TypeScript Transform",
+        "sass": "SASS/SCSS Transform",
+        "less": "LESS Transform",
+        "svgomg": "SVG Optimizer",
+        "caniuse": "Can I Use",
+        "regex101": "Regex Tester",
+        "bundlephobia": "Bundle Size"
+      }
+    }
+  },
+  "features": {
+    "title": "Features",
+    "chat": {
+      "title": "Chat",
+      "description": "Natural conversation with AI assistant"
+    },
+    "knowledge": {
+      "title": "Knowledge Base",
+      "description": "Import and manage your custom knowledge"
+    },
+    "files": {
+      "title": "File Processing",
+      "description": "Process and analyze various file formats"
+    },
+    "voice": {
+      "title": "Voice Interaction",
+      "description": "Voice input and text-to-speech output"
+    },
+    "security": {
+      "title": "Security",
+      "description": "End-to-end encryption and data protection"
+    }
+  },
+  "jsonFormatter": {
+    "title": "JSON Formatter",
+    "format": "Format",
+    "minify": "Minify",
+    "copy": "Copy",
+    "clear": "Clear",
+    "upload": "Upload File",
+    "download": "Download",
+    "errorMessage": "Invalid JSON format",
+    "placeholder": "Paste your JSON here...",
+    "settings": {
+      "title": "Settings",
+      "indentSize": "Indent Size",
+      "sortKeys": "Sort Keys",
+      "colorize": "Colorize"
+    },
+    "messages": {
+      "copied": "Copied to clipboard",
+      "cleared": "Content cleared",
+      "formatted": "JSON formatted successfully",
+      "minified": "JSON minified successfully"
+    },
+    "page": {
+      "title": "Online JSON Formatter & Validator",
+      "description": "Format, validate and beautify JSON data",
+      "features": {
+        "title": "Features",
+        "list": {
+          "format": "Format and validate JSON",
+          "minify": "Minify JSON data",
+          "validate": "Real-time JSON validation",
+          "syntax": "Syntax highlighting",
+          "download": "Download formatted JSON",
+          "share": "Share JSON via URL"
+        }
+      },
+      "tips": {
+        "title": "Tips",
+        "invalidJson": "Fix JSON validation errors:",
+        "quotedKeys": "Keys must be quoted with double quotes",
+        "trailingComma": "Remove trailing commas",
+        "missingBrackets": "Check for missing brackets or braces"
+      }
+    },
+    "formattedOutput": {
+      "title": "Formatted Output",
+      "copyTooltip": "Copy formatted JSON",
+      "downloadTooltip": "Download as file",
+      "lineCount": "{{count}} lines",
+      "charCount": "{{count}} characters",
+      "empty": "No formatted output yet",
+      "loading": "Formatting...",
+      "error": "Error in JSON formatting"
+    },
+    "syntaxError": "Syntax Error",
+    "errorAt": "Error at line {{line}}, column {{column}}"
+  }
+} 

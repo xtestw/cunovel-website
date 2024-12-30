@@ -1,0 +1,84 @@
+{
+  "common": {
+    "toolbox": "工具箱",
+    "aiNav": "AI 导航",
+    "feedback": "反馈",
+    "chromePlugin": "Chrome 插件"
+  },
+  "nav": {
+    "categories": {
+      "json": "JSON工具",
+      "time": "时间工具",
+      "text": "文本工具",
+      "encode": "编码工具", 
+      "image": "图像工具",
+      "code": "代码工具"
+    },
+    "tools": {
+      "json": {
+        "formatter": "JSON格式化",
+        "compare": "JSON对比"
+      },
+      "time": {
+        "timestamp": "时间戳转换"
+      },
+      "text": {
+        "compare": "文本对比",
+        "process": "文本处理",
+        "counter": "字数统计",
+        "regex": "正则匹配"
+      },
+      "encode": {
+        "base64": "Base64转换",
+        "url": "URL编码"
+      },
+      "image": {
+        "nav": "功能导航",
+        "compress": "图片压缩",
+        "resize": "调整大小",
+        "crop": "裁剪图片",
+        "convertJpg": "转换为JPG",
+        "convertFromJpg": "JPG转换",
+        "edit": "图片编辑",
+        "upscale": "图片放大",
+        "removeBg": "移除背景",
+        "watermark": "添加水印"
+      },
+      "code": {
+        "formatter": "代码格式化",
+        "minifier": "代码压缩",
+        "babel": "Babel转换",
+        "typescript": "TypeScript转换",
+        "sass": "SASS/SCSS转换",
+        "less": "LESS转换",
+        "svgomg": "SVG优化",
+        "caniuse": "兼容性查询",
+        "regex101": "正则测试",
+        "bundlephobia": "包大小分析"
+      }
+    }
+  },
+  "jsonFormatter": {
+    "title": "JSON 格式化工具",
+    "format": "格式化",
+    "minify": "压缩",
+    "copy": "复制",
+    "clear": "清空",
+    "upload": "上传文件",
+    "download": "下载",
+    "errorMessage": "JSON 格式无效",
+    "placeholder": "在此粘贴您的 JSON...",
+    "syntaxError": "语法错误",
+    "errorAt": "错误位置：第 {{line}} 行，第 {{column}} 列",
+    "formattedOutput": {
+      "title": "格式化输出",
+      "copyTooltip": "复制格式化的 JSON",
+      "downloadTooltip": "下载为文件",
+      "lineCount": "{{count}} 行",
+      "charCount": "{{count}} 个字符",
+      "empty": "暂无格式化输出",
+      "loading": "格式化中...",
+      "error": "JSON 格式化出错"
+    }
+  }
+} 
