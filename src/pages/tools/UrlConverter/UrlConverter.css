@@ -1,0 +1,123 @@
+.url-converter-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.standard-selector {
+  display: flex;
+  gap: 10px;
+}
+
+.standard-button {
+  padding: 8px 16px;
+  border: 1px solid #1890ff;
+  background: none;
+  color: #1890ff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.standard-button.active {
+  background: #1890ff;
+  color: white;
+}
+
+.standard-note {
+  color: #ff4d4f;
+  font-size: 14px;
+  padding: 8px;
+  background-color: #fff1f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+}
+
+.converter-layout {
+  display: flex;
+  gap: 15px;
+  align-items: stretch;
+}
+
+.converter-input,
+.converter-output {
+  flex: 1;
+  min-height: 200px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.operation-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.operation-button {
+  padding: 10px 20px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.operation-button:hover {
+  background-color: #40a9ff;
+}
+
+.operation-button.extract {
+  background-color: #52c41a;
+}
+
+.operation-button.extract:hover {
+  background-color: #73d13d;
+}
+
+.params-section {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.params-section h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.params-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.params-table th,
+.params-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.params-table th {
+  background-color: #fafafa;
+}
+
+@media (max-width: 768px) {
+  .converter-layout {
+    flex-direction: column;
+  }
+  
+  .operation-buttons {
+    flex-direction: row;
+    justify-content: center;
+  }
+} 

@@ -1,0 +1,40 @@
+{
+  "common": {
+    "toolbox": "Toolbox",
+    "aiNav": "AI Navigation"
+  },
+  "categories": {
+    "json": "JSON Tools",
+    "encode": "Encoding",
+    "time": "Time Tools",
+    "text": "Text Tools"
+  },
+  "tools": {
+    "jsonFormatter": "JSON Formatter",
+    "base64": "Base64 Converter",
+    "timestamp": "Timestamp Converter",
+    "text": "Text Tools",
+    "color": "Color Converter"
+  },
+  "jsonFormatter": {
+    "title": "JSON Formatter",
+    "format": "Format",
+    "minify": "Minify",
+    "copy": "Copy",
+    "clear": "Clear",
+    "placeholder": "Paste your JSON here...",
+    "formattedOutput": "Formatted JSON",
+    "syntaxError": "Syntax Error",
+    "errorAt": "Line {{line}}, Column {{column}}",
+    "invalidJson": "Invalid JSON format"
+  },
+  "aiNav": {
+    "title": "AI Navigation",
+    "searchPlaceholder": "Search AI tools...",
+    "categories": {
+      "chat": "Chat",
+      "image": "Image Generation",
+      "code": "Code Assistant"
+    }
+  }
+} 

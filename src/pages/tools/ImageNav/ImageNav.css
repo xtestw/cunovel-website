@@ -1,0 +1,89 @@
+.image-nav-container {
+  padding: 20px;
+  width: 100%;
+}
+
+.image-nav-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.image-nav-header h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.image-nav-header p {
+  color: #666;
+  font-size: 16px;
+}
+
+.image-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 16px;
+}
+
+.tool-card {
+  position: relative;
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #1890ff;
+}
+
+.tool-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.tool-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.tool-card p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.external-link {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: #999;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.tool-card:hover .external-link {
+  color: #1890ff;
+}
+
+@media (max-width: 768px) {
+  .image-nav-grid {
+    grid-template-columns: 1fr;
+    padding: 8px;
+  }
+  
+  .tool-card {
+    padding: 16px;
+  }
+} 

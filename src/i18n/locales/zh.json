@@ -1,0 +1,40 @@
+{
+  "common": {
+    "toolbox": "工具箱",
+    "aiNav": "AI导航"
+  },
+  "categories": {
+    "json": "JSON工具",
+    "encode": "编码转换",
+    "time": "时间工具",
+    "text": "文本工具"
+  },
+  "tools": {
+    "jsonFormatter": "JSON格式化",
+    "base64": "Base64转换",
+    "timestamp": "时间戳转换",
+    "text": "文本处理",
+    "color": "颜色转换"
+  },
+  "jsonFormatter": {
+    "title": "JSON 格式化工具",
+    "format": "格式化",
+    "minify": "压缩",
+    "copy": "复制",
+    "clear": "清除",
+    "placeholder": "在此粘贴您的 JSON...",
+    "formattedOutput": "格式化后的 JSON",
+    "syntaxError": "语法错误",
+    "errorAt": "第 {{line}} 行，第 {{column}} 列",
+    "invalidJson": "无效的 JSON 格式"
+  },
+  "aiNav": {
+    "title": "AI导航",
+    "searchPlaceholder": "搜索AI工具...",
+    "categories": {
+      "chat": "聊天对话",
+      "image": "图像生成",
+      "code": "代码助手"
+    }
+  }
+} 
