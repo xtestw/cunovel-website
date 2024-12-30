@@ -28,85 +28,85 @@ function Tools() {
   const toolsMenu = [
     {
       key: 'json',
-      label: 'JSON工具',
+      label: t('nav.categories.json'),
       tools: [
-        { key: 'formatter', label: 'JSON格式化', component: JsonFormatter },
-        { key: 'compare', label: 'JSON对比', component: JsonCompare }
+        { key: 'formatter', label: t('nav.tools.json.formatter'), component: JsonFormatter },
+        { key: 'compare', label: t('nav.tools.json.compare'), component: JsonCompare }
       ]
     },
     {
       key: 'time',
-      label: '时间工具',
+      label: t('nav.categories.time'),
       tools: [
-        { key: 'timestamp', label: '时间戳转换', component: TimeStamp }
+        { key: 'timestamp', label: t('nav.tools.time.timestamp'), component: TimeStamp }
       ]
     },
     {
       key: 'text',
-      label: '文本工具',
+      label: t('nav.categories.text'),
       tools: [
-        { key: 'compare', label: '文本对比', component: TextCompare },
-        { key: 'process', label: '文本处理', component: TextProcessor },
-        { key: 'counter', label: '字数统计', component: TextCounter },
-        { key: 'regex', label: '正则匹配', component: RegexMatcher }
+        { key: 'compare', label: t('nav.tools.text.compare'), component: TextCompare },
+        { key: 'process', label: t('nav.tools.text.process'), component: TextProcessor },
+        { key: 'counter', label: t('nav.tools.text.counter'), component: TextCounter },
+        { key: 'regex', label: t('nav.tools.text.regex'), component: RegexMatcher }
       ]
     },
     {
       key: 'encode',
-      label: '编码工具',
+      label: t('nav.categories.encode'),
       tools: [
-        { key: 'base64', label: 'Base64转换', component: Base64Converter },
-        { key: 'url', label: 'URL编码', component: UrlConverter }
+        { key: 'base64', label: t('nav.tools.encode.base64'), component: Base64Converter },
+        { key: 'url', label: t('nav.tools.encode.url'), component: UrlConverter }
       ]
     },
     {
       key: 'image',
-      label: '图像工具',
+      label: t('nav.categories.image'),
       tools: [
-        { key: 'imageNav', label: '功能导航', component: ImageNav },
+        { key: 'imageNav', label: t('nav.tools.image.nav'), component: ImageNav },
         { 
           key: 'compress', 
-          label: '图片压缩', 
+          label: t('nav.tools.image.compress'), 
           externalLink: 'https://www.iloveimg.com/compress-image'
         },
         { 
           key: 'resize', 
-          label: '调整大小',
+          label: t('nav.tools.image.resize'),
           externalLink: 'https://www.iloveimg.com/resize-image'
         },
         { 
           key: 'crop', 
-          label: '裁剪图片',
+          label: t('nav.tools.image.crop'),
           externalLink: 'https://www.iloveimg.com/crop-image'
         },
         { 
           key: 'convert-jpg', 
-          label: '转换为JPG',
+          label: t('nav.tools.image.convertJpg'),
           externalLink: 'https://www.iloveimg.com/convert-to-jpg'
         },
         { 
           key: 'convert-from-jpg', 
-          label: 'JPG转换',
+          label: t('nav.tools.image.convertFromJpg'),
           externalLink: 'https://www.iloveimg.com/convert-from-jpg'
         },
         { 
           key: 'edit', 
-          label: '图片编辑',
+          label: t('nav.tools.image.edit'),
           externalLink: 'https://www.iloveimg.com/photo-editor'
         },
         { 
           key: 'upscale', 
-          label: '图片放大',
+          label: t('nav.tools.image.upscale'),
           externalLink: 'https://www.iloveimg.com/upscale-image'
         },
         { 
           key: 'remove-bg', 
-          label: '移除背景',
+          label: t('nav.tools.image.removeBg'),
           externalLink: 'https://www.iloveimg.com/remove-background'
         },
         { 
           key: 'watermark', 
-          label: '添加水印',
+          label: t('nav.tools.image.watermark'),
           externalLink: 'https://www.iloveimg.com/watermark-image'
         },
         { 
@@ -128,52 +128,52 @@ function Tools() {
     },
     {
       key: 'code',
-      label: '代码工具',
+      label: t('nav.categories.code'),
       tools: [
-        { key: 'formatter', label: '代码格式化', component: CodeFormatter },
+        { key: 'formatter', label: t('nav.tools.code.formatter'), component: CodeFormatter },
         { 
           key: 'minifier', 
-          label: '代码压缩',
+          label: t('nav.tools.code.minifier'),
           externalLink: 'https://www.toptal.com/developers/javascript-minifier'
         },
         { 
           key: 'babel', 
-          label: 'Babel 转换',
+          label: t('nav.tools.code.babel'),
           externalLink: 'https://babeljs.io/repl'
         },
         { 
           key: 'typescript', 
-          label: 'TypeScript 转换',
+          label: t('nav.tools.code.typescript'),
           externalLink: 'https://www.typescriptlang.org/play'
         },
         { 
           key: 'sass', 
-          label: 'SASS/SCSS 转换',
+          label: t('nav.tools.code.sass'),
           externalLink: 'https://www.sassmeister.com/'
         },
         { 
           key: 'less', 
-          label: 'LESS 转换',
+          label: t('nav.tools.code.less'),
           externalLink: 'https://lesstester.com/'
         },
         { 
           key: 'svgomg', 
-          label: 'SVG 优化',
+          label: t('nav.tools.code.svgomg'),
           externalLink: 'https://jakearchibald.github.io/svgomg/'
         },
         { 
           key: 'caniuse', 
-          label: '兼容性查询',
+          label: t('nav.tools.code.caniuse'),
           externalLink: 'https://caniuse.com/'
         },
         { 
           key: 'regex101', 
-          label: '正则测试',
+          label: t('nav.tools.code.regex101'),
           externalLink: 'https://regex101.com/'
         },
         { 
           key: 'bundlephobia', 
-          label: '包大小分析',
+          label: t('nav.tools.code.bundlephobia'),
           externalLink: 'https://bundlephobia.com/'
         }
       ]

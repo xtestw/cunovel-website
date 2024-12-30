@@ -3,11 +3,14 @@ import ReactJson from 'react-json-view';
 import { useTranslation } from 'react-i18next';
 
 const JsonFormatter = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [inputJson, setInputJson] = useState('');
   const [outputJson, setOutputJson] = useState(null);
   const [error, setError] = useState('');
   const [errorPosition, setErrorPosition] = useState(null);
+
+  // 添加这行来调试当前语言
+  console.log('Current language:', i18n.language);
 
   // 解析JSON错误信息，获取错误位置和原因
   const parseJsonError = (error) => {
@@ -118,7 +121,7 @@ const JsonFormatter = () => {
         </div>
 
         <div className="json-output-area">
-          <h3>{t('jsonFormatter.formattedOutput')}</h3>
+          <h3>{t('jsonFormatter.formattedOutput.title')}</h3>
           {error ? (
             renderError()
           ) : (
