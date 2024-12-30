@@ -14,6 +14,7 @@ import XmlFormatter from './tools/XmlFormatter';
 import TextCompare from './tools/TextCompare';
 import JsonCompare from './tools/JsonCompare/JsonCompare';
 import TextProcessor from './tools/TextProcessor';
+import RegexMatcher from './tools/RegexMatcher';
 import '../styles/tools.css';
 
 function Tools() {
@@ -45,7 +46,8 @@ function Tools() {
       tools: [
         { key: 'compare', label: '文本对比', component: TextCompare },
         { key: 'process', label: '文本处理', component: TextProcessor },
-        { key: 'counter', label: '字数统计', component: TextCounter }
+        { key: 'counter', label: '字数统计', component: TextCounter },
+        { key: 'regex', label: '正则匹配', component: RegexMatcher }
       ]
     },
     {
