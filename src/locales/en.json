@@ -150,6 +150,217 @@
           "leftTitle": "Text 1",
           "rightTitle": "Text 2"
         }
+      },
+      "regexMatcher": {
+        "title": "Regular Expression Matcher",
+        "pattern": {
+          "label": "Regular Expression:",
+          "placeholder": "Enter regular expression"
+        },
+        "flags": {
+          "title": "Regex Flags:",
+          "options": {
+            "g": {
+              "label": "Global Match (g)",
+              "desc": "Find all matches rather than stopping after the first match"
+            },
+            "i": {
+              "label": "Case Insensitive (i)",
+              "desc": "Make the match case-insensitive"
+            },
+            "m": {
+              "label": "Multiline (m)",
+              "desc": "Make ^ and $ match the start/end of each line"
+            },
+            "s": {
+              "label": "Dot All (s)",
+              "desc": "Allow . to match newline characters"
+            },
+            "u": {
+              "label": "Unicode (u)",
+              "desc": "Use Unicode pattern matching"
+            },
+            "y": {
+              "label": "Sticky (y)",
+              "desc": "Matches only from the index indicated by lastIndex"
+            }
+          }
+        },
+        "text": {
+          "label": "Test Text:",
+          "placeholder": "Enter text to match"
+        },
+        "presets": {
+          "label": "Common Patterns:",
+          "select": "Select preset pattern",
+          "patterns": {
+            "email": "Match email address",
+            "phone": "Match Chinese phone number",
+            "url": "Match URL address",
+            "date": "Match date (YYYY-MM-DD or YYYY年MM月DD日)",
+            "ipv4": "Match IPv4 address"
+          }
+        },
+        "buttons": {
+          "match": "Execute Match"
+        },
+        "results": {
+          "title": "Match Results",
+          "count": "{{count}} matches",
+          "details": "Match Details:",
+          "match": "Match #{{number}}",
+          "value": "Value",
+          "position": "Position",
+          "groups": "Capture Groups"
+        },
+        "errors": {
+          "emptyInput": "Please enter regex pattern and test text",
+          "invalidRegex": "Invalid regular expression"
+        }
+      },
+      "base64": {
+        "title": "Base64 Converter",
+        "input": {
+          "placeholder": "Enter text to convert"
+        },
+        "buttons": {
+          "encode": "Encode",
+          "decode": "Decode"
+        },
+        "output": {
+          "title": "Result:"
+        },
+        "errors": {
+          "encode": "Encoding error, please check your input",
+          "decode": "Decoding error, please check your input"
+        }
+      },
+      "urlConverter": {
+        "title": "URL Converter",
+        "input": {
+          "placeholder": "Enter URL or parameters to encode/decode, e.g. http://example.com?key=value or key=value"
+        },
+        "standards": {
+          "note": "Note:",
+          "rfc1738": "RFC1738 uses '+' to encode spaces",
+          "rfc2396": "RFC2396 uses '%20' to encode spaces"
+        },
+        "buttons": {
+          "encode": "Encode →",
+          "decode": "Decode →",
+          "extract": "Extract Parameters"
+        },
+        "output": {
+          "placeholder": "Result will be shown here..."
+        },
+        "params": {
+          "title": "URL Parameters List:",
+          "table": {
+            "name": "Parameter Name",
+            "value": "Parameter Value"
+          },
+          "error": "Invalid URL or parameters"
+        }
+      },
+      "imageNav": {
+        "title": "Image Tools Navigation",
+        "description": "Select the image processing tool you need",
+        "tools": {
+          "compress": {
+            "title": "Image Compress",
+            "description": "Compress image file size while maintaining quality"
+          },
+          "resize": {
+            "title": "Resize Image",
+            "description": "Adjust image size and resolution"
+          },
+          "crop": {
+            "title": "Crop Image",
+            "description": "Crop and adjust image area"
+          },
+          "convertToJpg": {
+            "title": "Convert to JPG",
+            "description": "Convert other image formats to JPG"
+          },
+          "convertFromJpg": {
+            "title": "JPG Convert",
+            "description": "Convert JPG to other image formats"
+          },
+          "edit": {
+            "title": "Image Editor",
+            "description": "Edit and beautify images online"
+          },
+          "upscale": {
+            "title": "Image Upscale",
+            "description": "Lossless upscale image size"
+          },
+          "removeBg": {
+            "title": "Remove Background",
+            "description": "Automatically remove image background"
+          },
+          "watermark": {
+            "title": "Add Watermark",
+            "description": "Add text or image watermark"
+          },
+          "meme": {
+            "title": "Meme Generator",
+            "description": "Create and edit meme images"
+          },
+          "rotate": {
+            "title": "Rotate Image",
+            "description": "Rotate and flip images"
+          },
+          "blurFace": {
+            "title": "Blur Face",
+            "description": "Automatically detect and blur faces in images"
+          }
+        }
+      },
+      "codeFormatter": {
+        "title": "Code Formatter",
+        "language": {
+          "label": "Language:",
+          "options": {
+            "sql": "SQL",
+            "javascript": "JavaScript",
+            "html": "HTML",
+            "css": "CSS",
+            "json": "JSON",
+            "typescript": "TypeScript",
+            "jsx": "JSX/React",
+            "scss": "SCSS",
+            "less": "LESS",
+            "xml": "XML"
+          }
+        },
+        "indentSize": {
+          "label": "Indent Size:",
+          "disabled": "Disabled when using tabs"
+        },
+        "useTabs": {
+          "label": "Use Tab Indentation"
+        },
+        "input": {
+          "label": "Input Code:",
+          "placeholder": "Enter code to format..."
+        },
+        "buttons": {
+          "format": "Format →",
+          "copy": "Copy Result"
+        },
+        "output": {
+          "label": "Formatted Result:",
+          "placeholder": "Formatted code will be shown here..."
+        },
+        "errors": {
+          "emptyInput": "Please enter code to format",
+          "javascript": "JavaScript syntax error: ",
+          "json": "JSON syntax error: ",
+          "html": "HTML/XML syntax error: ",
+          "css": "CSS syntax error: ",
+          "sql": "SQL syntax error: ",
+          "copyFailed": "Copy failed: "
+        }
       }
     }
   },

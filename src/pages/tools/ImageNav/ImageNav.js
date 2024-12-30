@@ -1,77 +1,80 @@
 import React from 'react';
 import './ImageNav.css';
+import { useTranslation } from 'react-i18next';
 
 const ImageNav = () => {
+  const { t } = useTranslation();
+
   const imageTools = [
     {
-      title: '图片压缩',
-      description: '压缩图片文件大小，保持图片质量',
+      title: t('nav.tools.imageNav.tools.compress.title'),
+      description: t('nav.tools.imageNav.tools.compress.description'),
       icon: '🗜️',
       link: 'https://www.iloveimg.com/compress-image'
     },
     {
-      title: '调整大小',
-      description: '调整图片尺寸和分辨率',
+      title: t('nav.tools.imageNav.tools.resize.title'),
+      description: t('nav.tools.imageNav.tools.resize.description'),
       icon: '📐',
       link: 'https://www.iloveimg.com/resize-image'
     },
     {
-      title: '裁剪图片',
-      description: '裁剪和调整图片区域',
+      title: t('nav.tools.imageNav.tools.crop.title'),
+      description: t('nav.tools.imageNav.tools.crop.description'),
       icon: '✂️',
       link: 'https://www.iloveimg.com/crop-image'
     },
     {
-      title: '转换为JPG',
-      description: '将其他格式图片转换为JPG格式',
+      title: t('nav.tools.imageNav.tools.convertToJpg.title'),
+      description: t('nav.tools.imageNav.tools.convertToJpg.description'),
       icon: '🔄',
       link: 'https://www.iloveimg.com/convert-to-jpg'
     },
     {
-      title: 'JPG转换',
-      description: '将JPG转换为其他图片格式',
+      title: t('nav.tools.imageNav.tools.convertFromJpg.title'),
+      description: t('nav.tools.imageNav.tools.convertFromJpg.description'),
       icon: '🔄',
       link: 'https://www.iloveimg.com/convert-from-jpg'
     },
     {
-      title: '图片编辑',
-      description: '在线编辑和美化图片',
+      title: t('nav.tools.imageNav.tools.edit.title'),
+      description: t('nav.tools.imageNav.tools.edit.description'),
       icon: '🎨',
       link: 'https://www.iloveimg.com/photo-editor'
     },
     {
-      title: '图片放大',
-      description: '无损放大图片尺寸',
+      title: t('nav.tools.imageNav.tools.upscale.title'),
+      description: t('nav.tools.imageNav.tools.upscale.description'),
       icon: '🔍',
       link: 'https://www.iloveimg.com/upscale-image'
     },
     {
-      title: '移除背景',
-      description: '自动移除图片背景',
+      title: t('nav.tools.imageNav.tools.removeBg.title'),
+      description: t('nav.tools.imageNav.tools.removeBg.description'),
       icon: '🎭',
       link: 'https://www.iloveimg.com/remove-background'
     },
     {
-      title: '添加水印',
-      description: '为图片添加文字或图片水印',
+      title: t('nav.tools.imageNav.tools.watermark.title'),
+      description: t('nav.tools.imageNav.tools.watermark.description'),
       icon: '💧',
       link: 'https://www.iloveimg.com/watermark-image'
     },
     {
-      title: '表情包制作',
-      description: '制作和编辑表情包图片',
+      title: t('nav.tools.imageNav.tools.meme.title'),
+      description: t('nav.tools.imageNav.tools.meme.description'),
       icon: '😄',
       link: 'https://www.iloveimg.com/meme-generator'
     },
     {
-      title: '旋转图片',
-      description: '旋转和翻转图片',
+      title: t('nav.tools.imageNav.tools.rotate.title'),
+      description: t('nav.tools.imageNav.tools.rotate.description'),
       icon: '🔄',
       link: 'https://www.iloveimg.com/rotate-image'
     },
     {
-      title: '人脸模糊',
-      description: '自动检测并模糊图片中的人脸',
+      title: t('nav.tools.imageNav.tools.blurFace.title'),
+      description: t('nav.tools.imageNav.tools.blurFace.description'),
       icon: '👤',
       link: 'https://www.iloveimg.com/blur-face'
     }
@@ -80,8 +83,8 @@ const ImageNav = () => {
   return (
     <div className="image-nav-container">
       <div className="image-nav-header">
-        <h2>图像工具导航</h2>
-        <p>选择需要使用的图像处理工具</p>
+        <h2>{t('nav.tools.imageNav.title')}</h2>
+        <p>{t('nav.tools.imageNav.description')}</p>
       </div>
       <div className="image-nav-grid">
         {imageTools.map((tool, index) => (

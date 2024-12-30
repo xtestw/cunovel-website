@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { js as jsBeautify, css as cssBeautify, html as htmlBeautify } from 'js-beautify';
 import { format as sqlFormat } from 'sql-formatter';
 import './CodeFormatter.css';
+import { useTranslation } from 'react-i18next';
 
 const CodeFormatter = () => {
+  const { t } = useTranslation();
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('javascript');
   const [formattedCode, setFormattedCode] = useState('');
@@ -11,25 +13,23 @@ const CodeFormatter = () => {
   const [indentSize, setIndentSize] = useState(2);
   const [useTabs, setUseTabs] = useState(false);
 
-  // 支持的语言列表
   const languages = [
-    { value: 'sql', label: 'SQL' },
-    { value: 'javascript', label: 'JavaScript' },
-    { value: 'html', label: 'HTML' },
-    { value: 'css', label: 'CSS' },
-    { value: 'json', label: 'JSON' },
-    { value: 'typescript', label: 'TypeScript' },
-    { value: 'jsx', label: 'JSX/React' },
-    { value: 'scss', label: 'SCSS' },
-    { value: 'less', label: 'LESS' },
-    { value: 'xml', label: 'XML' }
+    { value: 'sql', label: t('nav.tools.codeFormatter.language.options.sql') },
+    { value: 'javascript', label: t('nav.tools.codeFormatter.language.options.javascript') },
+    { value: 'html', label: t('nav.tools.codeFormatter.language.options.html') },
+    { value: 'css', label: t('nav.tools.codeFormatter.language.options.css') },
+    { value: 'json', label: t('nav.tools.codeFormatter.language.options.json') },
+    { value: 'typescript', label: t('nav.tools.codeFormatter.language.options.typescript') },
+    { value: 'jsx', label: t('nav.tools.codeFormatter.language.options.jsx') },
+    { value: 'scss', label: t('nav.tools.codeFormatter.language.options.scss') },
+    { value: 'less', label: t('nav.tools.codeFormatter.language.options.less') },
+    { value: 'xml', label: t('nav.tools.codeFormatter.language.options.xml') }
   ];
 
-  // 格式化代码
   const formatCode = () => {
     setError('');
     if (!code.trim()) {
-      setError('请输入需要格式化的代码');
+      setError(t('nav.tools.codeFormatter.errors.emptyInput'));
       return;
     }
 
@@ -62,7 +62,7 @@ const CodeFormatter = () => {
           try {
             result = jsBeautify(code, options);
           } catch (e) {
-            throw new Error('JavaScript 语法错误: ' + e.message);
+            throw new Error(t('nav.tools.codeFormatter.errors.javascript') + e.message);
           }
           break;
 
@@ -71,7 +71,7 @@ const CodeFormatter = () => {
             const parsed = JSON.parse(code);
             result = JSON.stringify(parsed, null, useTabs ? '\t' : ' '.repeat(indentSize));
           } catch (e) {
-            throw new Error('JSON 语法错误: ' + e.message);
+            throw new Error(t('nav.tools.codeFormatter.errors.json') + e.message);
           }
           break;
 
@@ -83,7 +83,7 @@ const CodeFormatter = () => {
               unformatted: ['code', 'pre', 'em', 'strong', 'span']
             });
           } catch (e) {
-            throw new Error('HTML/XML 语法错误: ' + e.message);
+            throw new Error(t('nav.tools.codeFormatter.errors.html') + e.message);
           }
           break;
 
@@ -97,7 +97,7 @@ const CodeFormatter = () => {
               selector_separator_newline: true
             });
           } catch (e) {
-            throw new Error('CSS 语法错误: ' + e.message);
+            throw new Error(t('nav.tools.codeFormatter.errors.css') + e.message);
           }
           break;
 
@@ -110,7 +110,7 @@ const CodeFormatter = () => {
               linesBetweenQueries: 2
             });
           } catch (e) {
-            throw new Error('SQL 语法错误: ' + e.message);
+            throw new Error(t('nav.tools.codeFormatter.errors.sql') + e.message);
           }
           break;
 
@@ -124,15 +124,11 @@ const CodeFormatter = () => {
     }
   };
 
-  // 复制格式化后的代码
   const copyCode = () => {
     if (formattedCode) {
       navigator.clipboard.writeText(formattedCode)
-        .then(() => {
-          // 可以添加复制成功的提示
-        })
         .catch(err => {
-          setError('复制失败: ' + err.message);
+          setError(t('nav.tools.codeFormatter.errors.copyFailed') + err.message);
         });
     }
   };
@@ -141,7 +137,7 @@ const CodeFormatter = () => {
     <div className="code-formatter">
       <div className="formatter-controls">
         <div className="control-group">
-          <label>语言:</label>
+          <label>{t('nav.tools.codeFormatter.language.label')}</label>
           <select 
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -155,7 +151,7 @@ const CodeFormatter = () => {
         </div>
 
         <div className="control-group">
-          <label>缩进大小:</label>
+          <label>{t('nav.tools.codeFormatter.indentSize.label')}</label>
           <input
             type="number"
             min="1"
@@ -163,6 +159,7 @@ const CodeFormatter = () => {
             value={indentSize}
             onChange={(e) => setIndentSize(Number(e.target.value))}
             disabled={useTabs}
+            title={useTabs ? t('nav.tools.codeFormatter.indentSize.disabled') : ''}
           />
         </div>
 
@@ -173,38 +170,38 @@ const CodeFormatter = () => {
               checked={useTabs}
               onChange={(e) => setUseTabs(e.target.checked)}
             />
-            使用Tab缩进
+            {t('nav.tools.codeFormatter.useTabs.label')}
           </label>
         </div>
       </div>
 
       <div className="code-panels">
         <div className="code-panel">
-          <label>输入代码:</label>
+          <label>{t('nav.tools.codeFormatter.input.label')}</label>
           <textarea
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="在此输入需要格式化的代码..."
+            placeholder={t('nav.tools.codeFormatter.input.placeholder')}
             spellCheck="false"
           />
         </div>
 
         <div className="format-actions">
           <button onClick={formatCode} className="format-button">
-            格式化 →
+            {t('nav.tools.codeFormatter.buttons.format')}
           </button>
           <button onClick={copyCode} className="copy-button" disabled={!formattedCode}>
-            复制结果
+            {t('nav.tools.codeFormatter.buttons.copy')}
           </button>
         </div>
 
         <div className="code-panel">
-          <label>格式化结果:</label>
+          <label>{t('nav.tools.codeFormatter.output.label')}</label>
           <textarea
             value={formattedCode}
             readOnly
             spellCheck="false"
-            placeholder="格式化后的代码将显示在这里..."
+            placeholder={t('nav.tools.codeFormatter.output.placeholder')}
           />
         </div>
       </div>

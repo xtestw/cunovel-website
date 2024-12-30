@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './RegexMatcher.css';
+import { useTranslation } from 'react-i18next';
 
 const RegexMatcher = () => {
+  const { t } = useTranslation();
   const [pattern, setPattern] = useState('');
   const [flags, setFlags] = useState('g');
   const [text, setText] = useState('');
@@ -11,34 +13,34 @@ const RegexMatcher = () => {
   const [selectedFlags, setSelectedFlags] = useState(['g']);
 
   const flagOptions = [
-    { value: 'g', label: '全局匹配', desc: '查找所有匹配项而非在找到第一个匹配后停止' },
-    { value: 'i', label: '忽略大小写', desc: '使匹配不区分大小写' },
-    { value: 'm', label: '多行匹配', desc: '使 ^ 和 $ 匹配每一行的开始和结束' },
-    { value: 's', label: '点号匹配换行', desc: '允许 . 匹配换行符' },
-    { value: 'u', label: 'Unicode', desc: '使用Unicode模式进行匹配' },
-    { value: 'y', label: '粘性匹配', desc: '仅匹配目标字符串中此正则表达式的lastIndex属性指示的索引处的匹配项' }
+    { value: 'g', label: t('nav.tools.regexMatcher.flags.options.g.label'), desc: t('nav.tools.regexMatcher.flags.options.g.desc') },
+    { value: 'i', label: t('nav.tools.regexMatcher.flags.options.i.label'), desc: t('nav.tools.regexMatcher.flags.options.i.desc') },
+    { value: 'm', label: t('nav.tools.regexMatcher.flags.options.m.label'), desc: t('nav.tools.regexMatcher.flags.options.m.desc') },
+    { value: 's', label: t('nav.tools.regexMatcher.flags.options.s.label'), desc: t('nav.tools.regexMatcher.flags.options.s.desc') },
+    { value: 'u', label: t('nav.tools.regexMatcher.flags.options.u.label'), desc: t('nav.tools.regexMatcher.flags.options.u.desc') },
+    { value: 'y', label: t('nav.tools.regexMatcher.flags.options.y.label'), desc: t('nav.tools.regexMatcher.flags.options.y.desc') }
   ];
 
   const presets = {
     email: {
       pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
-      description: '匹配电子邮件地址'
+      description: t('nav.tools.regexMatcher.presets.patterns.email')
     },
     phone: {
       pattern: '(?:(?:\\+|00)86)?1[3-9]\\d{9}',
-      description: '匹配中国大陆手机号'
+      description: t('nav.tools.regexMatcher.presets.patterns.phone')
     },
     url: {
       pattern: 'https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)',
-      description: '匹配URL地址'
+      description: t('nav.tools.regexMatcher.presets.patterns.url')
     },
     date: {
       pattern: '\\d{4}[-/年](0?[1-9]|1[012])[-/月](0?[1-9]|[12][0-9]|3[01])日?',
-      description: '匹配日期（YYYY-MM-DD或YYYY年MM月DD日）'
+      description: t('nav.tools.regexMatcher.presets.patterns.date')
     },
     ipv4: {
       pattern: '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)',
-      description: '匹配IPv4地址'
+      description: t('nav.tools.regexMatcher.presets.patterns.ipv4')
     }
   };
 
@@ -130,17 +132,17 @@ const RegexMatcher = () => {
       <div className="regex-panel">
         <div className="left-panel">
           <div className="input-section">
-            <label>正则表达式:</label>
+            <label>{t('nav.tools.regexMatcher.pattern.label')}</label>
             <input
               type="text"
               value={pattern}
               onChange={(e) => setPattern(e.target.value)}
-              placeholder="输入正则表达式"
+              placeholder={t('nav.tools.regexMatcher.pattern.placeholder')}
             />
           </div>
 
           <div className="flags-section">
-            <label>正则标志:</label>
+            <label>{t('nav.tools.regexMatcher.flags.title')}</label>
             <div className="flags-selector">
               {flagOptions.map(({ value, label, desc }) => (
                 <label key={value} className="flag-option" title={desc}>
@@ -155,30 +157,30 @@ const RegexMatcher = () => {
                       }
                     }}
                   />
-                  <span className="flag-label">{label} ({value})</span>
+                  <span className="flag-label">{label}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div className="text-input">
-            <label>待匹配文本:</label>
+            <label>{t('nav.tools.regexMatcher.text.label')}</label>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="输入要匹配的文本"
+              placeholder={t('nav.tools.regexMatcher.text.placeholder')}
             />
           </div>
         </div>
 
         <div className="right-panel">
           <div className="presets-section">
-            <label>常用模式:</label>
+            <label>{t('nav.tools.regexMatcher.presets.label')}</label>
             <select 
               value={selectedPreset} 
               onChange={(e) => setSelectedPreset(e.target.value)}
             >
-              <option value="">选择预设模式</option>
+              <option value="">{t('nav.tools.regexMatcher.presets.select')}</option>
               {Object.entries(presets).map(([key, { description }]) => (
                 <option key={key} value={key}>
                   {description}
@@ -188,7 +190,7 @@ const RegexMatcher = () => {
           </div>
 
           <button onClick={handleMatch} className="match-button">
-            执行匹配
+            {t('nav.tools.regexMatcher.buttons.match')}
           </button>
         </div>
       </div>
@@ -197,22 +199,22 @@ const RegexMatcher = () => {
 
       <div className="results-panel">
         <div className="highlighted-content">
-          <label>匹配结果 ({matches.length} 个匹配):</label>
+          <label>{t('nav.tools.regexMatcher.results.title')} ({t('nav.tools.regexMatcher.results.count', { count: matches.length })}):</label>
           {highlightText()}
         </div>
 
         {matches.length > 0 && (
           <div className="matches-list">
-            <label>详细匹配信息:</label>
+            <label>{t('nav.tools.regexMatcher.results.details')}</label>
             <div className="matches-container">
               {matches.map((match, index) => (
                 <div key={index} className="match-item">
-                  <div>匹配 #{index + 1}</div>
-                  <div>值: {match.value}</div>
-                  <div>位置: {match.index}</div>
+                  <div>{t('nav.tools.regexMatcher.results.match', { number: index + 1 })}</div>
+                  <div>{t('nav.tools.regexMatcher.results.value')}: {match.value}</div>
+                  <div>{t('nav.tools.regexMatcher.results.position')}: {match.index}</div>
                   {match.groups.length > 0 && (
                     <div>
-                      捕获组: 
+                      {t('nav.tools.regexMatcher.results.groups')}: 
                       {match.groups.map((group, i) => (
                         <span key={i} className="group">
                           {group}
