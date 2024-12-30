@@ -15,6 +15,7 @@ import TextCompare from './tools/TextCompare';
 import JsonCompare from './tools/JsonCompare/JsonCompare';
 import TextProcessor from './tools/TextProcessor';
 import RegexMatcher from './tools/RegexMatcher';
+import CodeFormatter from './tools/CodeFormatter/CodeFormatter';
 import '../styles/tools.css';
 
 function Tools() {
@@ -122,6 +123,58 @@ function Tools() {
           key: 'blur-face', 
           label: '人脸模糊',
           externalLink: 'https://www.iloveimg.com/blur-face'
+        }
+      ]
+    },
+    {
+      key: 'code',
+      label: '代码工具',
+      tools: [
+        { key: 'formatter', label: '代码格式化', component: CodeFormatter },
+        { 
+          key: 'minifier', 
+          label: '代码压缩',
+          externalLink: 'https://www.toptal.com/developers/javascript-minifier'
+        },
+        { 
+          key: 'babel', 
+          label: 'Babel 转换',
+          externalLink: 'https://babeljs.io/repl'
+        },
+        { 
+          key: 'typescript', 
+          label: 'TypeScript 转换',
+          externalLink: 'https://www.typescriptlang.org/play'
+        },
+        { 
+          key: 'sass', 
+          label: 'SASS/SCSS 转换',
+          externalLink: 'https://www.sassmeister.com/'
+        },
+        { 
+          key: 'less', 
+          label: 'LESS 转换',
+          externalLink: 'https://lesstester.com/'
+        },
+        { 
+          key: 'svgomg', 
+          label: 'SVG 优化',
+          externalLink: 'https://jakearchibald.github.io/svgomg/'
+        },
+        { 
+          key: 'caniuse', 
+          label: '兼容性查询',
+          externalLink: 'https://caniuse.com/'
+        },
+        { 
+          key: 'regex101', 
+          label: '正则测试',
+          externalLink: 'https://regex101.com/'
+        },
+        { 
+          key: 'bundlephobia', 
+          label: '包大小分析',
+          externalLink: 'https://bundlephobia.com/'
         }
       ]
     }

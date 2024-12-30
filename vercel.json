@@ -35,6 +35,20 @@
       }
     },
     {
+        "src": "/regexr.html",
+        "status": 301,
+        "headers": {
+          "Location": "/tools/text/regex"
+        }
+      },
+      {
+        "src": "/sql_format.html",
+        "status": 301,
+        "headers": {
+          "Location": "/tools/code/formatter"
+        }
+      },
+    {
       "src": "/url.html",
       "status": 301,
       "headers": {
