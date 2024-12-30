@@ -60,17 +60,29 @@ const TimeStamp = () => {
   // 处理日期转时间戳
   const handleDateToTimestamp = () => {
     try {
-      const dateTimeString = `${dateInput}T${timeInput || '00:00:00'}`;
+      if (!dateInput) {
+        setDateTimestamp({ ms: '', s: '' });
+        return;
+      }
+      
+      // 如果没有时间输入，使用当前时间
+      const timeString = timeInput || new Date().toTimeString().slice(0, 8);
+      const dateTimeString = `${dateInput}T${timeString}`;
       const timestamp = new Date(dateTimeString).getTime();
+      
       if (isNaN(timestamp)) {
         throw new Error('Invalid date');
       }
+      
       setDateTimestamp({
         ms: timestamp,
         s: Math.floor(timestamp / 1000)
       });
     } catch (e) {
-      setDateTimestamp({ ms: '无效的日期', s: '无效的日期' });
+      setDateTimestamp({ 
+        ms: t('nav.tools.timeStamp.errors.invalidTimestamp'), 
+        s: t('nav.tools.timeStamp.errors.invalidTimestamp') 
+      });
     }
   };
 

@@ -78,6 +78,328 @@
             "type_mismatch": "类型不匹配",
             "value_mismatch": "值不同"
           }
+        },
+        "timeStamp": {
+          "title": "时间戳转换",
+          "timezoneInfo": {
+            "title": "时区信息",
+            "selectLabel": "选择时区:",
+            "currentTimestamp": "当前时间戳(ms)",
+            "currentTimestampSeconds": "当前时间戳(s)",
+            "currentTime": "当前时间"
+          },
+          "converter": {
+            "title": "时间戳转换",
+            "inputPlaceholder": "输入时间戳",
+            "convertButton": "转换",
+            "result": "转换结果",
+            "units": {
+              "milliseconds": "毫秒",
+              "seconds": "秒"
+            }
+          },
+          "dateToTimestamp": {
+            "title": "日期转时间戳",
+            "timestampMs": "毫秒时间戳",
+            "timestampS": "秒时间戳"
+          },
+          "timestampDiff": {
+            "title": "时间戳差值",
+            "timestamp1": "时间戳1(毫秒)",
+            "timestamp2": "时间戳2(毫秒)",
+            "calculateButton": "计算差值",
+            "difference": "时间差",
+            "units": {
+              "days": "天",
+              "hours": "小时",
+              "minutes": "分钟",
+              "seconds": "秒"
+            }
+          },
+          "errors": {
+            "invalidTimestamp": "无效的时间戳",
+            "calculationError": "计算错误"
+          }
+        },
+        "textCounter": {
+          "placeholder": "在此输入或粘贴文本...",
+          "results": {
+            "characters": "总字符数",
+            "charactersNoSpace": "不含空格字符数",
+            "words": "单词数",
+            "lines": "行数",
+            "paragraphs": "段落数",
+            "chinese": "中文字数",
+            "english": "英文字母数",
+            "numbers": "数字个数",
+            "spaces": "空格数",
+            "punctuation": "标点符号数"
+          }
+        },
+        "textCompare": {
+          "title": "文本对比工具",
+          "text1": {
+            "title": "文本 1",
+            "placeholder": "请输入第一段文本"
+          },
+          "text2": {
+            "title": "文本 2",
+            "placeholder": "请输入第二段文本"
+          },
+          "diffViewer": {
+            "leftTitle": "文本 1",
+            "rightTitle": "文本 2"
+          }
+        },
+        "regexMatcher": {
+          "title": "正则表达式匹配器",
+          "pattern": {
+            "label": "正则表达式:",
+            "placeholder": "输入正则表达式"
+          },
+          "flags": {
+            "title": "正则标志:",
+            "options": {
+              "g": {
+                "label": "全局匹配 (g)",
+                "desc": "查找所有匹配项而非在找到第一个匹配后停止"
+              },
+              "i": {
+                "label": "忽略大小写 (i)",
+                "desc": "使匹配不区分大小写"
+              },
+              "m": {
+                "label": "多行匹配 (m)",
+                "desc": "使 ^ 和 $ 匹配每一行的开始和结束"
+              },
+              "s": {
+                "label": "点号匹配换行 (s)",
+                "desc": "允许 . 匹配换行符"
+              },
+              "u": {
+                "label": "Unicode (u)",
+                "desc": "使用Unicode模式进行匹配"
+              },
+              "y": {
+                "label": "粘性匹配 (y)",
+                "desc": "仅匹配目标字符串中此正则表达式的lastIndex属性指示的索引处的匹配项"
+              }
+            }
+          },
+          "text": {
+            "label": "待匹配文本:",
+            "placeholder": "输入要匹配的文本"
+          },
+          "presets": {
+            "label": "常用模式:",
+            "select": "选择预设模式",
+            "patterns": {
+              "email": "匹配电子邮件地址",
+              "phone": "匹配中国大陆手机号",
+              "url": "匹配URL地址",
+              "date": "匹配日期（YYYY-MM-DD或YYYY年MM月DD日）",
+              "ipv4": "匹配IPv4地址"
+            }
+          },
+          "buttons": {
+            "match": "执行匹配"
+          },
+          "results": {
+            "title": "匹配结果",
+            "count": "{{count}} 个匹配",
+            "details": "详细匹配信息:",
+            "match": "匹配 #{{number}}",
+            "value": "值",
+            "position": "位置",
+            "groups": "捕获组"
+          },
+          "errors": {
+            "emptyInput": "请输入正则表达式和待匹配文本",
+            "invalidRegex": "无效的正则表达式"
+          }
+        },
+        "base64": {
+          "title": "Base64 转换",
+          "input": {
+            "placeholder": "请输入要转换的文本"
+          },
+          "buttons": {
+            "encode": "编码",
+            "decode": "解码"
+          },
+          "output": {
+            "title": "结果："
+          },
+          "errors": {
+            "encode": "编码错误，请检查输入",
+            "decode": "解码错误，请检查输入"
+          }
+        },
+        "urlConverter": {
+          "title": "URL 转换",
+          "input": {
+            "placeholder": "输入需要编码/解码的URL或参数，例如: http://example.com?key=value 或 key=value"
+          },
+          "standards": {
+            "note": "注意:",
+            "rfc1738": "RFC1738 使用 '+' 编码空格",
+            "rfc2396": "RFC2396 使用 '%20' 编码空格"
+          },
+          "buttons": {
+            "encode": "编码 →",
+            "decode": "解码 →",
+            "extract": "提取参数"
+          },
+          "output": {
+            "placeholder": "转换结果将显示在这里..."
+          },
+          "params": {
+            "title": "URL参数列表:",
+            "table": {
+              "name": "参数名",
+              "value": "参数值"
+            },
+            "error": "无效的URL或参数"
+          }
+        },
+        "imageNav": {
+          "title": "图像工具导航",
+          "description": "选择需要使用的图像处理工具",
+          "tools": {
+            "compress": {
+              "title": "图片压缩",
+              "description": "压缩图片文件大小，保持图片质量"
+            },
+            "resize": {
+              "title": "调整大小",
+              "description": "调整图片尺寸和分辨率"
+            },
+            "crop": {
+              "title": "裁剪图片",
+              "description": "裁剪和调整图片区域"
+            },
+            "convertToJpg": {
+              "title": "转换为JPG",
+              "description": "将其他格式图片转换为JPG格式"
+            },
+            "convertFromJpg": {
+              "title": "JPG转换",
+              "description": "将JPG转换为其他图片格式"
+            },
+            "edit": {
+              "title": "图片编辑",
+              "description": "在线编辑和美化图片"
+            },
+            "upscale": {
+              "title": "图片放大",
+              "description": "无损放大图片尺寸"
+            },
+            "removeBg": {
+              "title": "移除背景",
+              "description": "自动移除图片背景"
+            },
+            "watermark": {
+              "title": "添加水印",
+              "description": "为图片添加文字或图片水印"
+            },
+            "meme": {
+              "title": "表情包制作",
+              "description": "制作和编辑表情包图片"
+            },
+            "rotate": {
+              "title": "旋转图片",
+              "description": "旋转和翻转图片"
+            },
+            "blurFace": {
+              "title": "人脸模糊",
+              "description": "自动检测并模糊图片中的人脸"
+            }
+          }
+        },
+        "codeFormatter": {
+          "title": "代码格式化",
+          "language": {
+            "label": "语言:",
+            "options": {
+              "sql": "SQL",
+              "javascript": "JavaScript",
+              "html": "HTML",
+              "css": "CSS",
+              "json": "JSON",
+              "typescript": "TypeScript",
+              "jsx": "JSX/React",
+              "scss": "SCSS",
+              "less": "LESS",
+              "xml": "XML"
+            }
+          },
+          "indentSize": {
+            "label": "缩进大小:",
+            "disabled": "使用Tab缩进时禁用"
+          },
+          "useTabs": {
+            "label": "使用Tab缩进"
+          },
+          "input": {
+            "label": "输入代码:",
+            "placeholder": "在此输入需要格式化的代码..."
+          },
+          "buttons": {
+            "format": "格式化 →",
+            "copy": "复制结果"
+          },
+          "output": {
+            "label": "格式化结果:",
+            "placeholder": "格式化后的代码将显示在这里..."
+          },
+          "errors": {
+            "emptyInput": "请输入需要格式化的代码",
+            "javascript": "JavaScript 语法错误: ",
+            "json": "JSON 语法错误: ",
+            "html": "HTML/XML 语法错误: ",
+            "css": "CSS 语法错误: ",
+            "sql": "SQL 语法错误: ",
+            "copyFailed": "复制失败: "
+          }
+        },
+        "aiNav": {
+          "title": "AI导航",
+          "categories": {
+            "chat": {
+              "title": "AI聊天",
+              "items": {
+                "chatgpt": {
+                  "name": "ChatGPT",
+                  "desc": "OpenAI开发的AI对话模型"
+                },
+                "claude": {
+                  "name": "Claude",
+                  "desc": "Anthropic开发的AI助手"
+                },
+                "gemini": {
+                  "name": "Gemini",
+                  "desc": "Google的AI模型"
+                }
+              }
+            },
+            "image": {
+              "title": "AI绘画",
+              "items": {
+                "midjourney": {
+                  "name": "Midjourney",
+                  "desc": "AI艺术和图像生成"
+                },
+                "stableDiffusion": {
+                  "name": "Stable Diffusion",
+                  "desc": "开源的AI图像生成模型"
+                },
+                "dalle": {
+                  "name": "DALL·E",
+                  "desc": "OpenAI的图像生成AI"
+                }
+              }
+            }
+          }
         }
       }
     },
