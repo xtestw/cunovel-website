@@ -49,10 +49,18 @@ function App() {
               >
                 {t('common.aiNav')}
               </NavLink>
+              <a 
+                href="https://chromewebstore.google.com/detail/cutool/pnadcjmfdflpblaogepdpeooialeelno?hl=en-US&utm_source=ext_sidebar"
+                className="nav-item chrome-plugin"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Chrome 插件
+                <span className="external-link-icon">↗</span>
+              </a>
             </nav>
             <div className="right-area">
               <LanguageSwitcher />
-              <div id="feedback-button">
               <a 
                 href={`mailto:${feedbackEmail}`}
                 className="feedback-button"
@@ -61,9 +69,6 @@ function App() {
               >
                 反馈
               </a>
-
-              </div>
-     
             </div>
           </div>
         </header>

@@ -77,6 +77,25 @@ const AINav = () => {
 
   return (
     <div className="ai-nav-container">
+      {/* Chrome 插件提示 */}
+      <div className="chrome-extension-banner">
+        <div className="banner-content">
+          <img src="/favicon.ico" alt="CuTool" className="extension-icon" />
+          <div className="banner-text">
+            <h3>CuTool Chrome 插件</h3>
+            <p>安装浏览器插件，随时使用工具箱的所有功能</p>
+          </div>
+          <a 
+            href="https://chromewebstore.google.com/detail/cutool/pnadcjmfdflpblaogepdpeooialeelno?hl=en-US&utm_source=ext_sidebar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="install-button"
+          >
+            安装插件
+          </a>
+        </div>
+      </div>
+
       {/* 左侧类别导航 */}
       <div className="category-sidebar">
         <div className="category-list">

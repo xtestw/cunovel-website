@@ -98,6 +98,22 @@ html, body {
   background: #1890ff;
 }
 
+.nav-item.chrome-plugin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.external-link-icon {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-top: -2px;
+}
+
+.nav-item.chrome-plugin:hover .external-link-icon {
+  opacity: 1;
+}
+
 /* 响应式布局 */
 @media screen and (max-width: 768px) {
   .tool-container {
@@ -115,6 +131,15 @@ html, body {
 
   .right-area {
     gap: 16px;
+  }
+
+  .nav-item {
+    padding: 0 12px;
+    font-size: 14px;
+  }
+  
+  .external-link-icon {
+    font-size: 12px;
   }
 }
 
