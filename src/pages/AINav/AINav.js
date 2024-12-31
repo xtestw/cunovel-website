@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import aiTools from '../../data/aiTools.json';
 import './AINav.css';
+import { Helmet } from 'react-helmet';
 
 const AINav = () => {
   const [activeCategory, setActiveCategory] = useState('');
@@ -76,54 +77,61 @@ const AINav = () => {
   };
 
   return (
-    <div className="ai-nav-container">
-      {/* Chrome 插件提示 */}
-      <div className="category-sidebar">
-        <div className="category-list">
-          {aiTools.map(({ category }) => (
+    <>
+      <Helmet>
+        <title>AI工具导航 | DevTools</title>
+        <meta name="description" content="精选AI工具导航,收录各类实用的人工智能工具和资源" />
+        <meta name="keywords" content="AI工具,人工智能,ChatGPT,AI导航,开发工具" />
+      </Helmet>
+      <div className="ai-nav-container">
+        {/* Chrome 插件提示 */}
+        <div className="category-sidebar">
+          <div className="category-list">
+            {aiTools.map(({ category }) => (
+              <div
+                key={category}
+                className={`category-item ${activeCategory === category ? 'active' : ''}`}
+                onClick={() => handleCategoryClick(category)}
+              >
+                {category}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 右侧内容区域 */}
+        <div className="content-area">
+          {aiTools.map(({ category, items }) => (
             <div
               key={category}
-              className={`category-item ${activeCategory === category ? 'active' : ''}`}
-              onClick={() => handleCategoryClick(category)}
+              id={category}
+              className="category-section"
             >
-              {category}
+              <h2 className="category-title">{category}</h2>
+              <div className="tools-grid">
+                {items.map((tool) => (
+                  <a
+                    key={tool.link}
+                    href={tool.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tool-card"
+                  >
+                    <div className="tool-icon">
+                      <img src={tool.icon} alt={tool.name} loading="lazy" />
+                    </div>
+                    <div className="tool-info">
+                      <h3>{tool.name}</h3>
+                      <p>{tool.desc}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
             </div>
           ))}
         </div>
       </div>
-
-      {/* 右侧内容区域 */}
-      <div className="content-area">
-        {aiTools.map(({ category, items }) => (
-          <div
-            key={category}
-            id={category}
-            className="category-section"
-          >
-            <h2 className="category-title">{category}</h2>
-            <div className="tools-grid">
-              {items.map((tool) => (
-                <a
-                  key={tool.link}
-                  href={tool.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tool-card"
-                >
-                  <div className="tool-icon">
-                    <img src={tool.icon} alt={tool.name} loading="lazy" />
-                  </div>
-                  <div className="tool-info">
-                    <h3>{tool.name}</h3>
-                    <p>{tool.desc}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    </>
   );
 };
 

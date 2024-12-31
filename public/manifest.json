@@ -1,6 +1,11 @@
 {
+  "name": "CuTool - 开发者在线工具箱",
   "short_name": "CuTool",
-  "name": "CuTool - 在线工具集合",
+  "description": "为开发者提供的在线工具箱，包含时间戳转换、代码格式化、AI导航等实用工具",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "favicon.ico",
@@ -17,9 +22,5 @@
       "type": "image/png",
       "sizes": "512x512"
     }
-  ],
-  "start_url": "https://cutool.online",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  ]
 } 

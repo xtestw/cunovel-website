@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './RegexMatcher.css';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet';
 
 const RegexMatcher = () => {
   const { t } = useTranslation();
@@ -128,107 +129,114 @@ const RegexMatcher = () => {
   };
 
   return (
-    <div className="regex-matcher">
-      <div className="regex-panel">
-        <div className="left-panel">
-          <div className="input-section">
-            <label>{t('nav.tools.regexMatcher.pattern.label')}</label>
-            <input
-              type="text"
-              value={pattern}
-              onChange={(e) => setPattern(e.target.value)}
-              placeholder={t('nav.tools.regexMatcher.pattern.placeholder')}
-            />
-          </div>
+    <>
+      <Helmet>
+        <title>正则表达式测试工具 | CuTool</title>
+        <meta name="description" content="在线正则表达式测试工具,提供常用正则模式,支持实时匹配和结果高亮" />
+        <meta name="keywords" content="正则表达式,正则测试,regex,正则匹配,在线工具" />
+      </Helmet>
+      <div className="regex-matcher">
+        <div className="regex-panel">
+          <div className="left-panel">
+            <div className="input-section">
+              <label>{t('nav.tools.regexMatcher.pattern.label')}</label>
+              <input
+                type="text"
+                value={pattern}
+                onChange={(e) => setPattern(e.target.value)}
+                placeholder={t('nav.tools.regexMatcher.pattern.placeholder')}
+              />
+            </div>
 
-          <div className="flags-section">
-            <label>{t('nav.tools.regexMatcher.flags.title')}</label>
-            <div className="flags-selector">
-              {flagOptions.map(({ value, label, desc }) => (
-                <label key={value} className="flag-option" title={desc}>
-                  <input
-                    type="checkbox"
-                    checked={selectedFlags.includes(value)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedFlags([...selectedFlags, value]);
-                      } else {
-                        setSelectedFlags(selectedFlags.filter(f => f !== value));
-                      }
-                    }}
-                  />
-                  <span className="flag-label">{label}</span>
-                </label>
-              ))}
+            <div className="flags-section">
+              <label>{t('nav.tools.regexMatcher.flags.title')}</label>
+              <div className="flags-selector">
+                {flagOptions.map(({ value, label, desc }) => (
+                  <label key={value} className="flag-option" title={desc}>
+                    <input
+                      type="checkbox"
+                      checked={selectedFlags.includes(value)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedFlags([...selectedFlags, value]);
+                        } else {
+                          setSelectedFlags(selectedFlags.filter(f => f !== value));
+                        }
+                      }}
+                    />
+                    <span className="flag-label">{label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="text-input">
+              <label>{t('nav.tools.regexMatcher.text.label')}</label>
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder={t('nav.tools.regexMatcher.text.placeholder')}
+              />
             </div>
           </div>
 
-          <div className="text-input">
-            <label>{t('nav.tools.regexMatcher.text.label')}</label>
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder={t('nav.tools.regexMatcher.text.placeholder')}
-            />
-          </div>
-        </div>
-
-        <div className="right-panel">
-          <div className="presets-section">
-            <label>{t('nav.tools.regexMatcher.presets.label')}</label>
-            <select 
-              value={selectedPreset} 
-              onChange={(e) => setSelectedPreset(e.target.value)}
-            >
-              <option value="">{t('nav.tools.regexMatcher.presets.select')}</option>
-              {Object.entries(presets).map(([key, { description }]) => (
-                <option key={key} value={key}>
-                  {description}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button onClick={handleMatch} className="match-button">
-            {t('nav.tools.regexMatcher.buttons.match')}
-          </button>
-        </div>
-      </div>
-
-      {error && <div className="error">{error}</div>}
-
-      <div className="results-panel">
-        <div className="highlighted-content">
-          <label>{t('nav.tools.regexMatcher.results.title')} ({t('nav.tools.regexMatcher.results.count', { count: matches.length })}):</label>
-          {highlightText()}
-        </div>
-
-        {matches.length > 0 && (
-          <div className="matches-list">
-            <label>{t('nav.tools.regexMatcher.results.details')}</label>
-            <div className="matches-container">
-              {matches.map((match, index) => (
-                <div key={index} className="match-item">
-                  <div>{t('nav.tools.regexMatcher.results.match', { number: index + 1 })}</div>
-                  <div>{t('nav.tools.regexMatcher.results.value')}: {match.value}</div>
-                  <div>{t('nav.tools.regexMatcher.results.position')}: {match.index}</div>
-                  {match.groups.length > 0 && (
-                    <div>
-                      {t('nav.tools.regexMatcher.results.groups')}: 
-                      {match.groups.map((group, i) => (
-                        <span key={i} className="group">
-                          {group}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+          <div className="right-panel">
+            <div className="presets-section">
+              <label>{t('nav.tools.regexMatcher.presets.label')}</label>
+              <select 
+                value={selectedPreset} 
+                onChange={(e) => setSelectedPreset(e.target.value)}
+              >
+                <option value="">{t('nav.tools.regexMatcher.presets.select')}</option>
+                {Object.entries(presets).map(([key, { description }]) => (
+                  <option key={key} value={key}>
+                    {description}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            <button onClick={handleMatch} className="match-button">
+              {t('nav.tools.regexMatcher.buttons.match')}
+            </button>
           </div>
-        )}
+        </div>
+
+        {error && <div className="error">{error}</div>}
+
+        <div className="results-panel">
+          <div className="highlighted-content">
+            <label>{t('nav.tools.regexMatcher.results.title')} ({t('nav.tools.regexMatcher.results.count', { count: matches.length })}):</label>
+            {highlightText()}
+          </div>
+
+          {matches.length > 0 && (
+            <div className="matches-list">
+              <label>{t('nav.tools.regexMatcher.results.details')}</label>
+              <div className="matches-container">
+                {matches.map((match, index) => (
+                  <div key={index} className="match-item">
+                    <div>{t('nav.tools.regexMatcher.results.match', { number: index + 1 })}</div>
+                    <div>{t('nav.tools.regexMatcher.results.value')}: {match.value}</div>
+                    <div>{t('nav.tools.regexMatcher.results.position')}: {match.index}</div>
+                    {match.groups.length > 0 && (
+                      <div>
+                        {t('nav.tools.regexMatcher.results.groups')}: 
+                        {match.groups.map((group, i) => (
+                          <span key={i} className="group">
+                            {group}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

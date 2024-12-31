@@ -12,14 +12,15 @@
     "react": "^18.2.0",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
     "react-i18next": "^15.2.0",
     "react-json-view": "^1.21.3",
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
     "sql-formatter": "^15.2.0",
+    "strip-ansi": "^6.0.1",
     "styled-components": "^6.1.13",
-    "web-vitals": "^2.1.0",
-    "strip-ansi": "^6.0.1"
+    "web-vitals": "^2.1.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",

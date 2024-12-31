@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './TextCounter.css';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet';
+import './TextCounter.css';
 
 const TextCounter = () => {
   const { t } = useTranslation();
@@ -19,80 +20,99 @@ const TextCounter = () => {
   });
 
   useEffect(() => {
-    calculateStats(text);
+    const calculateStats = () => {
+      const lines = text.split('\n');
+      const paragraphs = lines.filter(line => line.trim().length > 0);
+      const spaces = (text.match(/\s/g) || []).length;
+      const chinese = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+      const english = (text.match(/[a-zA-Z]/g) || []).length;
+      const numbers = (text.match(/[0-9]/g) || []).length;
+      const punctuation = (text.match(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~。，、；：？！…—·ˉ¨''""々～‖∶＂＇｀｜〃〔〕〈〉《》「」『』．〖〗【】（）［］｛｝]/g) || []).length;
+
+      setStats({
+        characters: text.length,
+        charactersNoSpace: text.replace(/\s/g, '').length,
+        words: text.trim().split(/\s+/).filter(word => word.length > 0).length,
+        lines: lines.length,
+        paragraphs: paragraphs.length,
+        chinese,
+        english,
+        numbers,
+        spaces,
+        punctuation
+      });
+    };
+
+    calculateStats();
   }, [text]);
 
-  const calculateStats = (text) => {
-    const stats = {
-      characters: text.length,
-      charactersNoSpace: text.replace(/\s/g, '').length,
-      words: text.trim().split(/\s+/).filter(word => word.length > 0).length,
-      lines: text.split('\n').length,
-      paragraphs: text.split('\n\n').filter(para => para.trim().length > 0).length,
-      chinese: (text.match(/[\u4e00-\u9fa5]/g) || []).length,
-      english: (text.match(/[a-zA-Z]/g) || []).length,
-      numbers: (text.match(/[0-9]/g) || []).length,
-      spaces: (text.match(/\s/g) || []).length,
-      punctuation: (text.match(/[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~。，、；：？！…—·ˉ¨''""々～‖∶＂＇｀｜〃〔〕〈〉《》「」『』．〖〗【】（）［］｛｝]/g) || []).length
-    };
-    setStats(stats);
-  };
-
   return (
-    <div className="text-counter-container">
-      <div className="input-section">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={t('nav.tools.textCounter.placeholder')}
-          className="text-input"
+    <>
+      <Helmet>
+        <title>字数统计工具 | CuTool</title>
+        <meta 
+          name="description" 
+          content="在线字数统计工具,支持中英文字符统计,字数、词数、行数、段落数等多维度统计" 
         />
-      </div>
-      <div className="stats-section">
+        <meta 
+          name="keywords" 
+          content="字数统计,文本统计,字符统计,词数统计,在线工具" 
+        />
+      </Helmet>
+      <div className="text-counter-container">
+        <div className="input-area">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={t('nav.tools.textCounter.placeholder')}
+            spellCheck="false"
+          />
+        </div>
+        
         <div className="stats-grid">
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.characters')}:</label>
+            <label>{t('nav.tools.textCounter.results.characters')}</label>
             <span>{stats.characters}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.charactersNoSpace')}:</label>
+            <label>{t('nav.tools.textCounter.results.charactersNoSpace')}</label>
             <span>{stats.charactersNoSpace}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.words')}:</label>
+            <label>{t('nav.tools.textCounter.results.words')}</label>
             <span>{stats.words}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.lines')}:</label>
+            <label>{t('nav.tools.textCounter.results.lines')}</label>
             <span>{stats.lines}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.paragraphs')}:</label>
+            <label>{t('nav.tools.textCounter.results.paragraphs')}</label>
             <span>{stats.paragraphs}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.chinese')}:</label>
+            <label>{t('nav.tools.textCounter.results.chinese')}</label>
             <span>{stats.chinese}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.english')}:</label>
+            <label>{t('nav.tools.textCounter.results.english')}</label>
             <span>{stats.english}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.numbers')}:</label>
+            <label>{t('nav.tools.textCounter.results.numbers')}</label>
             <span>{stats.numbers}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.spaces')}:</label>
+            <label>{t('nav.tools.textCounter.results.spaces')}</label>
             <span>{stats.spaces}</span>
           </div>
           <div className="stat-item">
-            <label>{t('nav.tools.textCounter.results.punctuation')}:</label>
+            <label>{t('nav.tools.textCounter.results.punctuation')}</label>
             <span>{stats.punctuation}</span>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

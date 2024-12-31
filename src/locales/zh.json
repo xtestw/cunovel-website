@@ -482,5 +482,27 @@
       },
       "syntaxError": "语法错误",
       "errorAt": "错误位置：第 {{line}} 行，第 {{column}} 列"
+    },
+    "seo": {
+      "timestamp": {
+        "title": "时间戳转换工具 | DevTools",
+        "description": "在线时间戳转换工具,支持时间戳与日期时间的互相转换,方便开发者使用",
+        "keywords": "时间戳转换,timestamp,unix时间戳,日期转换"
+      },
+      "codeFormatter": {
+        "title": "代码格式化工具 | DevTools",
+        "description": "在线代码格式化工具,支持JSON、HTML、CSS、JavaScript等多种格式化",
+        "keywords": "代码格式化,prettifier,美化代码,在线工具"
+      },
+      "aiNav": {
+        "title": "AI工具导航 | DevTools",
+        "description": "精选AI工具导航,收录各类实用的人工智能工具和资源",
+        "keywords": "AI工具,人工智能,ChatGPT,AI导航,开发工具"
+      },
+      "imageNav": {
+        "title": "图像工具导航 | DevTools",
+        "description": "精选图像处理工具导航,收录图片压缩、格式转换、在线PS等实用工具",
+        "keywords": "图像处理,图片压缩,图片格式转换,在线PS,图片工具"
+      }
     }
   } 

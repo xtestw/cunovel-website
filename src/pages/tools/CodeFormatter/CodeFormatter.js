@@ -3,6 +3,7 @@ import { js as jsBeautify, css as cssBeautify, html as htmlBeautify } from 'js-b
 import { format as sqlFormat } from 'sql-formatter';
 import './CodeFormatter.css';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet';
 
 const CodeFormatter = () => {
   const { t } = useTranslation();
@@ -134,80 +135,87 @@ const CodeFormatter = () => {
   };
 
   return (
-    <div className="code-formatter">
-      <div className="formatter-controls">
-        <div className="control-group">
-          <label>{t('nav.tools.codeFormatter.language.label')}</label>
-          <select 
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            {languages.map(lang => (
-              <option key={lang.value} value={lang.value}>
-                {lang.label}
-              </option>
-            ))}
-          </select>
-        </div>
+    <>
+      <Helmet>
+        <title>代码格式化工具 | DevTools</title>
+        <meta name="description" content="在线代码格式化工具,支持JSON、HTML、CSS、JavaScript等多种格式化" />
+        <meta name="keywords" content="代码格式化,prettifier,美化代码,在线工具" />
+      </Helmet>
+      <div className="code-formatter">
+        <div className="formatter-controls">
+          <div className="control-group">
+            <label>{t('nav.tools.codeFormatter.language.label')}</label>
+            <select 
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              {languages.map(lang => (
+                <option key={lang.value} value={lang.value}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="control-group">
-          <label>{t('nav.tools.codeFormatter.indentSize.label')}</label>
-          <input
-            type="number"
-            min="1"
-            max="8"
-            value={indentSize}
-            onChange={(e) => setIndentSize(Number(e.target.value))}
-            disabled={useTabs}
-            title={useTabs ? t('nav.tools.codeFormatter.indentSize.disabled') : ''}
-          />
-        </div>
-
-        <div className="control-group">
-          <label>
+          <div className="control-group">
+            <label>{t('nav.tools.codeFormatter.indentSize.label')}</label>
             <input
-              type="checkbox"
-              checked={useTabs}
-              onChange={(e) => setUseTabs(e.target.checked)}
+              type="number"
+              min="1"
+              max="8"
+              value={indentSize}
+              onChange={(e) => setIndentSize(Number(e.target.value))}
+              disabled={useTabs}
+              title={useTabs ? t('nav.tools.codeFormatter.indentSize.disabled') : ''}
             />
-            {t('nav.tools.codeFormatter.useTabs.label')}
-          </label>
+          </div>
+
+          <div className="control-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={useTabs}
+                onChange={(e) => setUseTabs(e.target.checked)}
+              />
+              {t('nav.tools.codeFormatter.useTabs.label')}
+            </label>
+          </div>
         </div>
+
+        <div className="code-panels">
+          <div className="code-panel">
+            <label>{t('nav.tools.codeFormatter.input.label')}</label>
+            <textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder={t('nav.tools.codeFormatter.input.placeholder')}
+              spellCheck="false"
+            />
+          </div>
+
+          <div className="format-actions">
+            <button onClick={formatCode} className="format-button">
+              {t('nav.tools.codeFormatter.buttons.format')}
+            </button>
+            <button onClick={copyCode} className="copy-button" disabled={!formattedCode}>
+              {t('nav.tools.codeFormatter.buttons.copy')}
+            </button>
+          </div>
+
+          <div className="code-panel">
+            <label>{t('nav.tools.codeFormatter.output.label')}</label>
+            <textarea
+              value={formattedCode}
+              readOnly
+              spellCheck="false"
+              placeholder={t('nav.tools.codeFormatter.output.placeholder')}
+            />
+          </div>
+        </div>
+
+        {error && <div className="error-message">{error}</div>}
       </div>
-
-      <div className="code-panels">
-        <div className="code-panel">
-          <label>{t('nav.tools.codeFormatter.input.label')}</label>
-          <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder={t('nav.tools.codeFormatter.input.placeholder')}
-            spellCheck="false"
-          />
-        </div>
-
-        <div className="format-actions">
-          <button onClick={formatCode} className="format-button">
-            {t('nav.tools.codeFormatter.buttons.format')}
-          </button>
-          <button onClick={copyCode} className="copy-button" disabled={!formattedCode}>
-            {t('nav.tools.codeFormatter.buttons.copy')}
-          </button>
-        </div>
-
-        <div className="code-panel">
-          <label>{t('nav.tools.codeFormatter.output.label')}</label>
-          <textarea
-            value={formattedCode}
-            readOnly
-            spellCheck="false"
-            placeholder={t('nav.tools.codeFormatter.output.placeholder')}
-          />
-        </div>
-      </div>
-
-      {error && <div className="error-message">{error}</div>}
-    </div>
+    </>
   );
 };
 

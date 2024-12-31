@@ -482,5 +482,27 @@
     },
     "syntaxError": "Syntax Error",
     "errorAt": "Error at line {{line}}, column {{column}}"
+  },
+  "seo": {
+    "timestamp": {
+      "title": "Timestamp Converter | DevTools",
+      "description": "Online timestamp conversion tool, supporting conversion between timestamps and datetime",
+      "keywords": "timestamp converter,unix timestamp,date conversion"
+    },
+    "codeFormatter": {
+      "title": "Code Formatter | DevTools",
+      "description": "Online code formatting tool supporting JSON, HTML, CSS, JavaScript and more",
+      "keywords": "code formatter,prettifier,beautify code,online tools"
+    },
+    "aiNav": {
+      "title": "AI Tools Navigation | DevTools",
+      "description": "Curated AI tools navigation, featuring various practical artificial intelligence tools and resources",
+      "keywords": "AI tools,artificial intelligence,ChatGPT,AI navigation,developer tools"
+    },
+    "imageNav": {
+      "title": "Image Tools Navigation | DevTools",
+      "description": "Curated image processing tools navigation, featuring image compression, format conversion, online Photoshop and more",
+      "keywords": "image processing,image compression,image conversion,online Photoshop,image tools"
+    }
   }
 } 
