@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Tools from './pages/Tools';
 import AINav from './pages/AINav/AINav';
 import LanguageSwitcher from './components/LanguageSwitcher';
@@ -93,6 +94,7 @@ function App() {
             </ins>
           </div>
         </footer>
+        <SpeedInsights />
       </div>
     </Router>
   );
