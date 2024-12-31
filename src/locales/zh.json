@@ -400,6 +400,37 @@
               }
             }
           }
+        },
+        "textProcessor": {
+          "page": {
+            "title": "文本处理工具",
+            "description": "在线文本处理工具,提供文本合并、分割、替换等多种处理功能",
+            "keywords": "文本处理,文本合并,文本分割,文本替换,在线工具"
+          },
+          "modes": {
+            "merge": "多行合并",
+            "split": "文本分割",
+            "replace": "文本替换"
+          },
+          "placeholders": {
+            "merge": "输入多行文本，将被合并为一行",
+            "split": "输入要分割的文本",
+            "replace": "输入要替换的文本",
+            "output": "处理结果将显示在这里"
+          },
+          "labels": {
+            "delimiter": "分隔符",
+            "find": "查找",
+            "replace": "替换为",
+            "useRegex": "使用正则表达式"
+          },
+          "buttons": {
+            "process": "处理"
+          },
+          "errors": {
+            "splitError": "分割错误，请检查分隔符",
+            "replaceError": "替换错误，请检查输入"
+          }
         }
       }
     },

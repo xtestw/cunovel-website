@@ -400,6 +400,37 @@
             }
           }
         }
+      },
+      "textProcessor": {
+        "page": {
+          "title": "Text Processor",
+          "description": "Online text processing tool, providing functions like text merging, splitting, and replacing",
+          "keywords": "text processor,text merge,text split,text replace,online tools"
+        },
+        "modes": {
+          "merge": "Merge Lines",
+          "split": "Split Text",
+          "replace": "Replace Text"
+        },
+        "placeholders": {
+          "merge": "Enter multiple lines of text to merge into one line",
+          "split": "Enter text to split",
+          "replace": "Enter text to replace",
+          "output": "Processing result will be shown here"
+        },
+        "labels": {
+          "delimiter": "Delimiter",
+          "find": "Find",
+          "replace": "Replace with",
+          "useRegex": "Use Regular Expression"
+        },
+        "buttons": {
+          "process": "Process"
+        },
+        "errors": {
+          "splitError": "Split error, please check delimiter",
+          "replaceError": "Replace error, please check input"
+        }
       }
     }
   },
