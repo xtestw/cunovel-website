@@ -66,10 +66,11 @@
     {
         "src": "/sitemap.xml",
         "dest": "/sitemap.xml"
-      },    {
+    }, 
+    {
         "src": "/robots.txt",
         "dest": "/robots.txt"
-      },
+    },
     {
       "src": "/logo192.png",
       "dest": "/logo192.png"
