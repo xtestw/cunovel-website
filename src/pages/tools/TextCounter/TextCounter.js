@@ -49,15 +49,9 @@ const TextCounter = () => {
   return (
     <>
       <Helmet>
-        <title>字数统计工具 | CuTool</title>
-        <meta 
-          name="description" 
-          content="在线字数统计工具,支持中英文字符统计,字数、词数、行数、段落数等多维度统计" 
-        />
-        <meta 
-          name="keywords" 
-          content="字数统计,文本统计,字符统计,词数统计,在线工具" 
-        />
+        <title>字数统计工具 | Text Counter - CUTool</title>
+        <meta name="description" content="在线字数统计工具，支持中英文字符统计，字数、词数、行数、段落数等多维度统计。Online text statistics tool supporting Chinese and English character counting, words, lines, paragraphs and more." />
+        <meta name="keywords" content="text counter, word count, character count, text statistics, 字数统计, 文本统计, 字符统计, 词数统计" />
       </Helmet>
       <div className="text-counter-container">
         <div className="input-area">

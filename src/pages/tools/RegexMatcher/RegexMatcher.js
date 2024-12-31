@@ -131,9 +131,9 @@ const RegexMatcher = () => {
   return (
     <>
       <Helmet>
-        <title>正则表达式测试工具 | CuTool</title>
-        <meta name="description" content="在线正则表达式测试工具,提供常用正则模式,支持实时匹配和结果高亮" />
-        <meta name="keywords" content="正则表达式,正则测试,regex,正则匹配,在线工具" />
+        <title>正则表达式测试工具 | Regex Tester - CUTool</title>
+        <meta name="description" content="在线正则表达式测试工具，提供常用正则模式，支持实时匹配和结果高亮。Online regex testing tool with common patterns, real-time matching and result highlighting." />
+        <meta name="keywords" content="regex tester, regular expression, regex pattern, regex matcher, 正则表达式, 正则测试, 正则匹配" />
       </Helmet>
       <div className="regex-matcher">
         <div className="regex-panel">

@@ -137,9 +137,9 @@ const CodeFormatter = () => {
   return (
     <>
       <Helmet>
-        <title>代码格式化工具 | DevTools</title>
-        <meta name="description" content="在线代码格式化工具,支持JSON、HTML、CSS、JavaScript等多种格式化" />
-        <meta name="keywords" content="代码格式化,prettifier,美化代码,在线工具" />
+        <title>代码格式化工具 | Code Formatter - CUTool</title>
+        <meta name="description" content="在线代码格式化工具，支持 JavaScript、HTML、CSS、SQL 等多种语言的代码美化。Online code formatter supporting multiple languages including JavaScript, HTML, CSS, SQL and more." />
+        <meta name="keywords" content="code formatter, beautifier, prettifier, JavaScript formatter, HTML formatter, CSS formatter, SQL formatter, 代码格式化, 代码美化" />
       </Helmet>
       <div className="code-formatter">
         <div className="formatter-controls">

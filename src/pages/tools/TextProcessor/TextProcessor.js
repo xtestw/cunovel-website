@@ -61,15 +61,9 @@ const TextProcessor = () => {
   return (
     <>
       <Helmet>
-        <title>{t('nav.tools.textProcessor.page.title')} | CuTool</title>
-        <meta 
-          name="description" 
-          content={t('nav.tools.textProcessor.page.description')}
-        />
-        <meta 
-          name="keywords" 
-          content={t('nav.tools.textProcessor.page.keywords')}
-        />
+        <title>文本处理工具 | Text Processor - CUTool</title>
+        <meta name="description" content="在线文本处理工具，支持文本合并、分割、替换等多种操作。Online text processing tool supporting text merge, split, replace and more operations." />
+        <meta name="keywords" content="text processor, text merge, text split, text replace, 文本处理, 文本合并, 文本分割, 文本替换" />
       </Helmet>
       <div className="text-processor-container">
         <div className="mode-selector">

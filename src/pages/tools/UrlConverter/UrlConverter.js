@@ -96,9 +96,9 @@ const UrlConverter = () => {
   return (
     <>
       <Helmet>
-        <title>URL编码转换工具 | CuTool</title>
-        <meta name="description" content="在线URL编码解码工具,支持参数提取和RFC标准转换" />
-        <meta name="keywords" content="URL编码,URL解码,URL参数,在线工具" />
+        <title>URL 编解码工具 | URL Encoder/Decoder - CUTool</title>
+        <meta name="description" content="在线 URL 编解码工具，支持 URL 参数提取和多种编码标准。Online URL encoder and decoder with parameter extraction and multiple encoding standards." />
+        <meta name="keywords" content="URL encoder, URL decoder, URL parameters, RFC2396, RFC1738, URL 编码, URL 解码, URL 参数" />
       </Helmet>
       <div className="url-converter-container">
         <div className="standard-selector">

@@ -84,9 +84,9 @@ const ImageNav = () => {
   return (
     <>
       <Helmet>
-        <title>图像工具导航 | DevTools</title>
-        <meta name="description" content="精选图像处理工具导航,收录图片压缩、格式转换、在线PS等实用工具" />
-        <meta name="keywords" content="图像处理,图片压缩,图片格式转换,在线PS,图片工具" />
+        <title>图像工具导航 | Image Tools Navigation - CUTool</title>
+        <meta name="description" content="精选图像处理工具导航，包含图片压缩、格式转换、在线PS等实用工具。Collection of image processing tools including compression, format conversion, online photo editing and more." />
+        <meta name="keywords" content="image tools, image processing, image compression, photo editor, 图像处理, 图片压缩, 图片格式转换, 在线PS" />
       </Helmet>
       <div className="image-nav-container">
         <div className="image-nav-header">

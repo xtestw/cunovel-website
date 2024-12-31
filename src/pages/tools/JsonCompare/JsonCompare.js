@@ -82,15 +82,9 @@ const JsonCompare = () => {
   return (
     <>
       <Helmet>
-        <title>JSON对比工具 | CuTool</title>
-        <meta 
-          name="description" 
-          content="在线JSON对比工具,快速找出两个JSON数据的差异,支持深层对比和类型检查" 
-        />
-        <meta 
-          name="keywords" 
-          content="JSON对比,JSON比较,JSON差异,JSON验证,在线工具" 
-        />
+        <title>JSON 对比工具 | JSON Compare - CUTool</title>
+        <meta name="description" content="在线 JSON 对比工具，支持深层对比和类型检查，快速找出两个 JSON 数据的差异。Online JSON comparison tool with deep comparison and type checking capabilities." />
+        <meta name="keywords" content="JSON compare, JSON diff, JSON comparison, JSON validator, JSON 对比, JSON 比较, JSON 差异" />
       </Helmet>
       <div className="json-compare-container">
         <div className="input-panels">
