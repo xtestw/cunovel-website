@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Tools from './pages/Tools';
@@ -20,6 +21,10 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <Helmet>
+          <meta name="sogou_site_verification" content="0ZZ5kf0BG4" />
+          <meta name="360-site-verification" content="6d82a11803ef6749aad7340caf7f9bb4" />
+        </Helmet>
         <header className="App-header">
           <div className="tool-container">
             <div className="logo-area">
