@@ -1,15 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import Navbar from './components/Navbar';
 import Tools from './pages/Tools';
 import AINav from './pages/AINav/AINav';
 import LanguageSwitcher from './components/LanguageSwitcher';
-import JsonFormatter from './pages/tools/JsonFormatter';
-import XmlFormatter from './pages/tools/XmlFormatter';
-import TextCompare from './pages/tools/TextCompare';
-import UrlConverter from './pages/tools/UrlConverter/UrlConverter';
-import JsonCompare from './pages/tools/JsonCompare/JsonCompare';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import ReactJson from 'react-json-view';
 import { useTranslation } from 'react-i18next';
 
@@ -105,46 +106,54 @@ const JsonFormatter = () => {
   };
 
   return (
-    <div className="json-formatter">
-      <div className="json-container">
-        <div className="json-input-area">
-          <h3>{t('jsonFormatter.title')}</h3>
-          <textarea
-            value={inputJson}
-            onChange={(e) => setInputJson(e.target.value)}
-            placeholder={t('jsonFormatter.placeholder')}
-          />
-        </div>
-        
-        <div className="json-button-area">
-          <button onClick={() => setInputJson('')}>{t('jsonFormatter.clear')}</button>
-        </div>
-
-        <div className="json-output-area">
-          <h3>{t('jsonFormatter.formattedOutput.title')}</h3>
-          {error ? (
-            renderError()
-          ) : (
-            <ReactJson 
-              src={outputJson || {}}
-              theme="rjv-default"
-              style={{
-                padding: '12px',
-                borderRadius: '4px',
-                border: '1px solid #d9d9d9',
-                backgroundColor: '#fafafa',
-                height: '100%',
-                overflow: 'auto'
-              }}
-              displayDataTypes={false}
-              name={false}
-              enableClipboard={true}
-              collapsed={false}
+    <>
+      <Helmet>
+        <title>JSON 格式化工具 | JSON Formatter - CUTool</title>
+        <meta name="description" content="在线 JSON 格式化工具，支持 JSON 美化、压缩、验证和错误提示。Online JSON formatter tool with beautification, compression, validation and error highlighting." />
+        <meta name="keywords" content="JSON formatter, JSON validator, JSON beautifier, JSON 格式化, JSON 校验" />
+      </Helmet>
+      
+      <div className="json-formatter">
+        <div className="json-container">
+          <div className="json-input-area">
+            <h3>{t('jsonFormatter.title')}</h3>
+            <textarea
+              value={inputJson}
+              onChange={(e) => setInputJson(e.target.value)}
+              placeholder={t('jsonFormatter.placeholder')}
             />
-          )}
+          </div>
+          
+          <div className="json-button-area">
+            <button onClick={() => setInputJson('')}>{t('jsonFormatter.clear')}</button>
+          </div>
+
+          <div className="json-output-area">
+            <h3>{t('jsonFormatter.formattedOutput.title')}</h3>
+            {error ? (
+              renderError()
+            ) : (
+              <ReactJson 
+                src={outputJson || {}}
+                theme="rjv-default"
+                style={{
+                  padding: '12px',
+                  borderRadius: '4px',
+                  border: '1px solid #d9d9d9',
+                  backgroundColor: '#fafafa',
+                  height: '100%',
+                  overflow: 'auto'
+                }}
+                displayDataTypes={false}
+                name={false}
+                enableClipboard={true}
+                collapsed={false}
+              />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
