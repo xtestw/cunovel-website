@@ -1,5 +1,90 @@
 [
     {
+        "category": "常用工具",
+        "items": [
+            {
+                "link": "https://ai-bot.cn/sites/13002.html",
+                "name": "可灵AI",
+                "desc": "快手推出的AI图像和视频创作平台",
+                "icon": "https://ai-bot.cn/wp-content/uploads/2024/09/keling-logo.png"
+              },
+
+          {
+            "link": "https://ai-bot.cn/sites/4189.html",
+            "name": "豆包",
+            "desc": "字节跳动推出的免费AI智能助手",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2023/08/doubao-icon.png"
+          },
+          {
+            "link": "https://ai-bot.cn/sites/30.html",
+            "name": "ChatGPT",
+            "desc": "OpenAI旗下AI对话工具",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2023/03/chatgpt-icon.png"
+          },
+          {
+            "link": "https://ai-bot.cn/sites/460.html",
+            "name": "Claude",
+            "desc": "ChatGPT的最为有力的竞争对手之一",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2023/03/anthropic-icon.png"
+          },
+          {
+            "link": "https://kimi.paluai.com/",
+            "name": "Kimi智能助手",
+            "desc": "一次搜索可精读500个页面，会推理解析，能深度思考的AI助手",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2024/05/kimi-ai-logo.png"
+          },
+          {
+            "link": "https://ai-bot.cn/sites/8835.html",
+            "name": "海螺AI",
+            "desc": "MiniMax推出的免费AI智能聊天助理",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2024/02/hailuoai-icon.png"
+          },
+          {
+            "link": "https://ai-bot.cn/sites/12946.html",
+            "name": "腾讯元宝",
+            "desc": "腾讯推出的免费AI智能助手",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2024/05/tencent-yuanbao-icon.png"
+          },
+          {
+            "link": "https://ai-bot.cn/sites/1338.html",
+            "name": "通义千问",
+            "desc": "阿里推出的自研大模型，通情、达义，你的全能AI助手！",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2023/04/tongyi-aliyun-icon.png"
+          },
+          {
+            "link": "https://ai-bot.cn/sites/669.html",
+            "name": "文心一言",
+            "desc": "百度推出的基于文心大模型的AI对话互动工具",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2023/03/baidu-yiyan-icon.png"
+          },
+          {
+            "link": "https://ai-bot.cn/xinghuo-xfyun",
+            "name": "讯飞星火",
+            "desc": "免费AI智能助手，性能媲美GPT-4",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2024/01/xunfei-xinghuo-logo.png"
+          },
+          {
+            "link": "https://ai-bot.cn/sites/2005.html",
+            "name": "智谱清言",
+            "desc": "免费全能的AI助手，支持AI绘画、视频生成",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2023/08/zhipu-ai-chatglm-icon.png"
+          },
+          {
+            "link": "https://x.ai/grok",
+            "name": "Grok",
+            "desc": "马斯克旗下xAI推出的人工智能助手",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2023/11/xai-icon.png"
+          },
+          {
+            "link": "https://deepmind.google/technologies/gemini/",
+            "name": "Gemini",
+            "desc": "Google推出的AI聊天对话机器人Gemini",
+            "icon": "https://ai-bot.cn/wp-content/uploads/2024/05/googel-gemini-app-icon.webp"
+          }
+          
+        ]
+      },
+    {
       "category": "AI写作工具",
       "icon": "📝",
       "items": [
@@ -1583,7 +1668,7 @@
           "icon": "https://ai-bot.cn/wp-content/uploads/2023/11/xai-icon.png"
         },
         {
-          "link": "https://ai-bot.cn/sites/736.html",
+          "link": "https://deepmind.google/technologies/gemini/",
           "name": "Gemini",
           "desc": "Google推出的AI聊天对话机器人Gemini",
           "icon": "https://ai-bot.cn/wp-content/uploads/2024/05/googel-gemini-app-icon.webp"
@@ -1601,13 +1686,13 @@
           "icon": "https://ai-bot.cn/wp-content/uploads/2023/03/character-ai-icon.png"
         },
         {
-          "link": "https://ai-bot.cn/sites/11358.html",
+          "link": "https://www.meta.ai/?utm_source=cutool.online",
           "name": "Meta AI助手",
           "desc": "Meta推出的免费AI聊天助手",
           "icon": "https://ai-bot.cn/wp-content/uploads/2023/12/imagine-with-meta.png"
         },
         {
-          "link": "https://ai-bot.cn/sites/457.html",
+          "link": "https://www.microsoft.com/en-us/edge/features/bing-chat",
           "name": "Bing新必应",
           "desc": "微软推出的新版结合了ChatGPT功能的必应",
           "icon": "https://ai-bot.cn/wp-content/uploads/2023/03/new-bing-icon.png"
