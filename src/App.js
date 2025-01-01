@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +18,21 @@ const Content = styled.div`
 function App() {
   const { t } = useTranslation();
   const feedbackEmail = 'xuwei8091@gmail.com';
+  const [hasAds, setHasAds] = useState(false);
+
+  // 检查广告是否加载
+  useEffect(() => {
+    const checkAdsLoaded = () => {
+      const adContainer = document.querySelector('.adsbygoogle');
+      if (adContainer) {
+        const hasContent = adContainer.innerHTML.trim().length > 0;
+        setHasAds(hasContent);
+      }
+    };
+
+    // 广告加载可能需要一点时间
+    setTimeout(checkAdsLoaded, 1000);
+  }, []);
 
   return (
     <Router>
@@ -83,15 +98,26 @@ function App() {
             <Route path="*" element={<Navigate to="/tools/json/formatter" replace />} />
           </Routes>
         </Content>
-        <footer className="App-footer">
-          <div className="adsense-container">
-            <ins className="adsbygoogle"
-                style={{ display: 'block' }}
-                data-ad-client="ca-pub-1217509255829092"
-                data-ad-slot="9011635562"
-                data-ad-format="auto"
-                data-full-width-responsive="true">
-            </ins>
+        <footer className={`App-footer ${!hasAds ? 'no-ads' : ''}`}>
+          {hasAds && (
+            <div className="adsense-container">
+              <ins className="adsbygoogle"
+                  style={{ display: 'block' }}
+                  data-ad-client="ca-pub-1217509255829092"
+                  data-ad-slot="9011635562"
+                  data-ad-format="auto"
+                  data-full-width-responsive="true">
+              </ins>
+            </div>
+          )}
+          <div className="beian-info">
+            <a 
+              href="https://beian.miit.gov.cn/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              苏ICP备19065574号-2
+            </a>
           </div>
         </footer>
         <SpeedInsights />
