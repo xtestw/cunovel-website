@@ -1,0 +1,269 @@
+.json-error-details {
+  flex: 1;
+  min-height: 0;
+  border: 1px solid #d9d9d9;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  background-color: #fafafa;
+  overflow: auto;
+  padding: 12px;
+}
+
+.error-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px;
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+}
+
+.error-type {
+  color: #ff4d4f;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.error-type::before {
+  content: "⚠️";
+  font-size: 16px;
+}
+
+.error-location {
+  color: #666;
+  font-size: 13px;
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 3px;
+}
+
+.error-message {
+  color: #ff4d4f;
+  margin-bottom: 12px;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 8px;
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+}
+
+.error-context {
+  background: #fff;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  position: relative;
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.error-pointer {
+  position: absolute;
+  color: #ff4d4f;
+  font-weight: bold;
+  line-height: 1;
+  font-family: monospace;
+}
+
+.json-formatter {
+  height: calc(100vh - 64px - 90px - 40px); /* 减去头部、底部和内边距 */
+  display: flex;
+  flex-direction: column;
+}
+
+.json-container {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+}
+.tool-content {
+    padding: 10px !important;
+}
+.json-input-area,
+.json-output-area {
+  flex: 1;
+  min-height: 0; /* 防止flex子项溢出 */
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.json-input-area h3,
+.json-output-area h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.json-input-area textarea {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: none;
+  background-color: #fff;
+  margin-top: 10px;
+}
+
+.json-button-area {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+  flex-shrink: 0;
+}
+
+.json-output-area {
+  position: relative;
+  min-height: 0;
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #f5f5f5;
+  border: 1px solid #d9d9d9;
+  border-bottom: 0px;
+  border-radius: 4px 4px 0 0;
+  flex-shrink: 0;
+  margin-top: 10px;
+}
+
+.output-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  height: 28px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  color: #666;
+  transition: all 0.2s;
+  white-space: nowrap;
+  position: relative;
+}
+
+.action-button.copy-success {
+  color: #52c41a;
+  border-color: #52c41a;
+  background-color: #f6ffed;
+}
+
+.action-button:hover {
+  color: #40a9ff;
+  border-color: #40a9ff;
+  background-color: #f0f5ff;
+}
+
+.action-button.copy-success:hover {
+  color: #52c41a;
+  border-color: #52c41a;
+  background-color: #f6ffed;
+}
+
+.action-button:active {
+  background-color: #e6f7ff;
+}
+
+.action-icon {
+  font-size: 14px;
+  line-height: 1;
+  transition: all 0.3s;
+}
+
+.json-viewer-container {
+  flex: 1;
+  min-height: 0;
+  border: 1px solid #d9d9d9;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  background-color: #fafafa;
+  overflow: auto;
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 768px) {
+  .json-formatter {
+    padding: 10px;
+    height: calc(100vh - 64px - 90px - 20px);
+  }
+
+  .json-container {
+    flex-direction: column;
+  }
+
+  .json-input-area,
+  .json-output-area {
+    width: 100%;
+  }
+
+  .output-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .output-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .action-button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .json-error-details {
+    padding: 12px;
+  }
+
+  .error-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .error-context {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+.action-button.active {
+  color: #1890ff;
+  border-color: #1890ff;
+  background-color: #e6f7ff;
+}
+
+.action-button.active:hover {
+  color: #40a9ff;
+  border-color: #40a9ff;
+  background-color: #e6f7ff;
+}
