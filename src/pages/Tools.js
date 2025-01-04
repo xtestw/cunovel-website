@@ -13,6 +13,21 @@ import TextProcessor from './tools/TextProcessor';
 import RegexMatcher from './tools/RegexMatcher';
 import CodeFormatter from './tools/CodeFormatter/CodeFormatter';
 import '../styles/tools.css';
+import styled from 'styled-components';
+
+const ToolCard = styled.div`
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #333333;
+`;
+
+const ToolTitle = styled.h3`
+  color: #2c3e50;
+`;
+
+const ToolDescription = styled.p`
+  color: #666666;
+`;
 
 function Tools() {
   const { t } = useTranslation();

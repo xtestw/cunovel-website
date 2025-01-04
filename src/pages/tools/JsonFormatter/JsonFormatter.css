@@ -80,6 +80,7 @@
   height: calc(100vh - 64px - 90px - 40px); /* 减去头部、底部和内边距 */
   display: flex;
   flex-direction: column;
+  background-color: #ffffff;
 }
 
 .json-container {
@@ -119,7 +120,8 @@
   font-size: 14px;
   line-height: 1.6;
   resize: none;
-  background-color: #fff;
+  background-color: #f8f8f8;
+  color: #333333;
   margin-top: 10px;
 }
 
@@ -267,3 +269,18 @@
   border-color: #40a9ff;
   background-color: #e6f7ff;
 }
+
+.format-button {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.format-button:hover {
+  background-color: #357abd;
+}
+
+/* 代码高亮主题修改为浅色 */
+.json-output .string { color: #22863a; }
+.json-output .number { color: #005cc5; }
+.json-output .boolean { color: #e36209; }
+.json-output .null { color: #b31d28; }

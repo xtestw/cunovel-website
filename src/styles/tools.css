@@ -1,3 +1,23 @@
+/* 修改主体背景色和文字颜色 */
+body {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.tools-container {
+  background-color: #f5f5f5;
+}
+
+.tool-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tool-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
 .tool-component {
   margin: 0;
   height: 100%;
@@ -69,10 +89,10 @@ textarea:focus, input[type="text"]:focus {
 
 .tools-nav {
   margin-bottom: 20px;
-  background: white;
+  background: #ffffff;
   padding: 0;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .category-nav {
@@ -80,7 +100,7 @@ textarea:focus, input[type="text"]:focus {
   align-items: center;
   padding: 0 20px;
   height: 56px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .category-item {
@@ -92,15 +112,17 @@ textarea:focus, input[type="text"]:focus {
   font-size: 15px;
   color: #595959;
   position: relative;
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
 
 .category-item:hover {
   color: #1890ff;
+  background-color: #f5f7fa;
 }
 
 .category-item.active {
   color: #1890ff;
+  background-color: #f0f7ff;
 }
 
 .category-item.has-dropdown {
@@ -125,9 +147,11 @@ textarea:focus, input[type="text"]:focus {
   top: 100%;
   left: 0;
   min-width: 160px;
-  background: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px -4px rgba(0,0,0,0.12), 
+              0 6px 16px 0 rgba(0,0,0,0.08);
+  border: 1px solid #eaeaea;
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
@@ -142,22 +166,24 @@ textarea:focus, input[type="text"]:focus {
 }
 
 .dropdown-item {
-  padding: 8px 16px;
+  padding: 10px 16px;
   color: #595959;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s;
-  white-space: nowrap;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .dropdown-item:hover {
-  background: #f5f5f5;
+  background: #f5f7fa;
   color: #1890ff;
 }
 
 .dropdown-item.active {
   color: #1890ff;
-  background: #e6f7ff;
+  background: #f0f7ff;
 }
 
 .tool-nav {
@@ -192,10 +218,10 @@ textarea:focus, input[type="text"]:focus {
 
 .tool-content {
   flex: 1;
-  background: white;
+  background: #ffffff;
   border-radius: 8px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   min-height: calc(100vh - 180px);
 }
 
@@ -401,7 +427,8 @@ textarea:focus, input[type="text"]:focus {
 .external-link-icon {
   margin-left: 8px;
   font-size: 12px;
-  color: #999;
+  color: #bfbfbf;
+  transition: color 0.2s;
 }
 
 .dropdown-item:hover .external-link-icon {

@@ -19,13 +19,102 @@ html, body {
 }
 
 .App-header {
-  background-color: #001529;
-  border-bottom: 1px solid #002140;
-  padding: 0;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  background-color: #ffffff;
+  border-bottom: 1px solid #eaeaea;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.App-logo {
+  height: 40px;
+  pointer-events: none;
+}
+
+.App-title {
+  color: #262626;
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.App-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.App-nav a {
+  color: #595959;
+  text-decoration: none;
+  font-size: 15px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.App-nav a:hover {
+  color: #1890ff;
+  background-color: #f5f7fa;
+}
+
+.App-nav a.active {
+  color: #1890ff;
+  background-color: #f0f7ff;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.language-button {
+  padding: 6px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #595959;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.language-button:hover {
+  color: #1890ff;
+  border-color: #1890ff;
+  background-color: #f5f7fa;
+}
+
+.language-button.active {
+  color: #1890ff;
+  border-color: #1890ff;
+  background-color: #f0f7ff;
+}
+
+@media (max-width: 768px) {
+  .App-header {
+    padding: 0 16px;
+  }
+
+  .App-title {
+    font-size: 18px;
+  }
+
+  .App-nav {
+    gap: 16px;
+  }
+
+  .App-nav a {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
 }
 
 .tool-container {
@@ -54,7 +143,7 @@ html, body {
   margin: 0;
   font-size: 20px;
   font-weight: 500;
-  color: #ffffff;
+  color: #262626;
 }
 
 .nav-area {
@@ -70,7 +159,7 @@ html, body {
   height: 64px;
   display: flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.65);
+  color: #595959;
   font-size: 15px;
   cursor: pointer;
   transition: all 0.3s;
@@ -79,11 +168,11 @@ html, body {
 }
 
 .nav-item:hover {
-  color: #ffffff;
+  color: #1890ff;
 }
 
 .nav-item.active {
-  color: #ffffff;
+  color: #1890ff;
 }
 
 .nav-item.active::after {
@@ -104,12 +193,12 @@ html, body {
 
 .external-link-icon {
   font-size: 14px;
-  opacity: 0.7;
+  color: #8c8c8c;
   margin-top: -2px;
 }
 
-.nav-item.chrome-plugin:hover .external-link-icon {
-  opacity: 1;
+.nav-item:hover .external-link-icon {
+  color: #1890ff;
 }
 
 /* 响应式布局 */
@@ -175,10 +264,10 @@ html, body {
   align-items: center;
   justify-content: center;
   padding: 4px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #d9d9d9;
   border-radius: 4px;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.65);
+  background: #ffffff;
+  color: #595959;
   cursor: pointer;
   font-size: 14px;
   transition: all 0.3s;
@@ -188,25 +277,25 @@ html, body {
 }
 
 .language-switcher button:hover {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.08);
+  color: #1890ff;
+  border-color: #1890ff;
+  background: #f0f7ff;
 }
 
 .language-switcher button.active {
-  color: #ffffff;
+  color: #1890ff;
   border-color: #1890ff;
-  background: rgba(24, 144, 255, 0.15);
+  background: #f0f7ff;
 }
 
 .feedback-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.65);
+  color: #595959;
   text-decoration: none;
   padding: 4px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #d9d9d9;
   border-radius: 4px;
   font-size: 14px;
   transition: all 0.3s;
@@ -214,12 +303,13 @@ html, body {
   height: 32px;
   line-height: 24px;
   flex-shrink: 0;
+  background: #ffffff;
 }
 
 .feedback-button:hover {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.08);
+  color: #1890ff;
+  border-color: #1890ff;
+  background: #f0f7ff;
 }
 
 /* 响应式布局调整 */

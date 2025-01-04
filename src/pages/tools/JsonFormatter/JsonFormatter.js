@@ -196,18 +196,24 @@ const JsonFormatter = () => {
                 src={outputJson || {}}
                 theme="rjv-default"
                 style={{
+                    lineNumbers: 'visible', // 确保行号可见
+
                   padding: '12px',
                   borderRadius: '0px 0px 4px 4px',
                   border: '1px solid #d9d9d9',
                   backgroundColor: '#fafafa',
                   height: '100%',
-                  overflow: 'auto'
+                  overflow: 'auto',
+                  fontFamily: 'Monaco, monospace',
+                  fontSize: '14px',
                 }}
                 displayDataTypes={false}
                 name={false}
                 enableClipboard={true}
                 collapsed={isCollapsed}
                 displayLineNumbers={true}
+                iconStyle="square"
+                indentWidth={4}
               />
             )}
           </div>
