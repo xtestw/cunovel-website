@@ -68,7 +68,7 @@ textarea:focus, input[type="text"]:focus {
 }
 
 .tools-nav {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   background: white;
   padding: 0;
   border-radius: 8px;
@@ -208,50 +208,6 @@ textarea:focus, input[type="text"]:focus {
   border-radius: 4px;
 }
 
-.json-container {
-  display: flex;
-  gap: 24px;
-  align-items: stretch;
-  height: calc(100vh - 180px);
-}
-
-.json-input-area,
-.json-output-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.json-input-area h3,
-.json-output-area h3 {
-  margin: 0 0 8px 0;
-}
-
-.json-input-area textarea,
-.json-output-area textarea,
-.json-output-area > div {
-  flex: 1;
-  min-height: calc(100vh - 280px) !important;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
-  font-size: 14px;
-  line-height: 1.6;
-  resize: none;
-  background: #fafafa;
-}
-
-.json-button-area {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 12px;
-  padding: 0 12px;
-}
-
-.json-button-area button {
-  white-space: nowrap;
-  padding: 10px 20px;
-}
-
 .language-switcher {
   top: 20px;
   right: 20px;
@@ -273,35 +229,6 @@ textarea:focus, input[type="text"]:focus {
 .language-switcher button.active {
   background: #e0e0e0;
   font-weight: bold;
-}
-
-.json-formatter button {
-  background: #1890ff;
-  border: none;
-  color: white;
-  transition: all 0.3s;
-}
-
-.json-formatter button:hover {
-  background: #40a9ff;
-}
-
-.json-formatter textarea {
-  border: 1px solid #d9d9d9;
-  transition: all 0.3s;
-}
-
-.json-formatter textarea:focus {
-  border-color: #40a9ff;
-  box-shadow: 0 0 0 2px rgba(24,144,255,0.2);
-}
-
-.json-error-details {
-  padding: 16px;
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
-  border-radius: 4px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
 }
 
 .error-header {

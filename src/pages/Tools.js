@@ -6,7 +6,7 @@ import UrlConverter from './tools/UrlConverter/UrlConverter';
 import TimeStamp from './tools/TimeStamp/TimeStamp';
 import TextCounter from './tools/TextCounter';
 import ImageNav from './tools/ImageNav/ImageNav';
-import JsonFormatter from './tools/JsonFormatter';
+import JsonFormatter from './tools/JsonFormatter/JsonFormatter';
 import TextCompare from './tools/TextCompare';
 import JsonCompare from './tools/JsonCompare/JsonCompare';
 import TextProcessor from './tools/TextProcessor';

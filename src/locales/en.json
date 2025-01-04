@@ -511,6 +511,19 @@
       "loading": "Formatting...",
       "error": "Error in JSON formatting"
     },
+    "actions": {
+        "copy": "Copy",
+        "compress": "Compress",
+        "expand": "Expand",
+        "collapse": "Collapse",
+        "format": "Format"
+      },
+      "messages": {
+        "copySuccess": "Copied",
+        "copyFailed": "Copy failed",
+        "formatSuccess": "Formatted",
+        "formatFailed": "Format failed"
+      },
     "syntaxError": "Syntax Error",
     "errorAt": "Error at line {{line}}, column {{column}}"
   },
