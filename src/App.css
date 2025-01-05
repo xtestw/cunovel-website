@@ -191,6 +191,13 @@ html, body {
   gap: 6px;
 }
 
+.nav-item.idea-plugin {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+
 .external-link-icon {
   font-size: 14px;
   color: #8c8c8c;

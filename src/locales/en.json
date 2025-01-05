@@ -548,5 +548,33 @@
       "description": "Curated image processing tools navigation, featuring image compression, format conversion, online Photoshop and more",
       "keywords": "image processing,image compression,image conversion,online Photoshop,image tools"
     }
+  },
+  "chromePlugin": {
+    "title": "Chrome Extension Installation Guide",
+    "store": {
+      "title": "Install from Chrome Web Store",
+      "description": "Recommended installation method with automatic updates.",
+      "step1": "Click the \"Install from Chrome Store\" button below",
+      "step2": "Click \"Add to Chrome\" on the Chrome Web Store page",
+      "step3": "Click \"Add Extension\" in the confirmation popup to complete installation",
+      "button": "Install from Chrome Store"
+    },
+    "offline": {
+      "title": "Offline Installation",
+      "description": "If you cannot access the Chrome Web Store, you can install using the offline package.",
+      "step1": "Click the \"Download Offline Package\" button below to download the extension zip file",
+      "step2": "Extract the downloaded zip file to a local folder",
+      "step3": "Enter chrome://extensions/ in Chrome's address bar and press Enter",
+      "step4": "Enable \"Developer mode\" in the top right corner of the extensions page",
+      "step5": "Click \"Load unpacked\" and select the extracted folder to complete installation",
+      "button": "Download Offline Package",
+      "images": {
+        "download": "Click download button to get the plugin",
+        "unzip": "Extract the downloaded file",
+        "extensions": "Enter chrome://extensions/ in address bar",
+        "developer": "Enable developer mode",
+        "load": "Click Load unpacked"
+      }
+    }
   }
 } 

@@ -9,6 +9,7 @@ import LanguageSwitcher from './components/LanguageSwitcher';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
+import ChromePlugin from './pages/ChromePlugin';
 
 const Content = styled.div`
   margin: 0;
@@ -73,6 +74,15 @@ function App() {
                 Chrome 插件
                 <span className="external-link-icon">↗</span>
               </a>
+              <a 
+                href="https://plugins.jetbrains.com/plugin/26245-cutool?noRedirect=true"
+                className="nav-item idea-plugin"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                IDEA 插件
+                <span className="external-link-icon">↗</span>
+              </a>
             </nav>
             <div className="right-area">
               <LanguageSwitcher />
@@ -95,6 +105,7 @@ function App() {
             </Route>
             <Route path="/ai-nav" element={<AINav />} />
             <Route path="/" element={<Navigate to="/tools/json/formatter" replace />} />
+            <Route path="/chrome-plugin" element={<ChromePlugin />} />
             <Route path="*" element={<Navigate to="/tools/json/formatter" replace />} />
           </Routes>
         </Content>
