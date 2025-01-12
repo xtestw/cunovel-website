@@ -1,0 +1,152 @@
+.chrome-plugin-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.chrome-plugin-container h1 {
+  text-align: center;
+  color: #262626;
+  margin-bottom: 40px;
+}
+
+.install-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.install-section h2 {
+  color: #262626;
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.install-section p {
+  color: #595959;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.steps {
+  background: #f5f7fa;
+  border-radius: 6px;
+  padding: 20px 40px;
+  margin: 20px 0;
+}
+
+.steps ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.steps li {
+  color: #595959;
+  line-height: 2;
+  margin-bottom: 24px;
+}
+
+.step-image {
+  margin: 12px 0;
+  padding: 10px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.step-image:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.step-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+.image-caption {
+  margin-top: 8px;
+  color: #8c8c8c;
+  font-size: 13px;
+  text-align: center;
+}
+
+.image-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.image-preview-container {
+  position: relative;
+  max-width: 90%;
+  max-height: 90vh;
+}
+
+.image-preview-container img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.close-preview {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.install-button {
+  display: inline-block;
+  background: #1890ff;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.install-button:hover {
+  background: #40a9ff;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 768px) {
+  .chrome-plugin-container {
+    padding: 20px 16px;
+  }
+
+  .install-section {
+    padding: 20px;
+  }
+
+  .steps {
+    padding: 16px 24px;
+  }
+
+  .close-preview {
+    top: -40px;
+    right: 0;
+  }
+} 
