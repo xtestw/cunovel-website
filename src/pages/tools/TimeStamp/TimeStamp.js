@@ -23,6 +23,35 @@ const TimeStamp = () => {
     s: Math.floor(new Date().getTime() / 1000)
   });
 
+  // 处理日期转时间戳
+  const handleDateToTimestamp = () => {
+    try {
+      if (!dateInput) {
+        setDateTimestamp({ ms: '', s: '' });
+        return;
+      }
+      
+      // 如果没有时间输入，使用当前时间
+      const timeString = timeInput || new Date().toTimeString().slice(0, 8);
+      const dateTimeString = `${dateInput}T${timeString}`;
+      const timestamp = new Date(dateTimeString).getTime();
+      
+      if (isNaN(timestamp)) {
+        throw new Error('Invalid date');
+      }
+      
+      setDateTimestamp({
+        ms: timestamp,
+        s: Math.floor(timestamp / 1000)
+      });
+    } catch (e) {
+      setDateTimestamp({ 
+        ms: t('nav.tools.timeStamp.errors.invalidTimestamp'), 
+        s: t('nav.tools.timeStamp.errors.invalidTimestamp') 
+      });
+    }
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTimestamp(Date.now());
@@ -60,35 +89,6 @@ const TimeStamp = () => {
     const formatter = new Intl.DateTimeFormat('en-US', options);
     const timeZoneString = formatter.format(date).split(' ').pop();
     return timeZoneString;
-  };
-
-  // 处理日期转时间戳
-  const handleDateToTimestamp = () => {
-    try {
-      if (!dateInput) {
-        setDateTimestamp({ ms: '', s: '' });
-        return;
-      }
-      
-      // 如果没有时间输入，使用当前时间
-      const timeString = timeInput || new Date().toTimeString().slice(0, 8);
-      const dateTimeString = `${dateInput}T${timeString}`;
-      const timestamp = new Date(dateTimeString).getTime();
-      
-      if (isNaN(timestamp)) {
-        throw new Error('Invalid date');
-      }
-      
-      setDateTimestamp({
-        ms: timestamp,
-        s: Math.floor(timestamp / 1000)
-      });
-    } catch (e) {
-      setDateTimestamp({ 
-        ms: t('nav.tools.timeStamp.errors.invalidTimestamp'), 
-        s: t('nav.tools.timeStamp.errors.invalidTimestamp') 
-      });
-    }
   };
 
   // 格式化时间差值的文本
