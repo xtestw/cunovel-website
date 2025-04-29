@@ -71,7 +71,7 @@ const JsonFormatter = () => {
       setErrorPosition(errorInfo);
       setOutputJson(null);
     }
-  }, [inputJson]);
+  }, [inputJson, parseJsonError]);
 
   const renderError = () => {
     if (!errorPosition) {

@@ -49,7 +49,7 @@ const RegexMatcher = () => {
     if (selectedPreset) {
       setPattern(presets[selectedPreset].pattern);
     }
-  }, [selectedPreset]);
+  }, [selectedPreset, presets]);
 
   const handleMatch = () => {
     setError('');

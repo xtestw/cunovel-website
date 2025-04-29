@@ -30,6 +30,10 @@ const TimeStamp = () => {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    handleDateToTimestamp();
+  }, [handleDateToTimestamp]);
+
   // 格式化时间（带时区）
   const formatDate = (timestamp, unit, timeZone) => {
     try {
@@ -86,11 +90,6 @@ const TimeStamp = () => {
       });
     }
   };
-
-  // 当日期或时间变化时自动更新时间戳
-  useEffect(() => {
-    handleDateToTimestamp();
-  }, [dateInput, timeInput]);
 
   // 格式化时间差值的文本
   const formatTimeDiff = (days, hours, minutes, seconds) => {
