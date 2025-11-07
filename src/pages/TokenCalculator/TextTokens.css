@@ -1,0 +1,145 @@
+.text-tokens {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.text-input-section h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.text-input {
+  width: 100%;
+  min-height: 200px;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.stats-bar {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  display: flex;
+  gap: 20px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-label {
+  font-weight: 500;
+  color: #666;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #007bff;
+  font-family: monospace;
+}
+
+.models-section h3 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+
+.models-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.model-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.model-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.model-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.model-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.token-count {
+  font-weight: 600;
+  color: #28a745;
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+
+.pricing-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.price-value {
+  font-weight: 600;
+  color: #007bff;
+  font-family: monospace;
+}
+
+.price-note {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .models-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .model-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
