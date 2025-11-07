@@ -112,10 +112,11 @@ function App() {
         <footer className={`App-footer ${!hasAds ? 'no-ads' : ''}`}>
           {hasAds && (
             <div className="adsense-container">
+              {/* cutool-banner */}
               <ins className="adsbygoogle"
                   style={{ display: 'block' }}
                   data-ad-client="ca-pub-1217509255829092"
-                  data-ad-slot="9011635562"
+                  data-ad-slot="2912112137"
                   data-ad-format="auto"
                   data-full-width-responsive="true">
               </ins>
