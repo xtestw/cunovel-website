@@ -2,6 +2,7 @@
     "common": {
       "toolbox": "工具箱",
       "aiNav": "AI 导航",
+      "tokenCalculator": "AI Token计算器",
       "feedback": "反馈",
       "chromePlugin": "Chrome 插件"
     },
@@ -575,6 +576,27 @@
           "developer": "开启开发者模式",
           "load": "点击加载已解压的扩展程序"
         }
+      }
+    },
+    "tokenCalculator": {
+      "title": "AI Token计算器",
+      "textTokens": "文本Token计算",
+      "imageTokens": "图片Token计算",
+      "inputPlaceholder": "在此输入文本...",
+      "characterCount": "字符数",
+      "tokenCount": "Token数",
+      "modelsTitle": "AI模型",
+      "models": {
+        "gpt4": "GPT-4",
+        "gpt35turbo": "GPT-3.5 Turbo",
+        "claude": "Claude",
+        "gemini": "Gemini",
+        "qwen": "通义千问"
+      },
+      "pricing": {
+        "input": "输入",
+        "output": "输出",
+        "perMillionTokens": "每百万tokens"
       }
     }
   } 

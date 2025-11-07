@@ -3,9 +3,13 @@ import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import i18n from './i18n';
 import Tools from './pages/Tools';
 import AINav from './pages/AINav/AINav';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import TokenCalculator from './pages/TokenCalculator/TokenCalculator';
+import TextTokens from './pages/TokenCalculator/TextTokens';
+import ImageTokens from './pages/TokenCalculator/ImageTokens';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -20,6 +24,16 @@ function App() {
   const { t } = useTranslation();
   const feedbackEmail = 'xuwei8091@gmail.com';
   const [hasAds, setHasAds] = useState(false);
+  const [languageKey, setLanguageKey] = useState(i18n.language);
+
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      setLanguageKey(lng);
+    };
+
+    i18n.on('languageChanged', handleLanguageChange);
+    return () => i18n.off('languageChanged', handleLanguageChange);
+  }, []);
 
   // 检查广告是否加载
   useEffect(() => {
@@ -36,7 +50,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <Router key={languageKey}>
       <div className="App">
         <Helmet>
           <meta name="sogou_site_verification" content="0ZZ5kf0BG4" />
@@ -49,21 +63,32 @@ function App() {
               <h1>CUTool</h1>
             </div>
             <nav className="nav-area">
-              <NavLink 
-                to="/tools/json/formatter" 
-                className={({ isActive }) => 
-                  isActive ? 'nav-item active' : 'nav-item'
-                }
+              <NavLink
+                to="/tools/json/formatter"
+                className="nav-item"
+                style={({ isActive }) => ({
+                  color: isActive ? '#1890ff' : '#595959'
+                })}
               >
                 {t('common.toolbox')}
               </NavLink>
-              <NavLink 
-                to="/ai-nav" 
-                className={({ isActive }) => 
-                  isActive ? 'nav-item active' : 'nav-item'
-                }
+              <NavLink
+                to="/ai-nav"
+                className="nav-item"
+                style={({ isActive }) => ({
+                  color: isActive ? '#1890ff' : '#595959'
+                })}
               >
                 {t('common.aiNav')}
+              </NavLink>
+              <NavLink
+                to="/token-calculator/text"
+                className="nav-item"
+                style={({ isActive }) => ({
+                  color: isActive ? '#1890ff' : '#595959'
+                })}
+              >
+                {t('common.tokenCalculator')}
               </NavLink>
               <a 
                 href="https://chromewebstore.google.com/detail/cutool/pnadcjmfdflpblaogepdpeooialeelno?hl=en-US&utm_source=ext_sidebar"
@@ -104,6 +129,11 @@ function App() {
               <Route index element={<Navigate to="/tools/json/formatter" replace />} />
             </Route>
             <Route path="/ai-nav" element={<AINav />} />
+            <Route path="/token-calculator" element={<TokenCalculator />}>
+              <Route path="text" element={<TextTokens />} />
+              <Route path="image" element={<ImageTokens />} />
+              <Route index element={<Navigate to="/token-calculator/text" replace />} />
+            </Route>
             <Route path="/" element={<Navigate to="/tools/json/formatter" replace />} />
             <Route path="/chrome-plugin" element={<ChromePlugin />} />
             <Route path="*" element={<Navigate to="/tools/json/formatter" replace />} />

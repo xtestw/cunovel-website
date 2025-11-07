@@ -2,6 +2,7 @@
   "common": {
     "toolbox": "Toolbox",
     "aiNav": "AI Navigation",
+    "tokenCalculator": "AI Token Calculator",
     "feedback": "Feedback",
     "chromePlugin": "Chrome Extension"
   },
@@ -549,6 +550,27 @@
       "keywords": "image processing,image compression,image conversion,online Photoshop,image tools"
     }
   },
+  "tokenCalculator": {
+    "title": "AI Token Calculator",
+    "textTokens": "Text Tokens",
+    "imageTokens": "Image Tokens",
+    "inputPlaceholder": "Enter your text here...",
+    "characterCount": "Character Count",
+    "tokenCount": "Token Count",
+    "modelsTitle": "AI Models",
+    "models": {
+      "gpt4": "GPT-4",
+      "gpt35turbo": "GPT-3.5 Turbo",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "qwen": "Qwen"
+    },
+    "pricing": {
+      "input": "Input",
+      "output": "Output",
+      "perMillionTokens": "per million tokens"
+    }
+  },
   "chromePlugin": {
     "title": "Chrome Extension Installation Guide",
     "store": {
@@ -577,4 +599,4 @@
       }
     }
   }
-} 
+}

@@ -14,46 +14,43 @@ const JsonFormatter = () => {
   const [copySuccess, setCopySuccess] = useState(false);
   const [isCompressed, setIsCompressed] = useState(false);
 
-  // 添加这行来调试当前语言
-  console.log('Current language:', i18n.language);
-
-  // 解析JSON错误信息，获取错误位置和原因
-  const parseJsonError = (error) => {
-    const match = error.message.match(/at position (\d+)/);
-    const position = match ? parseInt(match[1]) : null;
-    
-    // 获取错误发生的行号和列号
-    if (position !== null) {
-      const textBeforeError = inputJson.substring(0, position);
-      const lines = textBeforeError.split('\n');
-      const line = lines.length;
-      const column = lines[lines.length - 1].length + 1;
+  useEffect(() => {
+    // 解析JSON错误信息，获取错误位置和原因
+    const parseJsonError = (error) => {
+      const match = error.message.match(/at position (\d+)/);
+      const position = match ? parseInt(match[1]) : null;
       
-      // 获取错误上下文
-      const errorLines = inputJson.split('\n');
-      const startLine = Math.max(0, line - 2);
-      const endLine = Math.min(errorLines.length, line + 2);
-      const context = errorLines.slice(startLine, endLine).join('\n');
+      // 获取错误发生的行号和列号
+      if (position !== null) {
+        const textBeforeError = inputJson.substring(0, position);
+        const lines = textBeforeError.split('\n');
+        const line = lines.length;
+        const column = lines[lines.length - 1].length + 1;
+        
+        // 获取错误上下文
+        const errorLines = inputJson.split('\n');
+        const startLine = Math.max(0, line - 2);
+        const endLine = Math.min(errorLines.length, line + 2);
+        const context = errorLines.slice(startLine, endLine).join('\n');
+        
+        return {
+          message: error.message,
+          line,
+          column,
+          context,
+          position
+        };
+      }
       
       return {
         message: error.message,
-        line,
-        column,
-        context,
-        position
+        line: null,
+        column: null,
+        context: null,
+        position: null
       };
-    }
-    
-    return {
-      message: error.message,
-      line: null,
-      column: null,
-      context: null,
-      position: null
     };
-  };
 
-  useEffect(() => {
     try {
       if (inputJson.trim()) {
         const parsed = JSON.parse(inputJson);
@@ -71,7 +68,7 @@ const JsonFormatter = () => {
       setErrorPosition(errorInfo);
       setOutputJson(null);
     }
-  }, [inputJson, parseJsonError]);
+  }, [inputJson]);
 
   const renderError = () => {
     if (!errorPosition) {

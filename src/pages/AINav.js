@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './AINav.css';
 import { useTranslation } from 'react-i18next';
 
 function AINav() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [language, setLanguage] = useState(i18n.language);
+
+  // 监听语言变化，强制重新渲染
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      setLanguage(lng);
+    };
+
+    i18n.on('languageChanged', handleLanguageChange);
+
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
 
   const aiTools = [
     {
