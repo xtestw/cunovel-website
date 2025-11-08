@@ -8,50 +8,345 @@ const IMAGE_MODEL_CONFIGS = {
     name: 'GPT-4 Vision',
     baseTokens: 85,
     pricePerImage: 0.0013, // 每张图片的固定价格
+    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    tokenCalcLink: 'https://platform.openai.com/docs/guides/vision',
     calculateTokens: (width, height) => {
-      const shortSide = Math.min(width, height);
-      const longSide = Math.max(width, height);
-      const ratio = longSide / shortSide;
-
-      let tokens = 85; // 基础token
-
-      if (shortSide <= 512 && longSide <= 512) {
-        tokens = 85;
-      } else if (shortSide <= 512) {
-        if (longSide <= 1024) tokens = 170;
-        else tokens = 340;
-      } else if (shortSide <= 1024) {
-        if (longSide <= 1024) tokens = 170;
-        else tokens = 340;
-      } else {
-        tokens = 340;
+      // GPT-4 Vision: 根据OpenAI官方公式校准
+      // 规则：图片会被resize到最大边不超过2048px，短边不超过768px
+      // 然后计算Tiles = ceil(width/512) × ceil(height/512)
+      // Tokens = 85 + 170 × Tiles
+      const maxDimension = 2048;
+      const maxShortSide = 768;
+      
+      let w = width;
+      let h = height;
+      
+      // 计算缩放比例
+      const scaleLong = Math.max(width, height) > maxDimension ? maxDimension / Math.max(width, height) : 1;
+      const scaleShort = Math.min(width, height) > maxShortSide ? maxShortSide / Math.min(width, height) : 1;
+      const scale = Math.min(scaleLong, scaleShort);
+      
+      w = Math.floor(w * scale);
+      h = Math.floor(h * scale);
+      
+      // 计算Tiles：ceil(width/512) × ceil(height/512)
+      const tilesW = Math.ceil(w / 512);
+      const tilesH = Math.ceil(h / 512);
+      const tiles = tilesW * tilesH;
+      
+      // 官方公式：85 + 170 × Tiles
+      return 85 + 170 * tiles;
+    }
+  },
+  gpt4oTurbo: {
+    name: 'GPT-4o Turbo',
+    baseTokens: 85,
+    pricePerImage: 0.0005, // 每张图片的价格
+    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    tokenCalcLink: 'https://platform.openai.com/docs/guides/vision',
+    calculateTokens: (width, height) => {
+      // GPT-4o Turbo: 使用与GPT-4 Vision相同的公式
+      // 规则：最大边不超过4096px（比GPT-4 Vision更大）
+      // Tiles = ceil(width/512) × ceil(height/512)
+      // Tokens = 85 + 170 × Tiles
+      const maxDimension = 4096;
+      
+      let w = width;
+      let h = height;
+      
+      // 计算缩放
+      const scale = Math.max(width, height) > maxDimension ? maxDimension / Math.max(width, height) : 1;
+      w = Math.floor(w * scale);
+      h = Math.floor(h * scale);
+      
+      // 计算Tiles
+      const tilesW = Math.ceil(w / 512);
+      const tilesH = Math.ceil(h / 512);
+      const tiles = tilesW * tilesH;
+      
+      // 官方公式：85 + 170 × Tiles
+      return 85 + 170 * tiles;
+    }
+  },
+  claude3OpusVision: {
+    name: 'Claude 3 Opus Vision',
+    baseTokens: 85,
+    pricePerImage: 0.015, // 每张图片的价格
+    pricingLink: 'https://www.anthropic.com/api/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/vision',
+    calculateTokens: (width, height) => {
+      // Claude 3: 图片会被resize到最大边4096px
+      // 然后按像素数计算tokens
+      const maxDimension = 4096;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
       }
-
-      return tokens;
+      
+      const pixels = w * h;
+      // Claude 3: 每256x256像素块约85 tokens
+      // 更精确的计算：基于像素数
+      if (pixels <= 65536) return 85; // <= 256x256
+      if (pixels <= 262144) return 170; // <= 512x512
+      if (pixels <= 1048576) return 340; // <= 1024x1024
+      // 更大的图片：每增加约393216像素（约768x512）增加170 tokens
+      const extraPixels = pixels - 1048576;
+      const extraBlocks = Math.ceil(extraPixels / 393216);
+      return 340 + (extraBlocks * 170);
+    }
+  },
+  claude3SonnetVision: {
+    name: 'Claude 3 Sonnet Vision',
+    baseTokens: 85,
+    pricePerImage: 0.003, // 每张图片的价格
+    pricingLink: 'https://www.anthropic.com/api/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/vision',
+    calculateTokens: (width, height) => {
+      // Claude 3 Sonnet: 与Opus相同的计算方式
+      const maxDimension = 4096;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      const pixels = w * h;
+      if (pixels <= 65536) return 85;
+      if (pixels <= 262144) return 170;
+      if (pixels <= 1048576) return 340;
+      const extraPixels = pixels - 1048576;
+      const extraBlocks = Math.ceil(extraPixels / 393216);
+      return 340 + (extraBlocks * 170);
     }
   },
   claudeVision: {
     name: 'Claude Vision',
     baseTokens: 85,
     pricePerImage: 0.0048, // 每张图片的价格
+    pricingLink: 'https://www.anthropic.com/api/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/vision',
     calculateTokens: (width, height) => {
-      // Claude的图片token计算相对简单
-      const pixels = width * height;
-      if (pixels <= 65536) return 85; // 256x256 or smaller
-      if (pixels <= 262144) return 170; // 512x512 or smaller
+      // Claude (旧版): 最大边2048px
+      const maxDimension = 2048;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      const pixels = w * h;
+      if (pixels <= 65536) return 85; // <= 256x256
+      if (pixels <= 262144) return 170; // <= 512x512
       return 340; // larger images
+    }
+  },
+  geminiProVision: {
+    name: 'Gemini Pro Vision',
+    baseTokens: 85,
+    pricePerImage: 0.000125, // 每张图片的价格
+    pricingLink: 'https://ai.google.dev/pricing',
+    tokenCalcLink: 'https://ai.google.dev/docs/gemini-api-quotas',
+    calculateTokens: (width, height) => {
+      // Gemini: 图片会被resize，最大边3072px
+      // 然后按像素数计算tokens
+      const maxDimension = 3072;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      const pixels = w * h;
+      // Gemini: 每256x256像素块约85 tokens
+      if (pixels <= 65536) return 85; // <= 256x256
+      if (pixels <= 262144) return 170; // <= 512x512
+      if (pixels <= 1048576) return 340; // <= 1024x1024
+      // 更大的图片：每增加约393216像素增加170 tokens
+      const extraPixels = pixels - 1048576;
+      const extraBlocks = Math.ceil(extraPixels / 393216);
+      return 340 + (extraBlocks * 170);
     }
   },
   geminiVision: {
     name: 'Gemini Vision',
     baseTokens: 85,
     pricePerImage: 0.00025, // 每张图片的价格
+    pricingLink: 'https://ai.google.dev/pricing',
+    tokenCalcLink: 'https://ai.google.dev/docs/gemini-api-quotas',
     calculateTokens: (width, height) => {
-      // Gemini的token计算
-      const pixels = width * height;
-      if (pixels <= 65536) return 85;
-      if (pixels <= 262144) return 170;
-      return 340;
+      // Gemini (旧版): 最大边2048px
+      const maxDimension = 2048;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      const pixels = w * h;
+      if (pixels <= 65536) return 85; // <= 256x256
+      if (pixels <= 262144) return 170; // <= 512x512
+      return 340; // larger images
+    }
+  },
+  qwen2VL: {
+    name: 'Qwen2-VL',
+    baseTokens: 85,
+    pricePerImage: 0.0008, // 每张图片的价格（估算）
+    pricingLink: 'https://www.google.com/search?q=Qwen2-VL+pricing',
+    tokenCalcLink: 'https://www.google.com/search?q=Qwen2-VL+token+calculation',
+    calculateTokens: (width, height) => {
+      // Qwen2-VL: 基于Qwen的视觉模型
+      // 通常支持最大边4480px，使用patch-based计算
+      // 类似GPT Vision的tiles方式，但patch大小为448x448
+      const maxDimension = 4480;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      // Qwen2-VL使用448x448的patch
+      // 计算patches：ceil(width/448) × ceil(height/448)
+      const patchesW = Math.ceil(w / 448);
+      const patchesH = Math.ceil(h / 448);
+      const patches = patchesW * patchesH;
+      
+      // 基础token + 每个patch约85 tokens
+      return 85 + patches * 85;
+    }
+  },
+  qwenVL: {
+    name: 'Qwen-VL',
+    baseTokens: 85,
+    pricePerImage: 0.001, // 每张图片的价格（估算）
+    pricingLink: 'https://www.google.com/search?q=Qwen-VL+pricing',
+    tokenCalcLink: 'https://www.google.com/search?q=Qwen-VL+token+calculation',
+    calculateTokens: (width, height) => {
+      // Qwen-VL: 第一代Qwen视觉模型
+      // 通常支持最大边2048px，使用patch-based计算
+      const maxDimension = 2048;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      // Qwen-VL使用448x448的patch
+      const patchesW = Math.ceil(w / 448);
+      const patchesH = Math.ceil(h / 448);
+      const patches = patchesW * patchesH;
+      
+      // 基础token + 每个patch约85 tokens
+      return 85 + patches * 85;
+    }
+  },
+  qwenVLMax: {
+    name: 'Qwen-VL-Max',
+    baseTokens: 4,
+    pricePerImage: 0.0012, // 每张图片的价格（估算）
+    pricingLink: 'https://www.alibabacloud.com/help/en/model-studio',
+    tokenCalcLink: 'https://help.aliyun.com/zh/model-studio/vision/',
+    calculateTokens: (width, height) => {
+      // Qwen-VL-Max: 根据阿里云官方文档
+      // 规则：每28×28像素对应1个Token（标准版本）
+      // 注意：qwen-vl-max-0813及之后版本、qwen-vl-plus-0710及之后版本使用32×32
+      // 单张图片最少4个Token，最多1280个Token
+      // 需要将宽高调整为28的整数倍（向上取整）
+      
+      // 将宽高调整为28的整数倍（向上取整）
+      const wAdjusted = Math.ceil(width / 28) * 28;
+      const hAdjusted = Math.ceil(height / 28) * 28;
+      
+      // 计算Token数量：每28×28像素 = 1个Token
+      let tokenCount = (wAdjusted * hAdjusted) / (28 * 28);
+      
+      // 应用最小和最大限制
+      // 最小4个Token，最大1280个Token
+      tokenCount = Math.max(4, Math.min(1280, tokenCount));
+      
+      return Math.ceil(tokenCount);
+    }
+  },
+  deepseekVision: {
+    name: 'DeepSeek Vision',
+    baseTokens: 85,
+    pricePerImage: 0.0008, // 每张图片的价格（估算）
+    pricingLink: 'https://www.google.com/search?q=DeepSeek+Vision+pricing',
+    tokenCalcLink: 'https://www.google.com/search?q=DeepSeek+Vision+token+calculation',
+    calculateTokens: (width, height) => {
+      // DeepSeek Vision: 基于类似GPT Vision的计算方式
+      // 规则：图片会被resize到最大边不超过2048px
+      // 使用类似GPT的tiles方式，但具体规则可能不同
+      // 估算：每32×32像素 = 1个Token（基于搜索结果）
+      const maxDimension = 2048;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      // 每32×32像素 = 1个Token
+      const patchesW = Math.ceil(w / 32);
+      const patchesH = Math.ceil(h / 32);
+      const patches = patchesW * patchesH;
+      
+      // 基础token + 每个patch 1个token
+      return Math.max(85, patches);
+    }
+  },
+  minimaxVision: {
+    name: 'MiniMax Vision',
+    baseTokens: 85,
+    pricePerImage: 0.0006, // 每张图片的价格（估算）
+    pricingLink: 'https://www.google.com/search?q=MiniMax+Vision+pricing',
+    tokenCalcLink: 'https://www.google.com/search?q=MiniMax+Vision+token+calculation',
+    calculateTokens: (width, height) => {
+      // MiniMax Vision: 基于类似GPT Vision的计算方式
+      // 规则：图片会被resize到最大边不超过2048px
+      // 使用类似GPT的tiles方式，但具体规则可能不同
+      // 估算：每32×32像素 = 1个Token（基于搜索结果）
+      const maxDimension = 2048;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      // 每32×32像素 = 1个Token
+      const patchesW = Math.ceil(w / 32);
+      const patchesH = Math.ceil(h / 32);
+      const patches = patchesW * patchesH;
+      
+      // 基础token + 每个patch 1个token
+      return Math.max(85, patches);
     }
   }
 };
@@ -79,20 +374,93 @@ function ImageTokens() {
   const [stats, setStats] = useState({
     models: {}
   });
+  const [sortConfig, setSortConfig] = useState({
+    field: null,
+    direction: 'asc' // 'asc' or 'desc'
+  });
 
   useEffect(() => {
     const models = {};
 
     Object.entries(IMAGE_MODEL_CONFIGS).forEach(([key, config]) => {
       const tokenCount = config.calculateTokens(dimensions.width, dimensions.height);
+      // 计算每百万tokens的价格：pricePerImage / tokenCount * 1000000
+      // 官方定价：每百万tokens的价格（基于当前图片的token数转换）
+      const pricePerMillionTokens = tokenCount > 0 
+        ? (config.pricePerImage / tokenCount * 1000000).toFixed(2)
+        : '0.00';
+      // 预估价格：基于当前token数计算的价格
+      // 每token价格 = pricePerImage / tokenCount
+      // 预估价格 = tokenCount * (pricePerImage / tokenCount) = pricePerImage
+      const estimatedPrice = config.pricePerImage.toFixed(6);
       models[key] = {
         tokens: tokenCount,
-        price: config.pricePerImage.toFixed(6)
+        pricePerMillionTokens: pricePerMillionTokens,
+        estimatedPrice: estimatedPrice
       };
     });
 
     setStats({ models });
   }, [dimensions]);
+
+  const handleSort = (field) => {
+    setSortConfig(prevConfig => {
+      if (prevConfig.field === field) {
+        return {
+          field,
+          direction: prevConfig.direction === 'asc' ? 'desc' : 'asc'
+        };
+      }
+      return {
+        field,
+        direction: 'asc'
+      };
+    });
+  };
+
+  const getSortedModels = () => {
+    const entries = Object.entries(IMAGE_MODEL_CONFIGS);
+    if (!sortConfig.field) {
+      return entries;
+    }
+
+    return [...entries].sort((a, b) => {
+      const [keyA, configA] = a;
+      const [keyB, configB] = b;
+      let valueA, valueB;
+
+      switch (sortConfig.field) {
+        case 'model':
+          valueA = configA.name.toLowerCase();
+          valueB = configB.name.toLowerCase();
+          break;
+        case 'tokens':
+          valueA = stats.models[keyA]?.tokens || 0;
+          valueB = stats.models[keyB]?.tokens || 0;
+          break;
+        case 'officialPrice':
+          valueA = parseFloat(stats.models[keyA]?.pricePerMillionTokens || 0);
+          valueB = parseFloat(stats.models[keyB]?.pricePerMillionTokens || 0);
+          break;
+        case 'estimatedPrice':
+          valueA = parseFloat(stats.models[keyA]?.estimatedPrice || 0);
+          valueB = parseFloat(stats.models[keyB]?.estimatedPrice || 0);
+          break;
+        default:
+          return 0;
+      }
+
+      if (typeof valueA === 'string') {
+        return sortConfig.direction === 'asc' 
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      } else {
+        return sortConfig.direction === 'asc' 
+          ? valueA - valueB
+          : valueB - valueA;
+      }
+    });
+  };
 
   const handleDimensionChange = (field, value) => {
     const numValue = parseInt(value) || 0;
@@ -112,7 +480,6 @@ function ImageTokens() {
   return (
     <div className="image-tokens">
       <div className="image-input-section">
-        <h2>{t('tokenCalculator.imageTokens')}</h2>
         <div className="dimension-inputs">
           <div className="input-group">
             <label htmlFor="width">Width (px)</label>
@@ -157,27 +524,87 @@ function ImageTokens() {
       </div>
 
       <div className="models-section">
-        <h3>AI Vision Models</h3>
-        <div className="models-grid">
-          {Object.entries(IMAGE_MODEL_CONFIGS).map(([key, config]) => (
-            <div key={key} className="model-card">
-              <div className="model-header">
-                <h4>{config.name}</h4>
-                <div className="token-count">
-                  {stats.models[key]?.tokens || 0} {t('tokenCalculator.tokenCount')}
-                </div>
-              </div>
-              <div className="pricing-info">
-                <div className="price-row">
-                  <span className="price-label">Price per image:</span>
-                  <span className="price-value">${stats.models[key]?.price || '0.000000'}</span>
-                </div>
-                <div className="price-note">
-                  (Fixed price per image)
-                </div>
-              </div>
-            </div>
-          ))}
+        <h3>{t('tokenCalculator.visionModelsTitle')}</h3>
+        <div className="models-table-container">
+          <table className="models-table">
+            <thead>
+              <tr>
+                <th 
+                  className="sortable" 
+                  onClick={() => handleSort('model')}
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                >
+                  {t('tokenCalculator.table.model')}
+                  {sortConfig.field === 'model' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                <th 
+                  className="sortable" 
+                  onClick={() => handleSort('tokens')}
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                >
+                  {t('tokenCalculator.tokenCount')}
+                  {sortConfig.field === 'tokens' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                <th 
+                  className="sortable" 
+                  onClick={() => handleSort('officialPrice')}
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                >
+                  {t('tokenCalculator.table.officialPrice')} ({t('tokenCalculator.pricing.perMillionTokens')})
+                  {sortConfig.field === 'officialPrice' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                <th 
+                  className="sortable" 
+                  onClick={() => handleSort('estimatedPrice')}
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                >
+                  {t('tokenCalculator.table.estimatedPrice')}
+                  {sortConfig.field === 'estimatedPrice' && (
+                    <span>{sortConfig.direction === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                <th>{t('tokenCalculator.table.links')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {getSortedModels().map(([key, config]) => (
+                <tr key={key}>
+                  <td className="model-name">{config.name}</td>
+                  <td className="token-count">{stats.models[key]?.tokens || 0}</td>
+                  <td className="price-value">${stats.models[key]?.pricePerMillionTokens || '0.00'}</td>
+                  <td className="price-value">${stats.models[key]?.estimatedPrice || '0.000000'}</td>
+                  <td className="links-cell">
+                    <div className="links-group">
+                      <a 
+                        href={config.pricingLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="link-item"
+                        title={t('tokenCalculator.table.pricingLink')}
+                      >
+                        {t('tokenCalculator.table.pricing')}
+                      </a>
+                      <a 
+                        href={config.tokenCalcLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="link-item"
+                        title={t('tokenCalculator.table.tokenCalcLink')}
+                      >
+                        {t('tokenCalculator.table.tokenCalc')}
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

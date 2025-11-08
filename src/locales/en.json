@@ -478,7 +478,11 @@
       "copied": "Copied to clipboard",
       "cleared": "Content cleared",
       "formatted": "JSON formatted successfully",
-      "minified": "JSON minified successfully"
+      "minified": "JSON minified successfully",
+      "copySuccess": "Copied",
+      "copyFailed": "Copy failed",
+      "formatSuccess": "Formatted successfully",
+      "formatFailed": "Format failed"
     },
     "page": {
       "title": "Online JSON Formatter & Validator",
@@ -519,12 +523,6 @@
         "collapse": "Collapse",
         "format": "Format"
       },
-      "messages": {
-        "copySuccess": "Copied",
-        "copyFailed": "Copy failed",
-        "formatSuccess": "Formatted",
-        "formatFailed": "Format failed"
-      },
     "syntaxError": "Syntax Error",
     "errorAt": "Error at line {{line}}, column {{column}}"
   },
@@ -560,16 +558,46 @@
     "modelsTitle": "AI Models",
     "models": {
       "gpt4": "GPT-4",
+      "gpt4turbo": "GPT-4 Turbo",
+      "gpt4o": "GPT-4o",
+      "gpt4omini": "GPT-4o mini",
+      "gpt41": "GPT-4.1",
+      "gpt41mini": "GPT-4.1 mini",
+      "gpt41nano": "GPT-4.1 nano",
       "gpt35turbo": "GPT-3.5 Turbo",
+      "claude3Opus": "Claude 3 Opus",
+      "claude3Sonnet": "Claude 3 Sonnet",
+      "claude3Haiku": "Claude 3 Haiku",
       "claude": "Claude",
+      "geminiPro": "Gemini Pro",
       "gemini": "Gemini",
-      "qwen": "Qwen"
+      "qwen": "Qwen",
+      "llama2": "Llama 2",
+      "mistral": "Mistral",
+      "deepseek": "DeepSeek",
+      "minimax": "MiniMax"
     },
     "pricing": {
       "input": "Input",
       "output": "Output",
       "perMillionTokens": "per million tokens"
-    }
+    },
+    "table": {
+      "model": "Model",
+      "pricePerImage": "Price per Image",
+      "officialPrice": "Official Price",
+      "estimatedPrice": "Estimated Price",
+      "perImage": "per image",
+      "links": "Links",
+      "pricing": "Pricing",
+      "tokenCalc": "Token Calc",
+      "pricingLink": "View pricing details",
+      "tokenCalcLink": "View token calculation docs",
+      "estimatedInputPrice": "Estimated Input Price",
+      "estimatedOutputPrice": "Estimated Output Price"
+    },
+    "visionModelsTitle": "AI Vision Models",
+    "priceDisclaimer": "Disclaimer: Token calculation and pricing are estimates. Actual costs should be evaluated based on actual usage."
   },
   "chromePlugin": {
     "title": "Chrome Extension Installation Guide",

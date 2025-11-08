@@ -478,7 +478,11 @@
         "copied": "已复制到剪贴板",
         "cleared": "内容已清空",
         "formatted": "JSON 格式化成功",
-        "minified": "JSON 压缩成功"
+        "minified": "JSON 压缩成功",
+        "copySuccess": "复制成功",
+        "copyFailed": "复制失败",
+        "formatSuccess": "格式化成功",
+        "formatFailed": "格式化失败"
       },
       "page": {
         "title": "在线 JSON 格式化和验证工具",
@@ -518,12 +522,6 @@
         "expand": "展开",
         "collapse": "折叠",
         "format": "格式化"
-      },
-      "messages": {
-        "copySuccess": "复制成功",
-        "copyFailed": "复制失败",
-        "formatSuccess": "格式化成功",
-        "formatFailed": "格式化失败"
       },
       "syntaxError": "语法错误",
       "errorAt": "错误位置：第 {{line}} 行，第 {{column}} 列"
@@ -588,15 +586,45 @@
       "modelsTitle": "AI模型",
       "models": {
         "gpt4": "GPT-4",
+        "gpt4turbo": "GPT-4 Turbo",
+        "gpt4o": "GPT-4o",
+        "gpt4omini": "GPT-4o mini",
+        "gpt41": "GPT-4.1",
+        "gpt41mini": "GPT-4.1 mini",
+        "gpt41nano": "GPT-4.1 nano",
         "gpt35turbo": "GPT-3.5 Turbo",
+        "claude3Opus": "Claude 3 Opus",
+        "claude3Sonnet": "Claude 3 Sonnet",
+        "claude3Haiku": "Claude 3 Haiku",
         "claude": "Claude",
+        "geminiPro": "Gemini Pro",
         "gemini": "Gemini",
-        "qwen": "通义千问"
+        "qwen": "通义千问",
+        "llama2": "Llama 2",
+        "mistral": "Mistral",
+        "deepseek": "DeepSeek",
+        "minimax": "MiniMax"
       },
       "pricing": {
         "input": "输入",
         "output": "输出",
         "perMillionTokens": "每百万tokens"
-      }
+      },
+      "table": {
+        "model": "模型",
+        "pricePerImage": "每张图片价格",
+        "officialPrice": "官方定价",
+        "estimatedPrice": "预估价格",
+        "perImage": "每张图片",
+        "links": "链接",
+        "pricing": "价格",
+        "tokenCalc": "Token计算",
+        "pricingLink": "查看价格详情",
+        "tokenCalcLink": "查看Token计算说明",
+        "estimatedInputPrice": "输入价格预估",
+        "estimatedOutputPrice": "输出价格预估"
+      },
+      "visionModelsTitle": "AI视觉模型",
+      "priceDisclaimer": "声明：Token计算和价格均为预估，具体费用请按照实际用量来评估。"
     }
   } 

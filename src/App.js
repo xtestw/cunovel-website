@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,7 @@ function App() {
   const feedbackEmail = 'xuwei8091@gmail.com';
   const [hasAds, setHasAds] = useState(false);
   const [languageKey, setLanguageKey] = useState(i18n.language);
+  const adInitialized = useRef(false);
 
   useEffect(() => {
     const handleLanguageChange = (lng) => {
@@ -35,8 +36,56 @@ function App() {
     return () => i18n.off('languageChanged', handleLanguageChange);
   }, []);
 
-  // 检查广告是否加载
+  // 初始化广告并检查是否加载
   useEffect(() => {
+    const initAds = () => {
+      // 检查是否已经初始化过
+      if (adInitialized.current) {
+        return;
+      }
+
+      // 等待 adsbygoogle 脚本加载
+      if (typeof window === 'undefined' || !window.adsbygoogle) {
+        return;
+      }
+
+      try {
+        // 查找所有未初始化的广告容器
+        const adContainers = document.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
+        
+        // 如果有未初始化的容器，才调用 push
+        if (adContainers.length > 0) {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+          adInitialized.current = true;
+        }
+      } catch (error) {
+        // 忽略重复初始化的错误
+        if (!error.message || !error.message.includes('already have ads')) {
+          console.warn('AdSense initialization error:', error);
+        }
+      }
+    };
+
+    // 延迟初始化，确保 DOM 已渲染且脚本已加载
+    const timer = setTimeout(() => {
+      // 如果脚本还没加载，等待一下
+      if (typeof window !== 'undefined' && window.adsbygoogle) {
+        initAds();
+      } else {
+        // 等待脚本加载
+        const checkScript = setInterval(() => {
+          if (typeof window !== 'undefined' && window.adsbygoogle) {
+            initAds();
+            clearInterval(checkScript);
+          }
+        }, 100);
+        
+        // 10秒后停止检查
+        setTimeout(() => clearInterval(checkScript), 10000);
+      }
+    }, 500);
+
+    // 检查广告是否加载
     const checkAdsLoaded = () => {
       const adContainer = document.querySelector('.adsbygoogle');
       if (adContainer) {
@@ -46,7 +95,12 @@ function App() {
     };
 
     // 广告加载可能需要一点时间
-    setTimeout(checkAdsLoaded, 1000);
+    const checkTimer = setTimeout(checkAdsLoaded, 2000);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(checkTimer);
+    };
   }, []);
 
   return (

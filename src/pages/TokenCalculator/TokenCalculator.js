@@ -22,26 +22,26 @@ function TokenCalculator() {
 
   return (
     <div className="token-calculator">
-      <div className="token-calculator-header">
-        <h1>{t('tokenCalculator.title')}</h1>
-        <div className="token-calculator-nav">
-          <NavLink
-            to="text"
-            className={({ isActive }) =>
-              isActive ? 'token-calculator-nav-item active' : 'token-calculator-nav-item'
-            }
-          >
-            {t('tokenCalculator.textTokens')}
-          </NavLink>
-          <NavLink
-            to="image"
-            className={({ isActive }) =>
-              isActive ? 'token-calculator-nav-item active' : 'token-calculator-nav-item'
-            }
-          >
-            {t('tokenCalculator.imageTokens')}
-          </NavLink>
-        </div>
+      <div className="token-calculator-nav">
+        <NavLink
+          to="text"
+          className={({ isActive }) =>
+            isActive ? 'token-calculator-nav-item active' : 'token-calculator-nav-item'
+          }
+        >
+          {t('tokenCalculator.textTokens')}
+        </NavLink>
+        <NavLink
+          to="image"
+          className={({ isActive }) =>
+            isActive ? 'token-calculator-nav-item active' : 'token-calculator-nav-item'
+          }
+        >
+          {t('tokenCalculator.imageTokens')}
+        </NavLink>
+      </div>
+      <div className="price-disclaimer">
+        <p>{t('tokenCalculator.priceDisclaimer')}</p>
       </div>
       <div className="token-calculator-content">
         <Outlet />

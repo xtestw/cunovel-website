@@ -1,20 +1,14 @@
 .image-tokens {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-}
-
-.image-input-section h2 {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
+  gap: 16px;
 }
 
 .dimension-inputs {
   display: flex;
   align-items: end;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .input-group {
@@ -30,11 +24,11 @@
 }
 
 .dimension-input {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 16px;
-  width: 120px;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100px;
   transition: border-color 0.3s ease;
 }
 
@@ -55,10 +49,10 @@
 .image-info {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  padding: 20px;
+  gap: 12px;
+  padding: 12px;
   background-color: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid #e0e0e0;
 }
 
@@ -81,65 +75,88 @@
 
 .models-section h3 {
   color: #333;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
-}
-
-.models-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.model-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
-}
-
-.model-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.model-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.model-header h4 {
-  margin: 0;
-  color: #333;
+  margin-bottom: 12px;
   font-size: 1.1rem;
+}
+
+.price-disclaimer {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #856404;
+  line-height: 1.5;
+}
+
+.price-disclaimer p {
+  margin: 0;
+}
+
+.models-table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.models-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.models-table thead {
+  background-color: #f8f9fa;
+}
+
+.models-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 0.85rem;
+}
+
+.models-table th.sortable {
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.models-table th.sortable:hover {
+  background-color: #f0f0f0;
+}
+
+.models-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.models-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.models-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.models-table td {
+  padding: 10px 12px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.model-name {
+  font-weight: 500;
+  color: #333;
 }
 
 .token-count {
   font-weight: 600;
   color: #28a745;
   font-family: monospace;
-  font-size: 1.1rem;
-}
-
-.pricing-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.price-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.price-label {
-  color: #666;
   font-size: 0.9rem;
 }
 
@@ -147,13 +164,36 @@
   font-weight: 600;
   color: #007bff;
   font-family: monospace;
+  font-size: 0.85rem;
 }
 
-.price-note {
-  font-size: 0.8rem;
-  color: #888;
-  margin-top: 5px;
-  font-style: italic;
+.links-cell {
+  min-width: 150px;
+}
+
+.links-group {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.link-item {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.link-item:hover {
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
 }
 
 @media (max-width: 768px) {
@@ -175,13 +215,32 @@
     grid-template-columns: 1fr;
   }
 
-  .models-grid {
-    grid-template-columns: 1fr;
+  .models-table-container {
+    border-radius: 0;
+    box-shadow: none;
   }
 
-  .model-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+  .models-table {
+    font-size: 0.9rem;
+  }
+
+  .models-table th,
+  .models-table td {
+    padding: 10px 8px;
+  }
+
+  .links-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .link-item {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+  }
+
+  .links-cell {
+    min-width: auto;
   }
 }
