@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './TimeStamp.css';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
@@ -24,7 +24,7 @@ const TimeStamp = () => {
   });
 
   // 处理日期转时间戳
-  const handleDateToTimestamp = () => {
+  const handleDateToTimestamp = useCallback(() => {
     try {
       if (!dateInput) {
         setDateTimestamp({ ms: '', s: '' });
@@ -50,7 +50,7 @@ const TimeStamp = () => {
         s: t('nav.tools.timeStamp.errors.invalidTimestamp') 
       });
     }
-  };
+  }, [dateInput, timeInput, t]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -61,7 +61,7 @@ const TimeStamp = () => {
 
   useEffect(() => {
     handleDateToTimestamp();
-  }, [handleDateToTimestamp]);
+  }, [dateInput, timeInput, t]);
 
   // 格式化时间（带时区）
   const formatDate = (timestamp, unit, timeZone) => {
