@@ -32,6 +32,22 @@
   "resolutions": {
     "strip-ansi": "6.0.1"
   },
+  "overrides": {
+    "react-diff-viewer": {
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
+    },
+    "react-json-view": {
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
+    },
+    "flux": {
+      "react": "^18.2.0"
+    },
+    "react-scripts": {
+      "typescript": "^5.0.0"
+    }
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "DISABLE_ESLINT_PLUGIN=true CI=false PUBLIC_URL=/ GENERATE_SOURCEMAP=false react-scripts build",

@@ -591,7 +591,10 @@
         "gpt4omini": "GPT-4o mini",
         "gpt4o1": "GPT-4o1 Preview",
         "gpt4o1mini": "GPT-4o1 Mini",
+        "gpt41": "GPT-4.1",
+        "gpt41mini": "GPT-4.1 mini",
         "gpt41nano": "GPT-4.1 nano",
+        "gpt5": "GPT-5",
         "gpt35turbo": "GPT-3.5 Turbo",
         "claude35Sonnet": "Claude 3.5 Sonnet",
         "claude35Haiku": "Claude 3.5 Haiku",
@@ -615,9 +618,6 @@
         "minimax": "MiniMax",
         "gemini": "Gemini",
         "claude": "Claude",
-        "llama2": "Llama 2",
-        "claude": "Claude",
-        "gemini": "Gemini",
         "llama2": "Llama 2"
       },
       "pricing": {

@@ -54,6 +54,27 @@ const MODEL_CONFIGS = {
     pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
   },
+  gpt41: {
+    name: 'gpt41',
+    inputPrice: 0.002, // 每1000 tokens $0.002 ($2/百万tokens) - GPT-4.1
+    outputPrice: 0.008, // 每1000 tokens $0.008 ($8/百万tokens)
+    pricingLink: 'https://openai.com/api/pricing/',
+    tokenCalcLink: 'https://platform.openai.com/tokenizer'
+  },
+  gpt41mini: {
+    name: 'gpt41mini',
+    inputPrice: 0.0005, // 每1000 tokens $0.0005 ($0.50/百万tokens) - GPT-4.1 mini
+    outputPrice: 0.002, // 每1000 tokens $0.002 ($2/百万tokens)
+    pricingLink: 'https://openai.com/api/pricing/',
+    tokenCalcLink: 'https://platform.openai.com/tokenizer'
+  },
+  gpt5: {
+    name: 'gpt5',
+    inputPrice: 0.005, // 每1000 tokens $0.005 ($5/百万tokens) - GPT-5 (预估价格)
+    outputPrice: 0.015, // 每1000 tokens $0.015 ($15/百万tokens)
+    pricingLink: 'https://openai.com/api/pricing/',
+    tokenCalcLink: 'https://platform.openai.com/tokenizer'
+  },
   gpt35turbo: {
     name: 'gpt35turbo',
     inputPrice: 0.0005, // 每1000 tokens $0.0005 ($0.50/百万tokens) - 2024年12月最新价格
@@ -301,7 +322,10 @@ const calculateTokens = (text, modelKey, modelConfig) => {
       case 'gpt4omini':
       case 'gpt4o1':
       case 'gpt4o1mini':
+      case 'gpt41':
+      case 'gpt41mini':
       case 'gpt41nano':
+      case 'gpt5':
       case 'gpt35turbo': {
         // GPT系列回退算法
         const chineseTokens = chineseChars;

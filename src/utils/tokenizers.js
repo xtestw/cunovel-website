@@ -27,7 +27,10 @@ const getEncoder = (modelName) => {
       case 'gpt4omini':
       case 'gpt4o1':
       case 'gpt4o1mini':
+      case 'gpt41':
+      case 'gpt41mini':
       case 'gpt41nano':
+      case 'gpt5':
         encoder = encoding_for_model('gpt-4');
         break;
       case 'gpt35turbo':
@@ -303,7 +306,10 @@ export const calculateTokensWithLibrary = (text, modelKey) => {
       case 'gpt4omini':
       case 'gpt4o1':
       case 'gpt4o1mini':
+      case 'gpt41':
+      case 'gpt41mini':
       case 'gpt41nano':
+      case 'gpt5':
       case 'gpt35turbo':
         return calculateGPTTokens(text, modelKey);
         
