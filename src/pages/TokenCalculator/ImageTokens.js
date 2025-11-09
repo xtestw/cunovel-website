@@ -7,8 +7,8 @@ const IMAGE_MODEL_CONFIGS = {
   gpt4v: {
     name: 'GPT-4 Vision',
     baseTokens: 85,
-    pricePerImage: 0.0013, // 每张图片的固定价格
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    pricePerImage: 0.001275, // 每张图片的固定价格 - 2024年12月最新价格
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/docs/guides/vision',
     calculateTokens: (width, height) => {
       // GPT-4 Vision: 根据OpenAI官方公式校准
@@ -38,24 +38,28 @@ const IMAGE_MODEL_CONFIGS = {
       return 85 + 170 * tiles;
     }
   },
-  gpt4oTurbo: {
-    name: 'GPT-4o Turbo',
+  gpt4oVision: {
+    name: 'GPT-4o Vision',
     baseTokens: 85,
-    pricePerImage: 0.0005, // 每张图片的价格
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    pricePerImage: 0.001275, // 每张图片的价格 - 2024年12月最新价格
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/docs/guides/vision',
     calculateTokens: (width, height) => {
-      // GPT-4o Turbo: 使用与GPT-4 Vision相同的公式
-      // 规则：最大边不超过4096px（比GPT-4 Vision更大）
+      // GPT-4o Vision: 使用与GPT-4 Vision相同的公式
+      // 规则：最大边不超过2048px，短边不超过768px
       // Tiles = ceil(width/512) × ceil(height/512)
       // Tokens = 85 + 170 × Tiles
-      const maxDimension = 4096;
+      const maxDimension = 2048;
+      const maxShortSide = 768;
       
       let w = width;
       let h = height;
       
-      // 计算缩放
-      const scale = Math.max(width, height) > maxDimension ? maxDimension / Math.max(width, height) : 1;
+      // 计算缩放比例
+      const scaleLong = Math.max(width, height) > maxDimension ? maxDimension / Math.max(width, height) : 1;
+      const scaleShort = Math.min(width, height) > maxShortSide ? maxShortSide / Math.min(width, height) : 1;
+      const scale = Math.min(scaleLong, scaleShort);
+      
       w = Math.floor(w * scale);
       h = Math.floor(h * scale);
       
@@ -68,12 +72,42 @@ const IMAGE_MODEL_CONFIGS = {
       return 85 + 170 * tiles;
     }
   },
+  claude35SonnetVision: {
+    name: 'Claude 3.5 Sonnet Vision',
+    baseTokens: 85,
+    pricePerImage: 0.003, // 每张图片的价格 - Claude 3.5 Sonnet最新版本
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/vision',
+    calculateTokens: (width, height) => {
+      // Claude 3.5 Sonnet: 图片会被resize到最大边4096px
+      // 然后按像素数计算tokens
+      const maxDimension = 4096;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      const pixels = w * h;
+      // Claude 3.5: 每256x256像素块约85 tokens
+      if (pixels <= 65536) return 85; // <= 256x256
+      if (pixels <= 262144) return 170; // <= 512x512
+      if (pixels <= 1048576) return 340; // <= 1024x1024
+      // 更大的图片：每增加约393216像素（约768x512）增加170 tokens
+      const extraPixels = pixels - 1048576;
+      const extraBlocks = Math.ceil(extraPixels / 393216);
+      return 340 + (extraBlocks * 170);
+    }
+  },
   claude3OpusVision: {
     name: 'Claude 3 Opus Vision',
     baseTokens: 85,
-    pricePerImage: 0.015, // 每张图片的价格
-    pricingLink: 'https://www.anthropic.com/api/pricing',
-    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/vision',
+    pricePerImage: 0.015, // 每张图片的价格 - 2024年12月最新价格
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/vision',
     calculateTokens: (width, height) => {
       // Claude 3: 图片会被resize到最大边4096px
       // 然后按像素数计算tokens
@@ -102,9 +136,9 @@ const IMAGE_MODEL_CONFIGS = {
   claude3SonnetVision: {
     name: 'Claude 3 Sonnet Vision',
     baseTokens: 85,
-    pricePerImage: 0.003, // 每张图片的价格
-    pricingLink: 'https://www.anthropic.com/api/pricing',
-    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/vision',
+    pricePerImage: 0.003, // 每张图片的价格 - 2024年12月最新价格
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/vision',
     calculateTokens: (width, height) => {
       // Claude 3 Sonnet: 与Opus相同的计算方式
       const maxDimension = 4096;
@@ -126,15 +160,72 @@ const IMAGE_MODEL_CONFIGS = {
       return 340 + (extraBlocks * 170);
     }
   },
-  claudeVision: {
-    name: 'Claude Vision',
+  claude3HaikuVision: {
+    name: 'Claude 3 Haiku Vision',
     baseTokens: 85,
-    pricePerImage: 0.0048, // 每张图片的价格
-    pricingLink: 'https://www.anthropic.com/api/pricing',
-    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/vision',
+    pricePerImage: 0.00025, // 每张图片的价格 - Claude 3 Haiku最新版本
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/vision',
     calculateTokens: (width, height) => {
-      // Claude (旧版): 最大边2048px
-      const maxDimension = 2048;
+      // Claude 3 Haiku: 与其他Claude 3模型相同的计算方式
+      const maxDimension = 4096;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      const pixels = w * h;
+      if (pixels <= 65536) return 85;
+      if (pixels <= 262144) return 170;
+      if (pixels <= 1048576) return 340;
+      const extraPixels = pixels - 1048576;
+      const extraBlocks = Math.ceil(extraPixels / 393216);
+      return 340 + (extraBlocks * 170);
+    }
+  },
+  gemini2FlashVision: {
+    name: 'Gemini 2.0 Flash Vision',
+    baseTokens: 85,
+    pricePerImage: 0.000075, // 每张图片的价格 - Gemini 2.0 Flash最新版本
+    pricingLink: 'https://ai.google.dev/pricing',
+    tokenCalcLink: 'https://ai.google.dev/gemini-api/docs/vision',
+    calculateTokens: (width, height) => {
+      // Gemini 2.0 Flash: 图片会被resize，最大边4096px
+      // 然后按像素数计算tokens
+      const maxDimension = 4096;
+      let w = width;
+      let h = height;
+      
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        w = Math.floor(width * scale);
+        h = Math.floor(height * scale);
+      }
+      
+      const pixels = w * h;
+      // Gemini 2.0: 每256x256像素块约85 tokens
+      if (pixels <= 65536) return 85; // <= 256x256
+      if (pixels <= 262144) return 170; // <= 512x512
+      if (pixels <= 1048576) return 340; // <= 1024x1024
+      // 更大的图片：每增加约393216像素增加170 tokens
+      const extraPixels = pixels - 1048576;
+      const extraBlocks = Math.ceil(extraPixels / 393216);
+      return 340 + (extraBlocks * 170);
+    }
+  },
+  gemini15ProVision: {
+    name: 'Gemini 1.5 Pro Vision',
+    baseTokens: 85,
+    pricePerImage: 0.00125, // 每张图片的价格 - Gemini 1.5 Pro
+    pricingLink: 'https://ai.google.dev/pricing',
+    tokenCalcLink: 'https://ai.google.dev/gemini-api/docs/vision',
+    calculateTokens: (width, height) => {
+      // Gemini 1.5 Pro: 图片会被resize，最大边4096px
+      const maxDimension = 4096;
       let w = width;
       let h = height;
       
@@ -147,15 +238,18 @@ const IMAGE_MODEL_CONFIGS = {
       const pixels = w * h;
       if (pixels <= 65536) return 85; // <= 256x256
       if (pixels <= 262144) return 170; // <= 512x512
-      return 340; // larger images
+      if (pixels <= 1048576) return 340; // <= 1024x1024
+      const extraPixels = pixels - 1048576;
+      const extraBlocks = Math.ceil(extraPixels / 393216);
+      return 340 + (extraBlocks * 170);
     }
   },
   geminiProVision: {
     name: 'Gemini Pro Vision',
     baseTokens: 85,
-    pricePerImage: 0.000125, // 每张图片的价格
+    pricePerImage: 0.000125, // 每张图片的价格 - 2024年12月最新价格
     pricingLink: 'https://ai.google.dev/pricing',
-    tokenCalcLink: 'https://ai.google.dev/docs/gemini-api-quotas',
+    tokenCalcLink: 'https://ai.google.dev/gemini-api/docs/vision',
     calculateTokens: (width, height) => {
       // Gemini: 图片会被resize，最大边3072px
       // 然后按像素数计算tokens
@@ -180,30 +274,7 @@ const IMAGE_MODEL_CONFIGS = {
       return 340 + (extraBlocks * 170);
     }
   },
-  geminiVision: {
-    name: 'Gemini Vision',
-    baseTokens: 85,
-    pricePerImage: 0.00025, // 每张图片的价格
-    pricingLink: 'https://ai.google.dev/pricing',
-    tokenCalcLink: 'https://ai.google.dev/docs/gemini-api-quotas',
-    calculateTokens: (width, height) => {
-      // Gemini (旧版): 最大边2048px
-      const maxDimension = 2048;
-      let w = width;
-      let h = height;
-      
-      if (width > maxDimension || height > maxDimension) {
-        const scale = maxDimension / Math.max(width, height);
-        w = Math.floor(width * scale);
-        h = Math.floor(height * scale);
-      }
-      
-      const pixels = w * h;
-      if (pixels <= 65536) return 85; // <= 256x256
-      if (pixels <= 262144) return 170; // <= 512x512
-      return 340; // larger images
-    }
-  },
+  
   qwen2VL: {
     name: 'Qwen2-VL',
     baseTokens: 85,

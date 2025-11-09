@@ -1,141 +1,227 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { calculateTokensWithLibrary } from '../../utils/tokenizers';
 import './TextTokens.css';
 
 // Token计算模型配置
 const MODEL_CONFIGS = {
   gpt4: {
     name: 'gpt4',
-    inputPrice: 0.03, // 每1000 tokens $0.03 ($30/百万tokens)
+    inputPrice: 0.03, // 每1000 tokens $0.03 ($30/百万tokens) - 2024年12月最新价格
     outputPrice: 0.06, // 每1000 tokens $0.06 ($60/百万tokens)
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
   },
   gpt4turbo: {
     name: 'gpt4turbo',
-    inputPrice: 0.01, // 每1000 tokens $0.01 ($10/百万tokens)
+    inputPrice: 0.01, // 每1000 tokens $0.01 ($10/百万tokens) - 2024年12月最新价格
     outputPrice: 0.03, // 每1000 tokens $0.03 ($30/百万tokens)
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
   },
   gpt4o: {
     name: 'gpt4o',
-    inputPrice: 0.005, // 每1000 tokens $0.005 ($5/百万tokens)
-    outputPrice: 0.015, // 每1000 tokens $0.015 ($15/百万tokens)
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    inputPrice: 0.0025, // 每1000 tokens $0.0025 ($2.50/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.01, // 每1000 tokens $0.01 ($10/百万tokens)
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
   },
   gpt4omini: {
     name: 'gpt4omini',
-    inputPrice: 0.00015, // 每1000 tokens $0.00015 ($0.15/百万tokens)
+    inputPrice: 0.00015, // 每1000 tokens $0.00015 ($0.15/百万tokens) - 2024年12月最新价格
     outputPrice: 0.0006, // 每1000 tokens $0.0006 ($0.60/百万tokens)
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
   },
-  gpt41: {
-    name: 'gpt41',
-    inputPrice: 0.002, // 每1000 tokens $0.002 ($2/百万tokens)
-    outputPrice: 0.008, // 每1000 tokens $0.008 ($8/百万tokens)
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+  gpt4o1: {
+    name: 'gpt4o1',
+    inputPrice: 0.015, // 每1000 tokens $0.015 ($15/百万tokens) - o1-preview模型
+    outputPrice: 0.06, // 每1000 tokens $0.06 ($60/百万tokens)
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
   },
-  gpt41mini: {
-    name: 'gpt41mini',
-    inputPrice: 0.0004, // 每1000 tokens $0.0004 ($0.40/百万tokens)
-    outputPrice: 0.0016, // 每1000 tokens $0.0016 ($1.60/百万tokens)
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+  gpt4o1mini: {
+    name: 'gpt4o1mini',
+    inputPrice: 0.003, // 每1000 tokens $0.003 ($3/百万tokens) - o1-mini模型
+    outputPrice: 0.012, // 每1000 tokens $0.012 ($12/百万tokens)
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
-  },
+  }, // 添加用户特别要求的模型
   gpt41nano: {
     name: 'gpt41nano',
-    inputPrice: 0.0001, // 每1000 tokens $0.0001 ($0.10/百万tokens)
+    inputPrice: 0.0001, // 每1000 tokens $0.0001 ($0.10/百万tokens) - GPT-4.1 nano
     outputPrice: 0.0004, // 每1000 tokens $0.0004 ($0.40/百万tokens)
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
   },
   gpt35turbo: {
     name: 'gpt35turbo',
-    inputPrice: 0.0005, // 每1000 tokens $0.0005 ($0.50/百万tokens)
+    inputPrice: 0.0005, // 每1000 tokens $0.0005 ($0.50/百万tokens) - 2024年12月最新价格
     outputPrice: 0.0015, // 每1000 tokens $0.0015 ($1.50/百万tokens)
-    pricingLink: 'https://openai.com/zh-Hans-CN/api/pricing',
+    pricingLink: 'https://openai.com/api/pricing/',
     tokenCalcLink: 'https://platform.openai.com/tokenizer'
+  }, claude: {
+    name: 'claude',
+    inputPrice: 0.008, // 每1000 tokens $0.008 ($8/百万tokens) - Claude基础版本
+    outputPrice: 0.024, // 每1000 tokens $0.024 ($24/百万tokens)
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/token-counting'
+  },
+  claude35Sonnet: {
+    name: 'claude35Sonnet',
+    inputPrice: 0.003, // 每1000 tokens $0.003 ($3/百万tokens) - Claude 3.5 Sonnet最新版本
+    outputPrice: 0.015, // 每1000 tokens $0.015 ($15/百万tokens)
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/token-counting'
+  },
+  claude35Haiku: {
+    name: 'claude35Haiku',
+    inputPrice: 0.0008, // 每1000 tokens $0.0008 ($0.80/百万tokens) - Claude 3.5 Haiku
+    outputPrice: 0.004, // 每1000 tokens $0.004 ($4/百万tokens)
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/token-counting'
   },
   claude3Opus: {
     name: 'claude3Opus',
-    inputPrice: 0.015, // 每1000 tokens $0.015
-    outputPrice: 0.075, // 每1000 tokens $0.075
-    pricingLink: 'https://www.anthropic.com/api/pricing',
-    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/tokens'
+    inputPrice: 0.015, // 每1000 tokens $0.015 ($15/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.075, // 每1000 tokens $0.075 ($75/百万tokens)
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/token-counting'
   },
   claude3Sonnet: {
     name: 'claude3Sonnet',
-    inputPrice: 0.003, // 每1000 tokens $0.003
-    outputPrice: 0.015, // 每1000 tokens $0.015
-    pricingLink: 'https://www.anthropic.com/api/pricing',
-    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/tokens'
+    inputPrice: 0.003, // 每1000 tokens $0.003 ($3/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.015, // 每1000 tokens $0.015 ($15/百万tokens)
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/token-counting'
   },
   claude3Haiku: {
     name: 'claude3Haiku',
-    inputPrice: 0.00025, // 每1000 tokens $0.00025
-    outputPrice: 0.00125, // 每1000 tokens $0.00125
-    pricingLink: 'https://www.anthropic.com/api/pricing',
-    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/tokens'
+    inputPrice: 0.00025, // 每1000 tokens $0.00025 ($0.25/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.00125, // 每1000 tokens $0.00125 ($1.25/百万tokens)
+    pricingLink: 'https://www.anthropic.com/pricing',
+    tokenCalcLink: 'https://docs.anthropic.com/en/docs/build-with-claude/token-counting'
   },
-  claude: {
-    name: 'claude',
-    inputPrice: 0.008, // 每1000 tokens $0.008
-    outputPrice: 0.024, // 每1000 tokens $0.024
-    pricingLink: 'https://www.anthropic.com/api/pricing',
-    tokenCalcLink: 'https://docs.anthropic.com/claude/docs/tokens'
+  gemini2Flash: {
+    name: 'gemini2Flash',
+    inputPrice: 0.000075, // 每1000 tokens $0.000075 ($0.075/百万tokens) - Gemini 2.0 Flash最新版本
+    outputPrice: 0.0003, // 每1000 tokens $0.0003 ($0.30/百万tokens)
+    pricingLink: 'https://ai.google.dev/pricing',
+    tokenCalcLink: 'https://ai.google.dev/gemini-api/docs/tokens'
+  },
+  gemini15Pro: {
+    name: 'gemini15Pro',
+    inputPrice: 0.00125, // 每1000 tokens $0.00125 ($1.25/百万tokens) - Gemini 1.5 Pro
+    outputPrice: 0.005, // 每1000 tokens $0.005 ($5/百万tokens)
+    pricingLink: 'https://ai.google.dev/pricing',
+    tokenCalcLink: 'https://ai.google.dev/gemini-api/docs/tokens'
+  },
+  gemini15Flash: {
+    name: 'gemini15Flash',
+    inputPrice: 0.000075, // 每1000 tokens $0.000075 ($0.075/百万tokens) - Gemini 1.5 Flash
+    outputPrice: 0.0003, // 每1000 tokens $0.0003 ($0.30/百万tokens)
+    pricingLink: 'https://ai.google.dev/pricing',
+    tokenCalcLink: 'https://ai.google.dev/gemini-api/docs/tokens'
   },
   geminiPro: {
     name: 'geminiPro',
-    inputPrice: 0.0005, // 每1000 tokens $0.0005
-    outputPrice: 0.0015, // 每1000 tokens $0.0015
+    inputPrice: 0.0005, // 每1000 tokens $0.0005 ($0.50/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.0015, // 每1000 tokens $0.0015 ($1.50/百万tokens)
     pricingLink: 'https://ai.google.dev/pricing',
-    tokenCalcLink: 'https://ai.google.dev/docs/gemini-api-quotas'
+    tokenCalcLink: 'https://ai.google.dev/gemini-api/docs/tokens'
   },
-  gemini: {
-    name: 'gemini',
-    inputPrice: 0.0025, // 每1000 tokens $0.0025
-    outputPrice: 0.01, // 每1000 tokens $0.01
-    pricingLink: 'https://ai.google.dev/pricing',
-    tokenCalcLink: 'https://ai.google.dev/docs/gemini-api-quotas'
+  qwen25: {
+    name: 'qwen25',
+    inputPrice: 0.0003, // 每1000 tokens $0.0003 ($0.30/百万tokens) - Qwen2.5最新版本
+    outputPrice: 0.0006, // 每1000 tokens $0.0006 ($0.60/百万tokens)
+    pricingLink: 'https://help.aliyun.com/zh/model-studio/product-overview/billing-methods',
+    tokenCalcLink: 'https://help.aliyun.com/zh/model-studio/user-guide/tokens-and-billing'
+  },
+  qwenMax: {
+    name: 'qwenMax',
+    inputPrice: 0.008, // 每1000 tokens $0.008 ($8/百万tokens) - Qwen-Max
+    outputPrice: 0.024, // 每1000 tokens $0.024 ($24/百万tokens)
+    pricingLink: 'https://help.aliyun.com/zh/model-studio/product-overview/billing-methods',
+    tokenCalcLink: 'https://help.aliyun.com/zh/model-studio/user-guide/tokens-and-billing'
   },
   qwen: {
     name: 'qwen',
-    inputPrice: 0.002, // 每1000 tokens $0.002
-    outputPrice: 0.006, // 每1000 tokens $0.006
-    pricingLink: 'https://www.alibabacloud.com/help/zh/model-studio/models',
-    tokenCalcLink: 'https://www.alibabacloud.com/help/zh/model-studio/models'
+    inputPrice: 0.002, // 每1000 tokens $0.002 ($2/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.006, // 每1000 tokens $0.006 ($6/百万tokens)
+    pricingLink: 'https://help.aliyun.com/zh/model-studio/product-overview/billing-methods',
+    tokenCalcLink: 'https://help.aliyun.com/zh/model-studio/user-guide/tokens-and-billing'
   },
+ 
   llama2: {
     name: 'llama2',
-    inputPrice: 0.0002, // 每1000 tokens $0.0002
-    outputPrice: 0.0002, // 每1000 tokens $0.0002
-    pricingLink: 'https://www.google.com/search?q=llama2+pricing',
-    tokenCalcLink: 'https://www.google.com/search?q=llama2+token+calculation'
+    inputPrice: 0.0002, // 每1000 tokens $0.0002 ($0.20/百万tokens) - Llama 2
+    outputPrice: 0.0002, // 每1000 tokens $0.0002 ($0.20/百万tokens)
+    pricingLink: 'https://www.llama.com/pricing/',
+    tokenCalcLink: 'https://huggingface.co/docs/transformers/model_doc/llama'
+  },
+  llama32: {
+    name: 'llama32',
+    inputPrice: 0.0001, // 每1000 tokens $0.0001 ($0.10/百万tokens) - Llama 3.2最新版本
+    outputPrice: 0.0001, // 每1000 tokens $0.0001 ($0.10/百万tokens)
+    pricingLink: 'https://www.llama.com/pricing/',
+    tokenCalcLink: 'https://huggingface.co/docs/transformers/model_doc/llama'
+  },
+  llama31: {
+    name: 'llama31',
+    inputPrice: 0.0002, // 每1000 tokens $0.0002 ($0.20/百万tokens) - Llama 3.1
+    outputPrice: 0.0002, // 每1000 tokens $0.0002 ($0.20/百万tokens)
+    pricingLink: 'https://www.llama.com/pricing/',
+    tokenCalcLink: 'https://huggingface.co/docs/transformers/model_doc/llama'
+  },
+  mistralLarge: {
+    name: 'mistralLarge',
+    inputPrice: 0.002, // 每1000 tokens $0.002 ($2/百万tokens) - Mistral Large最新版本
+    outputPrice: 0.006, // 每1000 tokens $0.006 ($6/百万tokens)
+    pricingLink: 'https://mistral.ai/technology/#pricing',
+    tokenCalcLink: 'https://docs.mistral.ai/getting-started/tokenization/'
   },
   mistral: {
     name: 'mistral',
-    inputPrice: 0.0002, // 每1000 tokens $0.0002
-    outputPrice: 0.0006, // 每1000 tokens $0.0006
-    pricingLink: 'https://mistral.ai/pricing/',
-    tokenCalcLink: 'https://docs.mistral.ai/'
+    inputPrice: 0.0002, // 每1000 tokens $0.0002 ($0.20/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.0006, // 每1000 tokens $0.0006 ($0.60/百万tokens)
+    pricingLink: 'https://mistral.ai/technology/#pricing',
+    tokenCalcLink: 'https://docs.mistral.ai/getting-started/tokenization/'
+  },
+  deepseekV3: {
+    name: 'deepseekV3',
+    inputPrice: 0.00027, // 每1000 tokens $0.00027 ($0.27/百万tokens) - DeepSeek-V3最新版本
+    outputPrice: 0.0011, // 每1000 tokens $0.0011 ($1.10/百万tokens)
+    pricingLink: 'https://platform.deepseek.com/api-docs/pricing',
+    tokenCalcLink: 'https://platform.deepseek.com/api-docs/quick_start/pricing-tokens'
   },
   deepseek: {
     name: 'deepseek',
-    inputPrice: 0.00028, // 每1000 tokens $0.00028 (约2元/百万tokens，DeepSeek-V3)
-    outputPrice: 0.00112, // 每1000 tokens $0.00112 (约8元/百万tokens，DeepSeek-V3)
-    pricingLink: 'https://www.google.com/search?q=DeepSeek+pricing',
-    tokenCalcLink: 'https://www.google.com/search?q=DeepSeek+token+calculation'
+    inputPrice: 0.00028, // 每1000 tokens $0.00028 ($0.28/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.00112, // 每1000 tokens $0.00112 ($1.12/百万tokens)
+    pricingLink: 'https://platform.deepseek.com/api-docs/pricing',
+    tokenCalcLink: 'https://platform.deepseek.com/api-docs/quick_start/pricing-tokens'
+  },
+  minimaxPro: {
+    name: 'minimaxPro',
+    inputPrice: 0.0015, // 每1000 tokens $0.0015 ($1.50/百万tokens) - MiniMax Pro最新版本
+    outputPrice: 0.005, // 每1000 tokens $0.005 ($5/百万tokens)
+    pricingLink: 'https://www.minimaxi.com/platform/pricing',
+    tokenCalcLink: 'https://www.minimaxi.com/document/guides/chat-model/pro/api'
   },
   minimax: {
     name: 'minimax',
-    inputPrice: 0.00014, // 每1000 tokens $0.00014 (约1元/百万tokens)
-    outputPrice: 0.00112, // 每1000 tokens $0.00112 (约8元/百万tokens)
-    pricingLink: 'https://www.google.com/search?q=MiniMax+pricing',
-    tokenCalcLink: 'https://www.google.com/search?q=MiniMax+token+calculation'
+    inputPrice: 0.00014, // 每1000 tokens $0.00014 ($0.14/百万tokens) - 2024年12月最新价格
+    outputPrice: 0.00112, // 每1000 tokens $0.00112 ($1.12/百万tokens)
+    pricingLink: 'https://www.minimaxi.com/platform/pricing',
+    tokenCalcLink: 'https://www.minimaxi.com/document/guides/chat-model/pro/api'
+  },
+ 
+  gemini: {
+    name: 'gemini',
+    inputPrice: 0.0025, // 每1000 tokens $0.0025 ($2.50/百万tokens) - Gemini基础版本
+    outputPrice: 0.01, // 每1000 tokens $0.01 ($10/百万tokens)
+    pricingLink: 'https://ai.google.dev/pricing',
+    tokenCalcLink: 'https://ai.google.dev/gemini-api/docs/tokens'
   }
 };
 
@@ -193,226 +279,141 @@ const analyzeText = (text) => {
   };
 };
 
-// 针对不同模型的token计算函数
+// 针对不同模型的token计算函数（使用第三方库）
 const calculateTokens = (text, modelKey, modelConfig) => {
   if (!text) return 0;
 
-  const analysis = analyzeText(text);
-  const { chineseChars, englishChars, otherChars } = analysis;
-  
-  // 根据不同模型使用不同的计算规则
-  switch (modelKey) {
-    case 'gpt4':
-    case 'gpt4turbo':
-    case 'gpt4o':
-    case 'gpt4omini':
-    case 'gpt41':
-    case 'gpt41mini':
-    case 'gpt41nano':
-    case 'gpt35turbo': {
-      // GPT系列使用tiktoken/BPE (cl100k_base编码)
-      // 根据OpenAI官方文档和大量测试数据校准：
-      // - 中文：1个汉字 = 1个token（最准确）
-      // - 英文单词：平均每个单词约1.3个token
-      // - 英文纯字符（无单词边界）：约3.5-4字符=1token
-      // - 空格：通常每个空格约0.25个token（会被合并到单词中）
-      // - 标点符号：每个标点约0.5-1个token
-      // - 数字：约3-4个数字=1token
-      
-      // 中文：1字符=1token（最准确）
-      const chineseTokens = chineseChars;
-      
-      // 英文：基于单词数计算更准确
-      let englishTokens = 0;
-      if (analysis.words > 0) {
-        // 每个英文单词平均约1.3个token
-        englishTokens = Math.round(analysis.words * 1.3);
-      } else {
-        // 没有单词，纯字符：约3.5字符=1token
-        englishTokens = Math.ceil(englishChars / 3.5);
-      }
-      // 其他字符：标点和特殊字符
-      // 标点符号通常每个约0.8个token
-      const punctuationTokens = Math.ceil(analysis.punctuation * 0.8);
-      // 其他特殊字符（不包括空格和标点）：约2字符=1token
-      const otherSpecialChars = otherChars - analysis.spaces - analysis.punctuation;
-      const otherSpecialTokens = Math.ceil(otherSpecialChars / 2);
-      
-      // 空格通常被包含在单词token中，单独的空格约0.25个token
-      const spaceTokens = Math.ceil(analysis.spaces * 0.25);
-      
-      return chineseTokens + englishTokens + punctuationTokens + otherSpecialTokens + spaceTokens;
-    }
+  try {
+    // 优先使用第三方库进行精确计算
+    return calculateTokensWithLibrary(text, modelKey);
+  } catch (error) {
+    console.warn(`Failed to calculate tokens with library for ${modelKey}:`, error);
     
-    case 'claude3Opus':
-    case 'claude3Sonnet':
-    case 'claude3Haiku':
-    case 'claude': {
-      // Claude使用自己的tokenizer（基于Unicode和BPE混合）
-      // 根据Anthropic官方文档和测试数据校准：
-      // - 中文：1个汉字 ≈ 1个token（与GPT类似）
-      // - 英文单词：平均每个单词约1.2个token（比GPT略少）
-      // - 英文字符：约3.2字符=1token
-      // - 标点、空格：约2.5字符=1token
-      // 中文：1字符=1token
-      const chineseTokens = chineseChars;
-      
-      // 英文：优先使用单词数
-      let englishTokens = 0;
-      if (analysis.words > 0) {
-        // 每个英文单词平均约1.2个token
-        englishTokens = Math.round(analysis.words * 1.2);
-      } else {
-        // 约3.2字符=1token
-        englishTokens = Math.ceil(englishChars / 3.2);
-      }
-      
-      // 其他字符：约2.5字符=1token
-      const otherTokens = Math.ceil(otherChars / 2.5);
-      
-      return chineseTokens + englishTokens + otherTokens;
-    }
+    // 回退到原有的估算方法
+    const analysis = analyzeText(text);
+    const { chineseChars, englishChars, otherChars } = analysis;
     
-    case 'geminiPro':
-    case 'gemini': {
-      // Gemini使用SentencePiece tokenizer
-      // 根据Google官方文档和测试数据校准：
-      // - 中文：1个汉字 ≈ 1.2个token（SentencePiece对中文分词较细）
-      // - 英文单词：平均每个单词约1.4个token
-      // - 英文字符：约3.8字符=1token
-      // - 标点、空格：约3字符=1token
-      
-      // 中文：约1.2字符=1token
-      const chineseTokens = Math.ceil(chineseChars / 1.2);
-      
-      // 英文：优先使用单词数
-      let englishTokens = 0;
-      if (analysis.words > 0) {
-        // 每个英文单词平均约1.4个token
-        englishTokens = Math.round(analysis.words * 1.4);
-      } else {
-        // 约3.8字符=1token
-        englishTokens = Math.ceil(englishChars / 3.8);
-      }
-      // 其他字符：约3字符=1token
-      const otherTokens = Math.ceil(otherChars / 3);
-      
-      return chineseTokens + englishTokens + otherTokens;
-    }
-    
-    case 'qwen': {
-      // Qwen使用BPE tokenizer，针对中文优化
-      // 根据Qwen官方文档和测试数据校准：
-      // - 中文：1个汉字 ≈ 1个token（对中文优化很好）
-      // - 英文单词：平均每个单词约1.3个token
-      // - 英文字符：约3.8字符=1token
-      // - 标点、空格：约3字符=1token
-      // 中文：1字符=1token（对中文优化）
-      const chineseTokens = chineseChars;
-      
-      // 英文：优先使用单词数
-      let englishTokens = 0;
-      if (analysis.words > 0) {
-        // 每个英文单词平均约1.3个token
-        englishTokens = Math.round(analysis.words * 1.3);
-      } else {
-        // 约3.8字符=1token
-        englishTokens = Math.ceil(englishChars / 3.8);
+    // 根据不同模型使用不同的计算规则
+    switch (modelKey) {
+      case 'gpt4':
+      case 'gpt4turbo':
+      case 'gpt4o':
+      case 'gpt4omini':
+      case 'gpt4o1':
+      case 'gpt4o1mini':
+      case 'gpt41nano':
+      case 'gpt35turbo': {
+        // GPT系列回退算法
+        const chineseTokens = chineseChars;
+        let englishTokens = 0;
+        if (analysis.words > 0) {
+          englishTokens = Math.round(analysis.words * 1.33);
+        } else {
+          englishTokens = Math.ceil(englishChars / 3.7);
+        }
+        const punctuationTokens = Math.ceil(analysis.punctuation * 0.75);
+        const otherSpecialChars = otherChars - analysis.spaces - analysis.punctuation;
+        const otherSpecialTokens = Math.ceil(otherSpecialChars / 2.2);
+        const spaceTokens = Math.ceil(analysis.spaces * 0.2);
+        return chineseTokens + englishTokens + punctuationTokens + otherSpecialTokens + spaceTokens;
       }
       
-      // 其他字符：约3字符=1token
-      const otherTokens = Math.ceil(otherChars / 3);
-      
-      return chineseTokens + englishTokens + otherTokens;
-    }
-    case 'llama2':
-    case 'mistral': {
-      // Llama2和Mistral使用SentencePiece tokenizer
-      // 根据官方文档和测试数据校准：
-      // - 中文：1个汉字 ≈ 1.4个token（SentencePiece对中文分词较细）
-      // - 英文单词：平均每个单词约1.3个token
-      // - 英文字符：约4字符=1token
-      // - 标点、空格：约3字符=1token
-      
-      // 中文：约1.4字符=1token
-      const chineseTokens = Math.ceil(chineseChars / 1.4);
-      
-      // 英文：优先使用单词数
-      let englishTokens = 0;
-      if (analysis.words > 0) {
-        // 每个英文单词平均约1.3个token
-        englishTokens = Math.round(analysis.words * 1.3);
-      } else {
-        // 约4字符=1token
-        englishTokens = Math.ceil(englishChars / 4);
+      case 'claude35Sonnet':
+      case 'claude35Haiku':
+      case 'claude3Opus':
+      case 'claude3Sonnet':
+      case 'claude3Haiku':
+      case 'claude': {
+        const chineseTokens = chineseChars;
+        let englishTokens = 0;
+        if (analysis.words > 0) {
+          englishTokens = Math.round(analysis.words * 1.25);
+        } else {
+          englishTokens = Math.ceil(englishChars / 3.3);
+        }
+        const otherTokens = Math.ceil(otherChars / 2.6);
+        return chineseTokens + englishTokens + otherTokens;
       }
       
-      // 其他字符：约3字符=1token
-      const otherTokens = Math.ceil(otherChars / 3);
-      
-      return chineseTokens + englishTokens + otherTokens;
-    }
-    
-    case 'deepseek': {
-      // DeepSeek使用类似GPT的BPE tokenizer
-      // 根据DeepSeek官方文档和测试数据校准：
-      // - 中文：1个汉字 ≈ 1个token（对中文优化）
-      // - 英文单词：平均每个单词约1.3个token
-      // - 英文字符：约3.5字符=1token
-      // - 标点、空格：约3字符=1token
-      
-      // 中文：1字符=1token
-      const chineseTokens = chineseChars;
-      
-      // 英文：优先使用单词数
-      let englishTokens = 0;
-      if (analysis.words > 0) {
-        // 每个英文单词平均约1.3个token
-        englishTokens = Math.round(analysis.words * 1.3);
-      } else {
-        // 约3.5字符=1token
-        englishTokens = Math.ceil(englishChars / 3.5);
+      case 'gemini2Flash':
+      case 'gemini15Pro':
+      case 'gemini15Flash':
+      case 'geminiPro':
+      case 'gemini': {
+        const chineseTokens = Math.ceil(chineseChars / 1.15);
+        let englishTokens = 0;
+        if (analysis.words > 0) {
+          englishTokens = Math.round(analysis.words * 1.35);
+        } else {
+          englishTokens = Math.ceil(englishChars / 3.6);
+        }
+        const otherTokens = Math.ceil(otherChars / 2.8);
+        return chineseTokens + englishTokens + otherTokens;
       }
       
-      // 其他字符：约3字符=1token
-      const otherTokens = Math.ceil(otherChars / 3);
-      
-      return chineseTokens + englishTokens + otherTokens;
-    }
-    
-    case 'minimax': {
-      // MiniMax使用类似GPT的BPE tokenizer
-      // 根据MiniMax官方文档和测试数据校准：
-      // - 中文：1个汉字 ≈ 1个token（对中文优化）
-      // - 英文单词：平均每个单词约1.3个token
-      // - 英文字符：约3.5字符=1token
-      // - 标点、空格：约3字符=1token
-      
-      // 中文：1字符=1token
-      const chineseTokens = chineseChars;
-      
-      // 英文：优先使用单词数
-      let englishTokens = 0;
-      if (analysis.words > 0) {
-        // 每个英文单词平均约1.3个token
-        englishTokens = Math.round(analysis.words * 1.3);
-      } else {
-        // 约3.5字符=1token
-        englishTokens = Math.ceil(englishChars / 3.5);
+      case 'qwen25':
+      case 'qwenMax':
+      case 'qwen': {
+        const chineseTokens = Math.ceil(chineseChars * 0.95);
+        let englishTokens = 0;
+        if (analysis.words > 0) {
+          englishTokens = Math.round(analysis.words * 1.28);
+        } else {
+          englishTokens = Math.ceil(englishChars / 3.6);
+        }
+        const otherTokens = Math.ceil(otherChars / 2.8);
+        return chineseTokens + englishTokens + otherTokens;
       }
       
-      // 其他字符：约3字符=1token
-      const otherTokens = Math.ceil(otherChars / 3);
+      case 'llama32':
+      case 'llama31':
+      case 'llama2':
+      case 'mistralLarge':
+      case 'mistral': {
+        const chineseTokens = Math.ceil(chineseChars / 1.35);
+        let englishTokens = 0;
+        if (analysis.words > 0) {
+          englishTokens = Math.round(analysis.words * 1.32);
+        } else {
+          englishTokens = Math.ceil(englishChars / 3.8);
+        }
+        const otherTokens = Math.ceil(otherChars / 2.9);
+        return chineseTokens + englishTokens + otherTokens;
+      }
       
-      return chineseTokens + englishTokens + otherTokens;
-    }
-    
-    default: {
-      // 默认使用保守估算
-      const englishTokens = Math.ceil(englishChars / 4);
-      const chineseTokens = Math.ceil(chineseChars / 1.5);
-      const otherTokens = Math.ceil(otherChars / 3);
-      return englishTokens + chineseTokens + otherTokens;
+      case 'deepseekV3':
+      case 'deepseek': {
+        const chineseTokens = Math.ceil(chineseChars * 0.98);
+        let englishTokens = 0;
+        if (analysis.words > 0) {
+          englishTokens = Math.round(analysis.words * 1.31);
+        } else {
+          englishTokens = Math.ceil(englishChars / 3.4);
+        }
+        const otherTokens = Math.ceil(otherChars / 2.7);
+        return chineseTokens + englishTokens + otherTokens;
+      }
+      
+      case 'minimaxPro':
+      case 'minimax': {
+        const chineseTokens = Math.ceil(chineseChars * 1.02);
+        let englishTokens = 0;
+        if (analysis.words > 0) {
+          englishTokens = Math.round(analysis.words * 1.29);
+        } else {
+          englishTokens = Math.ceil(englishChars / 3.4);
+        }
+        const otherTokens = Math.ceil(otherChars / 2.8);
+        return chineseTokens + englishTokens + otherTokens;
+      }
+      
+      default: {
+        // 默认使用保守估算
+        const englishTokens = Math.ceil(englishChars / 4);
+        const chineseTokens = Math.ceil(chineseChars / 1.5);
+        const otherTokens = Math.ceil(otherChars / 3);
+        return englishTokens + chineseTokens + otherTokens;
+      }
     }
   }
 };

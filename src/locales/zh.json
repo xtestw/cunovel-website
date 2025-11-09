@@ -589,21 +589,36 @@
         "gpt4turbo": "GPT-4 Turbo",
         "gpt4o": "GPT-4o",
         "gpt4omini": "GPT-4o mini",
-        "gpt41": "GPT-4.1",
-        "gpt41mini": "GPT-4.1 mini",
+        "gpt4o1": "GPT-4o1 Preview",
+        "gpt4o1mini": "GPT-4o1 Mini",
         "gpt41nano": "GPT-4.1 nano",
         "gpt35turbo": "GPT-3.5 Turbo",
+        "claude35Sonnet": "Claude 3.5 Sonnet",
+        "claude35Haiku": "Claude 3.5 Haiku",
         "claude3Opus": "Claude 3 Opus",
         "claude3Sonnet": "Claude 3 Sonnet",
         "claude3Haiku": "Claude 3 Haiku",
-        "claude": "Claude",
+        "gemini2Flash": "Gemini 2.0 Flash",
+        "gemini15Pro": "Gemini 1.5 Pro",
+        "gemini15Flash": "Gemini 1.5 Flash",
         "geminiPro": "Gemini Pro",
-        "gemini": "Gemini",
+        "qwen25": "通义千问2.5",
+        "qwenMax": "通义千问Max",
         "qwen": "通义千问",
-        "llama2": "Llama 2",
+        "llama32": "Llama 3.2",
+        "llama31": "Llama 3.1",
+        "mistralLarge": "Mistral Large",
         "mistral": "Mistral",
+        "deepseekV3": "DeepSeek V3",
         "deepseek": "DeepSeek",
-        "minimax": "MiniMax"
+        "minimaxPro": "MiniMax Pro",
+        "minimax": "MiniMax",
+        "gemini": "Gemini",
+        "claude": "Claude",
+        "llama2": "Llama 2",
+        "claude": "Claude",
+        "gemini": "Gemini",
+        "llama2": "Llama 2"
       },
       "pricing": {
         "input": "输入",
@@ -627,4 +642,4 @@
       "visionModelsTitle": "AI视觉模型",
       "priceDisclaimer": "声明：Token计算和价格均为预估，具体费用请按照实际用量来评估。"
     }
-  } 
+  }

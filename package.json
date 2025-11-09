@@ -10,6 +10,7 @@
     "i18next": "^24.2.0",
     "i18next-browser-languagedetector": "^8.0.2",
     "js-beautify": "^1.14.11",
+    "js-tiktoken": "^1.0.21",
     "react": "^18.2.0",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^18.2.0",
@@ -21,6 +22,7 @@
     "sql-formatter": "^15.2.0",
     "strip-ansi": "^6.0.1",
     "styled-components": "^6.1.13",
+    "tiktoken": "^1.0.22",
     "web-vitals": "^2.1.0"
   },
   "devDependencies": {
