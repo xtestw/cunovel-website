@@ -447,10 +447,37 @@ const calculatePrice = (tokenCount, pricePerThousand) => {
   return (tokenCount * pricePerThousand / 1000).toFixed(6);
 };
 
+// 模型系列分类
+const MODEL_FAMILIES = {
+  all: 'all',
+  gpt: 'gpt',
+  claude: 'claude',
+  gemini: 'gemini',
+  qwen: 'qwen',
+  deepseek: 'deepseek',
+  minimax: 'minimax',
+  llama: 'llama',
+  mistral: 'mistral'
+};
+
+// 获取模型所属系列
+const getModelFamily = (modelKey) => {
+  if (modelKey.startsWith('gpt')) return MODEL_FAMILIES.gpt;
+  if (modelKey.startsWith('claude')) return MODEL_FAMILIES.claude;
+  if (modelKey.startsWith('gemini')) return MODEL_FAMILIES.gemini;
+  if (modelKey.startsWith('qwen')) return MODEL_FAMILIES.qwen;
+  if (modelKey.startsWith('deepseek')) return MODEL_FAMILIES.deepseek;
+  if (modelKey.startsWith('minimax')) return MODEL_FAMILIES.minimax;
+  if (modelKey.startsWith('llama')) return MODEL_FAMILIES.llama;
+  if (modelKey.startsWith('mistral')) return MODEL_FAMILIES.mistral;
+  return MODEL_FAMILIES.all;
+};
+
 function TextTokens() {
   const { t, i18n } = useTranslation();
   const [text, setText] = useState('');
   const [language, setLanguage] = useState(i18n.language);
+  const [selectedFamily, setSelectedFamily] = useState(MODEL_FAMILIES.all);
 
   // 监听语言变化，强制重新渲染
   useEffect(() => {
@@ -505,7 +532,14 @@ function TextTokens() {
   };
 
   const getSortedModels = () => {
-    const entries = Object.entries(MODEL_CONFIGS);
+    let entries = Object.entries(MODEL_CONFIGS);
+    
+    // 应用系列筛选
+    if (selectedFamily !== MODEL_FAMILIES.all) {
+      entries = entries.filter(([key]) => getModelFamily(key) === selectedFamily);
+    }
+    
+    // 应用排序
     if (!sortConfig.field) {
       return entries;
     }
@@ -575,6 +609,62 @@ function TextTokens() {
 
       <div className="models-section">
         <h3>{t('tokenCalculator.modelsTitle')}</h3>
+        <div className="model-filters">
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.all ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.all)}
+          >
+            {t('tokenCalculator.filters.all')}
+          </button>
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.gpt ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.gpt)}
+          >
+            {t('tokenCalculator.filters.gpt')}
+          </button>
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.claude ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.claude)}
+          >
+            {t('tokenCalculator.filters.claude')}
+          </button>
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.gemini ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.gemini)}
+          >
+            {t('tokenCalculator.filters.gemini')}
+          </button>
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.qwen ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.qwen)}
+          >
+            {t('tokenCalculator.filters.qwen')}
+          </button>
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.deepseek ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.deepseek)}
+          >
+            {t('tokenCalculator.filters.deepseek')}
+          </button>
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.minimax ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.minimax)}
+          >
+            {t('tokenCalculator.filters.minimax')}
+          </button>
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.llama ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.llama)}
+          >
+            {t('tokenCalculator.filters.llama')}
+          </button>
+          <button
+            className={`filter-btn ${selectedFamily === MODEL_FAMILIES.mistral ? 'active' : ''}`}
+            onClick={() => setSelectedFamily(MODEL_FAMILIES.mistral)}
+          >
+            {t('tokenCalculator.filters.mistral')}
+          </button>
+        </div>
         <div className="models-table-container">
           <table className="models-table">
             <thead>

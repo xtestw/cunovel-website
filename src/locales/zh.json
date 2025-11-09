@@ -640,6 +640,17 @@
         "estimatedOutputPrice": "输出价格预估"
       },
       "visionModelsTitle": "AI视觉模型",
-      "priceDisclaimer": "声明：Token计算和价格均为预估，具体费用请按照实际用量来评估。"
+      "priceDisclaimer": "声明：Token计算和价格均为预估，具体费用请按照实际用量来评估。",
+      "filters": {
+        "all": "全部",
+        "gpt": "GPT",
+        "claude": "Claude",
+        "gemini": "Gemini",
+        "qwen": "Qwen",
+        "deepseek": "DeepSeek",
+        "minimax": "MiniMax",
+        "llama": "Llama",
+        "mistral": "Mistral"
+      }
     }
   }

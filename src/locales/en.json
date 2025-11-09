@@ -612,7 +612,18 @@
       "estimatedOutputPrice": "Estimated Output Price"
     },
     "visionModelsTitle": "AI Vision Models",
-    "priceDisclaimer": "Disclaimer: Token calculation and pricing are estimates. Actual costs should be evaluated based on actual usage."
+    "priceDisclaimer": "Disclaimer: Token calculation and pricing are estimates. Actual costs should be evaluated based on actual usage.",
+    "filters": {
+      "all": "All",
+      "gpt": "GPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "qwen": "Qwen",
+      "deepseek": "DeepSeek",
+      "minimax": "MiniMax",
+      "llama": "Llama",
+      "mistral": "Mistral"
+    }
   },
   "chromePlugin": {
     "title": "Chrome Extension Installation Guide",
