@@ -4,6 +4,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Base64Converter from './tools/Base64Converter';
 import UrlConverter from './tools/UrlConverter/UrlConverter';
 import TimeStamp from './tools/TimeStamp/TimeStamp';
+import CronExpression from './tools/CronExpression/CronExpression';
 import TextCounter from './tools/TextCounter';
 import ImageNav from './tools/ImageNav/ImageNav';
 import JsonFormatter from './tools/JsonFormatter/JsonFormatter';
@@ -49,7 +50,8 @@ function Tools() {
       key: 'time',
       label: t('nav.categories.time'),
       tools: [
-        { key: 'timestamp', label: t('nav.tools.time.timestamp'), component: TimeStamp }
+        { key: 'timestamp', label: t('nav.tools.time.timestamp'), component: TimeStamp },
+        { key: 'cron', label: t('nav.tools.time.cron.label'), component: CronExpression }
       ]
     },
     {

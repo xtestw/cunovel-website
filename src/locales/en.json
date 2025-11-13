@@ -21,7 +21,106 @@
         "compare": "JSON Compare"
       },
       "time": {
-        "timestamp": "Timestamp Converter"
+        "timestamp": "Timestamp Converter",
+        "cron": {
+          "label": "Cron Expression",
+          "title": "Cron Expression Generator & Explainer",
+          "description": "Generate and explain Cron expressions for scheduled tasks",
+          "modes": {
+            "generate": "Generate Cron Expression",
+            "explain": "Explain Cron Expression"
+          },
+          "generate": {
+            "title": "Generate Cron Expression"
+          },
+          "explain": {
+            "title": "Explain Cron Expression",
+            "inputLabel": "Enter Cron Expression",
+            "resultLabel": "Explanation"
+          },
+          "presets": {
+            "label": "Common Presets",
+            "everyMinute": "Every Minute",
+            "everyHour": "Every Hour",
+            "everyDay": "Every Day",
+            "everyWeek": "Every Week",
+            "everyMonth": "Every Month",
+            "workdays": "Workdays (Mon-Fri 9:00 AM)",
+            "weekends": "Weekends (Sat-Sun 9:00 AM)"
+          },
+          "fields": {
+            "minute": "Minute",
+            "hour": "Hour",
+            "dayOfMonth": "Day of Month",
+            "month": "Month",
+            "dayOfWeek": "Day of Week",
+            "minuteHint": "0-59 or *",
+            "hourHint": "0-23 or *",
+            "dayOfMonthHint": "1-31 or *",
+            "monthHint": "1-12 or *",
+            "dayOfWeekHint": "0-6 (0=Sunday) or *"
+          },
+          "result": {
+            "label": "Generated Cron Expression"
+          },
+          "buttons": {
+            "copy": "Copy",
+            "explain": "Explain"
+          },
+          "explanation": {
+            "minute": {
+              "every": "Every minute",
+              "interval": "Every {{interval}} minutes",
+              "range": "From minute {{start}} to {{end}}",
+              "specific": "At minute {{values}}"
+            },
+            "hour": {
+              "every": "Every hour",
+              "interval": "Every {{interval}} hours",
+              "range": "From {{start}}:00 to {{end}}:00",
+              "specific": "At {{values}}:00"
+            },
+            "dayOfMonth": {
+              "every": "Every day",
+              "any": "Any day",
+              "interval": "Every {{interval}} days",
+              "range": "From day {{start}} to {{end}}",
+              "specific": "On day {{values}}"
+            },
+            "month": {
+              "every": "Every month",
+              "interval": "Every {{interval}} months",
+              "range": "From month {{start}} to {{end}}",
+              "specific": "In month {{values}}"
+            },
+            "dayOfWeek": {
+              "every": "Every day of the week",
+              "any": "Any day of the week",
+              "interval": "Every {{interval}} weeks",
+              "range": "From day {{start}} to {{end}}",
+              "specific": "On day {{values}}"
+            }
+          },
+          "errors": {
+            "empty": "Please enter a Cron expression",
+            "invalid": "Invalid Cron expression format",
+            "invalidFormat": "Invalid Cron expression format. Should be 5 fields: minute hour day month weekday"
+          },
+          "info": {
+            "title": "Cron Expression Guide",
+            "format": "A Cron expression consists of 5 fields separated by spaces:",
+            "asterisk": "Match all possible values",
+            "question": "No specific value (only for day or weekday)",
+            "dash": "Specify a range, e.g., 1-5",
+            "comma": "Specify multiple values, e.g., 1,3,5",
+            "slash": "Specify an interval, e.g., */5 means every 5 units"
+          },
+          "seo": {
+            "title": "Cron Expression Generator & Explainer | Online Scheduled Task Tool - CUTool",
+            "description": "Free online Cron expression generator and explainer. Generate and explain Cron expressions for scheduled tasks. Features common presets, real-time validation, and detailed explanations.",
+            "keywords": "cron expression,cron generator,cron explainer,scheduled task,task scheduler,cron tool,online cron tool,linux cron,unix cron"
+          }
+        }
       },
       "text": {
         "compare": "Text Compare",

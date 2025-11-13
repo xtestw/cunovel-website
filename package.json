@@ -50,6 +50,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:3000": "PORT=3000 react-scripts start",
+    "start:3001": "PORT=3001 react-scripts start",
+    "start:8080": "PORT=8080 react-scripts start",
     "build": "DISABLE_ESLINT_PLUGIN=true CI=false PUBLIC_URL=/ GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
