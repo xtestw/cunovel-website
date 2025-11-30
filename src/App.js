@@ -178,24 +178,37 @@ function AppContent() {
               >
                 {t('common.tokenCalculator')}
               </NavLink>
-              <a 
-                href="https://chromewebstore.google.com/detail/cutool/pnadcjmfdflpblaogepdpeooialeelno?hl=en-US&utm_source=ext_sidebar"
-                className="nav-item chrome-plugin"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Chrome 插件
-                <span className="external-link-icon">↗</span>
-              </a>
-              <a 
-                href="https://plugins.jetbrains.com/plugin/26245-cutool?noRedirect=true"
-                className="nav-item idea-plugin"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                IDEA 插件
-                <span className="external-link-icon">↗</span>
-              </a>
+              <div className="nav-item nav-item-dropdown">
+                <div
+                  className={`nav-item-link ${location.pathname.startsWith('/chrome-plugin') ? 'active' : ''}`}
+                  style={{
+                    color: location.pathname.startsWith('/chrome-plugin') ? '#1890ff' : '#595959',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {t('common.plugins')}
+                </div>
+                <div className="nav-dropdown-menu">
+                  <a 
+                    href="https://chromewebstore.google.com/detail/cutool/pnadcjmfdflpblaogepdpeooialeelno?hl=en-US&utm_source=ext_sidebar"
+                    className="nav-dropdown-item"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t('common.chromePlugin')}
+                    <span className="external-link-icon">↗</span>
+                  </a>
+                  <a 
+                    href="https://plugins.jetbrains.com/plugin/26245-cutool?noRedirect=true"
+                    className="nav-dropdown-item"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t('common.ideaPlugin')}
+                    <span className="external-link-icon">↗</span>
+                  </a>
+                </div>
+              </div>
             </nav>
             <div className="right-area">
               <LanguageSwitcher />

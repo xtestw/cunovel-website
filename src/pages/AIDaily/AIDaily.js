@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { API_BASE_URL } from '../../config/api';
 import './AIDaily.css';
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3003/api';
 
 const AIDaily = () => {
   const { t, i18n } = useTranslation();

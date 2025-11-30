@@ -240,7 +240,7 @@ html, body {
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 140px;
+  min-width: 180px;
   background: #ffffff;
   border-radius: 6px;
   box-shadow: 0 3px 6px -4px rgba(0,0,0,0.12), 
@@ -262,7 +262,9 @@ html, body {
 }
 
 .nav-dropdown-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 10px 16px;
   color: #595959;
   font-size: 14px;
@@ -273,6 +275,10 @@ html, body {
 
 .nav-dropdown-item:hover {
   background: #f5f7fa;
+  color: #1890ff;
+}
+
+.nav-dropdown-item:hover .external-link-icon {
   color: #1890ff;
 }
 

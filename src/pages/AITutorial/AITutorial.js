@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { API_BASE_URL } from '../../config/api';
 import './AITutorial.css';
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3003/api';
 
 const AITutorial = () => {
   const { i18n } = useTranslation();

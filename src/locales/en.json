@@ -6,8 +6,10 @@
     "todayDaily": "Today's Daily",
     "historyDaily": "History Daily",
     "tokenCalculator": "AI Token Calculator",
-    "feedback": "Feedback",
-    "chromePlugin": "Chrome Extension"
+    "plugins": "Plugins",
+    "chromePlugin": "Chrome Extension",
+    "ideaPlugin": "IDEA Plugin",
+    "feedback": "Feedback"
   },
   "nav": {
     "categories": {

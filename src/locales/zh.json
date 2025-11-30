@@ -7,8 +7,10 @@
       "historyDaily": "历史日报",
       "aiTutorial": "AI 教程",
       "tokenCalculator": "AI Token计算器",
-      "feedback": "反馈",
-      "chromePlugin": "Chrome 插件"
+      "plugins": "插件",
+      "chromePlugin": "Chrome 插件",
+      "ideaPlugin": "IDEA 插件",
+      "feedback": "反馈"
     },
     "nav": {
       "categories": {
