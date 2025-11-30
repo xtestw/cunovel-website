@@ -2,6 +2,10 @@
     "common": {
       "toolbox": "工具箱",
       "aiNav": "AI 导航",
+      "aiDaily": "AI 日报",
+      "todayDaily": "今日日报",
+      "historyDaily": "历史日报",
+      "aiTutorial": "AI 教程",
       "tokenCalculator": "AI Token计算器",
       "feedback": "反馈",
       "chromePlugin": "Chrome 插件"
@@ -672,6 +676,36 @@
           "extensions": "在地址栏输入 chrome://extensions/",
           "developer": "开启开发者模式",
           "load": "点击加载已解压的扩展程序"
+        }
+      }
+    },
+    "aiDaily": {
+      "loading": "加载中...",
+      "error": "加载失败",
+      "today": {
+        "title": "今日AI日报",
+        "summary": "今日概要",
+        "news": "今日新闻",
+        "empty": "今日暂无日报",
+        "viewDetails": "查看详情 →",
+        "viewOriginal": "查看原文 →"
+      },
+      "history": {
+        "title": "历史日报",
+        "empty": "暂无历史日报",
+        "newsCount": "{{count}} 条新闻",
+        "viewDetails": "查看详情 →"
+      },
+      "seo": {
+        "today": {
+          "title": "AI日报 - 每日AI行业新闻动态 | CUTool",
+          "description": "每日AI行业新闻和动态，涵盖OpenAI、Google、Meta等公司最新AI技术突破、产品发布和行业趋势，帮助您及时了解人工智能领域的最新发展",
+          "keywords": "AI日报,人工智能新闻,AI动态,AI资讯,OpenAI,GPT,Claude,Gemini,AI技术,机器学习,深度学习,AI行业趋势"
+        },
+        "history": {
+          "title": "历史日报 - AI日报 | CUTool",
+          "description": "查看AI行业历史日报，了解过去的人工智能行业新闻和动态",
+          "keywords": "AI历史日报,AI新闻历史,人工智能历史,AI行业动态历史"
         }
       }
     },

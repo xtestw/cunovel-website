@@ -2,6 +2,9 @@
   "common": {
     "toolbox": "Toolbox",
     "aiNav": "AI Navigation",
+    "aiDaily": "AI Daily",
+    "todayDaily": "Today's Daily",
+    "historyDaily": "History Daily",
     "tokenCalculator": "AI Token Calculator",
     "feedback": "Feedback",
     "chromePlugin": "Chrome Extension"
@@ -749,6 +752,36 @@
         "extensions": "Enter chrome://extensions/ in address bar",
         "developer": "Enable developer mode",
         "load": "Click Load unpacked"
+      }
+    }
+  },
+  "aiDaily": {
+    "loading": "Loading...",
+    "error": "Failed to load",
+    "today": {
+      "title": "Today's AI Daily",
+      "summary": "Today's Summary",
+      "news": "Today's News",
+      "empty": "No daily report available today",
+      "viewDetails": "View Details →",
+      "viewOriginal": "View Original →"
+    },
+    "history": {
+      "title": "History Daily",
+      "empty": "No history daily available",
+      "newsCount": "{{count}} news",
+      "viewDetails": "View Details →"
+    },
+    "seo": {
+      "today": {
+        "title": "AI Daily - Daily AI Industry News | CUTool",
+        "description": "Daily AI industry news and updates, covering the latest AI technology breakthroughs, product launches, and industry trends from OpenAI, Google, Meta and other companies, helping you stay up-to-date with the latest developments in artificial intelligence",
+        "keywords": "AI daily,artificial intelligence news,AI updates,AI information,OpenAI,GPT,Claude,Gemini,AI technology,machine learning,deep learning,AI industry trends"
+      },
+      "history": {
+        "title": "History Daily - AI Daily | CUTool",
+        "description": "View AI industry history daily reports, learn about past artificial intelligence industry news and updates",
+        "keywords": "AI history daily,AI news history,artificial intelligence history,AI industry trends history"
       }
     }
   }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Helmet } from 'react-helmet';
-import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import i18n from './i18n';
@@ -10,6 +10,11 @@ import LanguageSwitcher from './components/LanguageSwitcher';
 import TokenCalculator from './pages/TokenCalculator/TokenCalculator';
 import TextTokens from './pages/TokenCalculator/TextTokens';
 import ImageTokens from './pages/TokenCalculator/ImageTokens';
+import AIDaily from './pages/AIDaily/AIDaily';
+import AIDailyDetail from './pages/AIDaily/AIDailyDetail';
+import AIDailyHistory from './pages/AIDaily/AIDailyHistory';
+import NewsDetail from './pages/AIDaily/NewsDetail';
+import AITutorial from './pages/AITutorial/AITutorial';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -20,21 +25,14 @@ const Content = styled.div`
   padding: 0;
 `;
 
-function App() {
+function AppContent() {
   const { t } = useTranslation();
+  const location = useLocation();
   const feedbackEmail = 'xuwei8091@gmail.com';
   const [hasAds, setHasAds] = useState(false);
-  const [languageKey, setLanguageKey] = useState(i18n.language);
   const adInitialized = useRef(false);
 
-  useEffect(() => {
-    const handleLanguageChange = (lng) => {
-      setLanguageKey(lng);
-    };
-
-    i18n.on('languageChanged', handleLanguageChange);
-    return () => i18n.off('languageChanged', handleLanguageChange);
-  }, []);
+  // Language change is handled by App component's Router key
 
   // 初始化广告并检查是否加载
   useEffect(() => {
@@ -104,8 +102,7 @@ function App() {
   }, []);
 
   return (
-    <Router key={languageKey}>
-      <div className="App">
+    <div className="App">
         <Helmet>
           <meta name="sogou_site_verification" content="0ZZ5kf0BG4" />
           <meta name="360-site-verification" content="6d82a11803ef6749aad7340caf7f9bb4" />
@@ -135,6 +132,43 @@ function App() {
               >
                 {t('common.aiNav')}
               </NavLink>
+              <div className="nav-item nav-item-dropdown">
+                <NavLink
+                  to="/ai-daily"
+                  className={`nav-item-link ${location.pathname.startsWith('/ai-daily') ? 'active' : ''}`}
+                  style={{
+                    color: location.pathname.startsWith('/ai-daily') ? '#1890ff' : '#595959'
+                  }}
+                >
+                  {t('common.aiDaily')}
+                </NavLink>
+                <div className="nav-dropdown-menu">
+                  <NavLink
+                    to="/ai-daily"
+                    end={false}
+                    className={({ isActive }) => {
+                      // 完全自定义激活判断，忽略 NavLink 的默认 isActive
+                      const isTodayActive = location.pathname === '/ai-daily' || 
+                        (location.pathname.startsWith('/ai-daily/') && 
+                         location.pathname !== '/ai-daily/history' &&
+                         location.pathname.match(/^\/ai-daily\/\d{4}-\d{2}-\d{2}/));
+                      return `nav-dropdown-item ${isTodayActive ? 'active' : ''}`;
+                    }}
+                  >
+                    {t('common.todayDaily')}
+                  </NavLink>
+                  <NavLink
+                    to="/ai-daily/history"
+                    className={({ isActive }) => {
+                      // 完全自定义激活判断
+                      const isHistoryActive = location.pathname === '/ai-daily/history';
+                      return `nav-dropdown-item ${isHistoryActive ? 'active' : ''}`;
+                    }}
+                  >
+                    {t('common.historyDaily')}
+                  </NavLink>
+                </div>
+              </div>
               <NavLink
                 to="/token-calculator/text"
                 className="nav-item"
@@ -183,6 +217,11 @@ function App() {
               <Route index element={<Navigate to="/tools/json/formatter" replace />} />
             </Route>
             <Route path="/ai-nav" element={<AINav />} />
+          <Route path="/ai-daily" element={<AIDaily />} />
+          <Route path="/ai-daily/history" element={<AIDailyHistory />} />
+          <Route path="/ai-daily/:date" element={<AIDailyDetail />} />
+          <Route path="/ai-daily/:date/news/:newsId" element={<NewsDetail />} />
+          <Route path="/ai-tutorial" element={<AITutorial />} />
             <Route path="/token-calculator" element={<TokenCalculator />}>
               <Route path="text" element={<TextTokens />} />
               <Route path="image" element={<ImageTokens />} />
@@ -218,6 +257,15 @@ function App() {
         </footer>
         <SpeedInsights />
       </div>
+  );
+}
+
+function App() {
+  const languageKey = i18n.language;
+
+  return (
+    <Router key={languageKey}>
+      <AppContent />
     </Router>
   );
 }
