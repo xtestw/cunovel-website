@@ -12,7 +12,7 @@ const getApiBaseUrl = () => {
   
   // 生产环境
   if (hostname === 'cutool.online' || hostname === 'www.cutool.online') {
-    return 'https://api.cutoo.online/api';
+    return 'https://api.cutool.online/api';
   }
   
   // 开发环境（localhost）
