@@ -1,0 +1,23 @@
+# 环境变量文件
+.env
+
+# 日志文件
+logs/
+*.log
+
+# Google 服务账号密钥文件（敏感信息）
+*.json
+!env.example
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 虚拟环境
+venv/
+env/
+ENV/
+
