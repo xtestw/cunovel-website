@@ -772,7 +772,14 @@
       "title": "History Daily",
       "empty": "No history daily available",
       "newsCount": "{{count}} news",
-      "viewDetails": "View Details →"
+      "viewDetails": "View Details →",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "search": "Search",
+      "reset": "Reset",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "pageInfo": "Page {{current}} of {{total}} ({{count}} total)"
     },
     "seo": {
       "today": {

@@ -113,35 +113,84 @@ def get_today_daily():
 def get_history_dailies():
     db = get_db()
     try:
-        today = datetime.now().date()
         # 获取语言参数，默认为中文
         language = request.args.get('lang', 'zh')
         if language not in ['zh', 'en']:
             language = 'zh'
         
-        # 查询最近7天的历史日报
-        history = []
-        for i in range(1, 8):
-            date = today - timedelta(days=i)
-            daily = db.query(AIDaily).filter(
-                AIDaily.date == date,
-                AIDaily.language == language
-            ).first()
-            
-            if daily:
-                # 统计新闻数量（同语言）
-                news_count = db.query(AINews).filter(
-                    AINews.daily_id == daily.id,
-                    AINews.language == language
-                ).count()
-                
-                history.append({
-                    'date': daily.date.strftime('%Y-%m-%d'),
-                    'summary': daily.summary,
-                    'news': [{'title': '...'} for _ in range(news_count)] if news_count > 0 else []
-                })
+        # 获取分页参数
+        page = request.args.get('page', '1')
+        page_size = request.args.get('pageSize', '20')
+        try:
+            page = int(page)
+            page_size = int(page_size)
+            if page < 1:
+                page = 1
+            if page_size < 1 or page_size > 100:
+                page_size = 20
+        except ValueError:
+            page = 1
+            page_size = 20
         
-        return jsonify(history)
+        # 获取日期范围参数
+        start_date = request.args.get('startDate')
+        end_date = request.args.get('endDate')
+        
+        # 构建查询
+        query = db.query(AIDaily).filter(AIDaily.language == language)
+        
+        # 应用日期范围过滤
+        if start_date:
+            try:
+                start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+                query = query.filter(AIDaily.date >= start_date_obj)
+            except ValueError:
+                pass
+        
+        if end_date:
+            try:
+                end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+                query = query.filter(AIDaily.date <= end_date_obj)
+            except ValueError:
+                pass
+        
+        # 按日期降序排序（最新的在前）
+        query = query.order_by(AIDaily.date.desc())
+        
+        # 获取总数
+        total = query.count()
+        
+        # 分页查询
+        offset = (page - 1) * page_size
+        dailies = query.offset(offset).limit(page_size).all()
+        
+        # 构建返回数据
+        history = []
+        for daily in dailies:
+            # 统计新闻数量（同语言）
+            news_count = db.query(AINews).filter(
+                AINews.daily_id == daily.id,
+                AINews.language == language
+            ).count()
+            
+            history.append({
+                'date': daily.date.strftime('%Y-%m-%d'),
+                'summary': daily.summary,
+                'news': [{'title': '...'} for _ in range(news_count)] if news_count > 0 else []
+            })
+        
+        # 计算总页数
+        total_pages = (total + page_size - 1) // page_size if total > 0 else 0
+        
+        return jsonify({
+            'data': history,
+            'pagination': {
+                'page': page,
+                'pageSize': page_size,
+                'total': total,
+                'totalPages': total_pages
+            }
+        })
     except Exception as e:
         app.logger.error(f'Error fetching history dailies: {str(e)}')
         return jsonify({'error': str(e)}), 500

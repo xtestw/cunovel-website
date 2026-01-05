@@ -696,7 +696,14 @@
         "title": "历史日报",
         "empty": "暂无历史日报",
         "newsCount": "{{count}} 条新闻",
-        "viewDetails": "查看详情 →"
+        "viewDetails": "查看详情 →",
+        "startDate": "开始日期",
+        "endDate": "结束日期",
+        "search": "搜索",
+        "reset": "重置",
+        "prevPage": "上一页",
+        "nextPage": "下一页",
+        "pageInfo": "第 {{current}} 页，共 {{total}} 页（共 {{count}} 条）"
       },
       "seo": {
         "today": {
