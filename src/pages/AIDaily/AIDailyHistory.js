@@ -25,6 +25,44 @@ const AIDailyHistory = () => {
     return i18n.language.startsWith('zh') ? 'zh' : 'en';
   };
 
+  // 检测内容是否是 HTML 格式
+  const isHTML = (str) => {
+    if (!str || typeof str !== 'string') return false;
+    // 检查是否包含 HTML 标签
+    const htmlTagPattern = /<\/?[a-z][\s\S]*>/i;
+    return htmlTagPattern.test(str);
+  };
+
+  // 从 HTML 中提取纯文本（不使用 DOM，避免 SSR 问题）
+  const extractTextFromHTML = (html) => {
+    if (!html) return '';
+    // 使用正则表达式移除 HTML 标签
+    return html
+      .replace(/<[^>]*>/g, '') // 移除所有 HTML 标签
+      .replace(/&nbsp;/g, ' ') // 替换 &nbsp;
+      .replace(/&amp;/g, '&') // 替换 &amp;
+      .replace(/&lt;/g, '<') // 替换 &lt;
+      .replace(/&gt;/g, '>') // 替换 &gt;
+      .replace(/&quot;/g, '"') // 替换 &quot;
+      .replace(/&#39;/g, "'") // 替换 &#39;
+      .trim();
+  };
+
+  // 渲染 summary 内容（兼容 HTML 和纯文本，用于历史列表预览）
+  const renderSummaryPreview = (summary) => {
+    if (!summary) return null;
+    // 对于历史列表，只显示纯文本预览，移除 HTML 标签
+    let textContent = '';
+    if (isHTML(summary)) {
+      textContent = extractTextFromHTML(summary);
+    } else {
+      textContent = summary;
+    }
+    // 限制长度用于预览
+    const preview = textContent.length > 150 ? textContent.substring(0, 150) + '...' : textContent;
+    return <p className="history-summary">{preview}</p>;
+  };
+
   useEffect(() => {
     fetchHistoryDailies(1);
   }, [i18n.language]);
@@ -161,9 +199,7 @@ const AIDailyHistory = () => {
                   {historyDailies.map((daily, index) => (
                     <div key={index} className="history-item">
                       <div className="history-date">{daily.date}</div>
-                      {daily.summary && (
-                        <p className="history-summary">{daily.summary}</p>
-                      )}
+                      {renderSummaryPreview(daily.summary)}
                       {daily.news && daily.news.length > 0 && (
                         <div className="history-news-count">
                           {t('aiDaily.history.newsCount', { count: daily.news.length })}

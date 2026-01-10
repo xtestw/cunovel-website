@@ -66,6 +66,57 @@
   margin: 0;
 }
 
+/* HTML 内容样式优化 */
+.summary-content p {
+  margin: 0 0 16px 0;
+  color: #666;
+  line-height: 1.8;
+}
+
+.summary-content p:last-child {
+  margin-bottom: 0;
+}
+
+.summary-content h3 {
+  font-size: 18px;
+  color: #333;
+  margin: 20px 0 12px 0;
+  font-weight: 600;
+  border-bottom: 1px solid #e8e8e8;
+  padding-bottom: 8px;
+}
+
+.summary-content h3:first-child {
+  margin-top: 0;
+}
+
+.summary-content strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.summary-content ul,
+.summary-content ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.summary-content li {
+  margin: 8px 0;
+  line-height: 1.8;
+}
+
+.summary-content a {
+  color: #1890ff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.summary-content a:hover {
+  color: #40a9ff;
+  text-decoration: underline;
+}
+
 .news-list {
   margin-top: 32px;
 }

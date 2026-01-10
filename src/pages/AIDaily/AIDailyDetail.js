@@ -18,6 +18,24 @@ const AIDailyDetail = () => {
     return i18n.language.startsWith('zh') ? 'zh' : 'en';
   };
 
+  // 检测内容是否是 HTML 格式
+  const isHTML = (str) => {
+    if (!str || typeof str !== 'string') return false;
+    // 检查是否包含 HTML 标签
+    const htmlTagPattern = /<\/?[a-z][\s\S]*>/i;
+    return htmlTagPattern.test(str);
+  };
+
+  // 渲染 summary 内容（兼容 HTML 和纯文本）
+  const renderSummary = (summary) => {
+    if (!summary) return null;
+    if (isHTML(summary)) {
+      return <div className="summary-content" dangerouslySetInnerHTML={{ __html: summary }} />;
+    } else {
+      return <div className="summary-content">{summary}</div>;
+    }
+  };
+
   useEffect(() => {
     fetchDailyDetail();
   }, [date, i18n.language]);
@@ -82,7 +100,7 @@ const AIDailyDetail = () => {
             {daily.summary && (
               <div className="daily-summary">
                 <h2 className="summary-title">日报概要</h2>
-                <p className="summary-content">{daily.summary}</p>
+                {renderSummary(daily.summary)}
               </div>
             )}
 
