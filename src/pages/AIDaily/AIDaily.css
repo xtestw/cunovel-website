@@ -165,6 +165,9 @@
   color: #666;
   line-height: 1.6;
   margin: 0 0 12px 0;
+  white-space: pre-wrap; /* 保留换行和空格 */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .news-link-button {
@@ -427,7 +430,15 @@
   font-size: 16px;
   color: #666;
   line-height: 1.8;
-  margin: 0;
+  margin: 0 0 12px 0;
+}
+
+.news-detail-summary p:last-child {
+  margin-bottom: 0;
+}
+
+.news-detail-summary br {
+  line-height: 1.8;
 }
 
 .news-detail-content {
@@ -435,16 +446,21 @@
   color: #333;
   line-height: 1.8;
   margin-bottom: 32px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .news-detail-content h1,
 .news-detail-content h2,
 .news-detail-content h3,
-.news-detail-content h4 {
+.news-detail-content h4,
+.news-detail-content h5,
+.news-detail-content h6 {
   color: #333;
   margin-top: 24px;
   margin-bottom: 16px;
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .news-detail-content h1 {
@@ -459,18 +475,51 @@
   font-size: 20px;
 }
 
+.news-detail-content h4 {
+  font-size: 18px;
+}
+
+.news-detail-content h5 {
+  font-size: 16px;
+}
+
+.news-detail-content h6 {
+  font-size: 14px;
+}
+
 .news-detail-content p {
-  margin-bottom: 16px;
+  margin: 0 0 16px 0;
+  line-height: 1.8;
+  color: #333;
+}
+
+.news-detail-content p:last-child {
+  margin-bottom: 0;
+}
+
+.news-detail-content br {
+  line-height: 1.8;
 }
 
 .news-detail-content ul,
 .news-detail-content ol {
   margin: 16px 0;
   padding-left: 24px;
+  line-height: 1.8;
 }
 
 .news-detail-content li {
   margin: 8px 0;
+  line-height: 1.8;
+}
+
+.news-detail-content blockquote {
+  margin: 16px 0;
+  padding: 12px 20px;
+  border-left: 4px solid #1890ff;
+  background: #f5f5f5;
+  font-style: italic;
+  color: #666;
 }
 
 .news-detail-content pre {

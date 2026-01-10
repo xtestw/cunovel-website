@@ -18,6 +18,50 @@ const NewsDetail = () => {
     return i18n.language.startsWith('zh') ? 'zh' : 'en';
   };
 
+  // 检测内容是否是 HTML 格式
+  const isHTML = (str) => {
+    if (!str || typeof str !== 'string') return false;
+    // 检查是否包含 HTML 标签
+    const htmlTagPattern = /<\/?[a-z][\s\S]*>/i;
+    return htmlTagPattern.test(str);
+  };
+
+  // 格式化纯文本内容（保留换行）
+  const formatPlainText = (text) => {
+    if (!text) return '';
+    // 将换行符转换为 <br>，多个连续换行转换为段落
+    return text
+      .split(/\n\s*\n/)  // 按双换行分割段落
+      .map(paragraph => paragraph.trim())
+      .filter(paragraph => paragraph.length > 0)
+      .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
+      .join('');
+  };
+
+  // 渲染内容（兼容 HTML 和纯文本）
+  const renderContent = (content) => {
+    if (!content) return null;
+    if (isHTML(content)) {
+      return <div className="news-detail-content" dangerouslySetInnerHTML={{ __html: content }} />;
+    } else {
+      // 纯文本需要格式化
+      const formattedHTML = formatPlainText(content);
+      return <div className="news-detail-content" dangerouslySetInnerHTML={{ __html: formattedHTML }} />;
+    }
+  };
+
+  // 渲染摘要（兼容 HTML 和纯文本）
+  const renderSummary = (summary) => {
+    if (!summary) return null;
+    if (isHTML(summary)) {
+      return <div dangerouslySetInnerHTML={{ __html: summary }} />;
+    } else {
+      // 纯文本需要格式化
+      const formattedHTML = formatPlainText(summary);
+      return <div dangerouslySetInnerHTML={{ __html: formattedHTML }} />;
+    }
+  };
+
   useEffect(() => {
     fetchNewsDetail();
   }, [date, newsId, i18n.language]);
@@ -87,16 +131,11 @@ const NewsDetail = () => {
             
             {news.summary && (
               <div className="news-detail-summary">
-                <p>{news.summary}</p>
+                {renderSummary(news.summary)}
               </div>
             )}
 
-            {news.content && (
-              <div 
-                className="news-detail-content"
-                dangerouslySetInnerHTML={{ __html: news.content }}
-              />
-            )}
+            {news.content && renderContent(news.content)}
 
             {news.source && (
               <div className="news-detail-source">

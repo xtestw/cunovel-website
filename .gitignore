@@ -99,4 +99,18 @@ dist
 .pnp.*
 
 # vercel
-.vercel 
+.vercel
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/ 

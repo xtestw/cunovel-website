@@ -2,7 +2,6 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-import re
 import os
 import sys
 
@@ -33,8 +32,13 @@ class RSSFetcher:
             print(f"Error fetching feed {feed_url}: {str(e)}")
             return None
     
-    def clean_html(self, html_content):
-        """清理HTML内容，提取纯文本"""
+    def clean_html(self, html_content, preserve_formatting=False):
+        """清理HTML内容，提取文本或格式化HTML
+        
+        Args:
+            html_content: 原始HTML内容
+            preserve_formatting: 是否保留格式化（用于content），False则提取纯文本（用于summary）
+        """
         if not html_content:
             return ''
         
@@ -44,19 +48,77 @@ class RSSFetcher:
         
         soup = BeautifulSoup(html_content, 'html.parser')
         # 移除script和style标签
-        for script in soup(["script", "style", "iframe"]):
+        for script in soup(["script", "style", "iframe", "noscript"]):
             script.decompose()
         
-        # 提取文本
-        text = soup.get_text()
-        
-        # 清理多余空白和换行
-        lines = (line.strip() for line in text.splitlines())
-        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-        text = ' '.join(chunk for chunk in chunks if chunk)
-        
-        # 限制长度，但保留更多内容用于content
-        return text[:5000]  # 增加长度限制
+        if preserve_formatting:
+            # 保留格式化，转换为干净的HTML
+            # 保留段落、列表、标题等结构标签
+            allowed_tags = ['p', 'br', 'strong', 'em', 'b', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+                          'ul', 'ol', 'li', 'blockquote', 'a', 'code', 'pre']
+            
+            # 清理所有不允许的标签，但保留文本内容
+            for tag in soup.find_all(True):
+                if tag.name not in allowed_tags:
+                    tag.unwrap()  # 移除标签但保留内容
+            
+            # 确保段落之间有合理的间距
+            for p in soup.find_all('p'):
+                if not p.get_text(strip=True):
+                    p.decompose()  # 移除空段落
+            
+            # 限制长度
+            html_str = str(soup)
+            if len(html_str) > 5000:
+                # 如果太长，截取前5000字符，但要确保HTML标签完整
+                truncated = html_str[:5000]
+                # 尝试找到最后一个完整的标签
+                last_tag_end = truncated.rfind('>')
+                if last_tag_end > 0:
+                    truncated = truncated[:last_tag_end + 1] + '...'
+                return truncated
+            return html_str
+        else:
+            # 提取纯文本，但保留段落结构（用换行分隔）
+            # 先处理段落
+            for p in soup.find_all(['p', 'div', 'br']):
+                if p.name == 'br':
+                    p.replace_with('\n')
+                else:
+                    p_text = p.get_text(strip=True)
+                    if p_text:
+                        p.replace_with(p_text + '\n\n')
+            
+            # 处理列表
+            for ul in soup.find_all(['ul', 'ol']):
+                items = []
+                for li in ul.find_all('li', recursive=False):
+                    items.append('• ' + li.get_text(strip=True))
+                if items:
+                    ul.replace_with('\n'.join(items) + '\n\n')
+            
+            # 提取文本
+            text = soup.get_text()
+            
+            # 清理多余空白，但保留段落分隔
+            lines = []
+            for line in text.splitlines():
+                line = line.strip()
+                if line:
+                    lines.append(line)
+            
+            # 合并连续的短行（可能是被错误分割的）
+            merged_lines = []
+            for line in lines:
+                if merged_lines and len(line) < 50 and not line.endswith(('.', '。', '!', '！', '?', '？')):
+                    merged_lines[-1] += ' ' + line
+                else:
+                    merged_lines.append(line)
+            
+            text = '\n\n'.join(merged_lines)
+            
+            # 限制长度
+            return text[:5000]
     
     def extract_content(self, entry):
         """从RSS条目中提取内容"""
@@ -97,7 +159,8 @@ class RSSFetcher:
             if '<![CDATA[' in content:
                 content = content.replace('<![CDATA[', '').replace(']]>', '')
         
-        return self.clean_html(content)
+        # 保留格式化（HTML格式）
+        return self.clean_html(content, preserve_formatting=True)
     
     def extract_summary(self, entry):
         """从RSS条目中提取摘要"""
@@ -114,13 +177,21 @@ class RSSFetcher:
             # 移除CDATA标签
             if '<![CDATA[' in summary:
                 summary = summary.replace('<![CDATA[', '').replace(']]>', '')
-            # 清理HTML标签，只保留文本
-            soup = BeautifulSoup(summary, 'html.parser')
-            summary = soup.get_text()
-            # 清理多余空白
-            summary = ' '.join(summary.split())
+            # 使用 clean_html 提取格式化的纯文本（保留段落结构）
+            summary = self.clean_html(summary, preserve_formatting=False)
         
-        return summary[:500] if summary else ''  # 限制长度
+        # 限制长度，但保留换行
+        if summary and len(summary) > 500:
+            # 在500字符附近找合适的截断点（句号、换行等）
+            truncated = summary[:500]
+            # 尝试在句号、问号、感叹号或换行处截断
+            for delimiter in ['。', '.', '!', '！', '?', '？', '\n']:
+                last_pos = truncated.rfind(delimiter)
+                if last_pos > 400:  # 确保不会截得太短
+                    truncated = truncated[:last_pos + 1]
+                    break
+            return truncated + '...' if len(summary) > 500 else summary
+        return summary if summary else ''
     
     def process_feed(self, feed_info):
         """处理单个RSS订阅源"""
@@ -132,7 +203,6 @@ class RSSFetcher:
             return []
         
         language = feed_info['language']
-        today = datetime.now().date()
         daily_id = self.db.get_today_daily(language)
         
         news_list = []
