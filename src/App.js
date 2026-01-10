@@ -252,9 +252,9 @@ function AppContent() {
               <Route path="image" element={<ImageTokens />} />
               <Route index element={<Navigate to="/token-calculator/text" replace />} />
             </Route>
-            <Route path="/" element={<Navigate to="/tools/json/formatter" replace />} />
+            <Route path="/" element={<Navigate to="/ai-daily" replace />} />
             <Route path="/chrome-plugin" element={<ChromePlugin />} />
-            <Route path="*" element={<Navigate to="/tools/json/formatter" replace />} />
+            <Route path="*" element={<Navigate to="/ai-daily" replace />} />
           </Routes>
         </Content>
         <footer className={`App-footer ${!hasAds ? 'no-ads' : ''}`}>
