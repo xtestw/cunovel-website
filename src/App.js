@@ -124,15 +124,6 @@ function AppContent() {
               >
                 {t('common.toolbox')}
               </NavLink>
-              <NavLink
-                to="/ai-nav"
-                className="nav-item"
-                style={({ isActive }) => ({
-                  color: isActive ? '#1890ff' : '#595959'
-                })}
-              >
-                {t('common.aiNav')}
-              </NavLink>
               <div className="nav-item nav-item-dropdown">
                 <NavLink
                   to="/ai-daily"
@@ -171,6 +162,15 @@ function AppContent() {
                 </div>
               </div>
               <NavLink
+                to="/prompt-tutorial/intro"
+                className="nav-item"
+                style={({ isActive }) => ({
+                  color: isActive ? '#1890ff' : '#595959'
+                })}
+              >
+                {t('common.promptTutorial')}
+              </NavLink>
+              <NavLink
                 to="/token-calculator/text"
                 className="nav-item"
                 style={({ isActive }) => ({
@@ -180,13 +180,13 @@ function AppContent() {
                 {t('common.tokenCalculator')}
               </NavLink>
               <NavLink
-                to="/prompt-tutorial/intro"
+                to="/ai-nav"
                 className="nav-item"
                 style={({ isActive }) => ({
                   color: isActive ? '#1890ff' : '#595959'
                 })}
               >
-                {t('common.promptTutorial')}
+                {t('common.aiNav')}
               </NavLink>
               <div className="nav-item nav-item-dropdown">
                 <div
