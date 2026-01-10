@@ -15,6 +15,7 @@ import AIDailyDetail from './pages/AIDaily/AIDailyDetail';
 import AIDailyHistory from './pages/AIDaily/AIDailyHistory';
 import NewsDetail from './pages/AIDaily/NewsDetail';
 import AITutorial from './pages/AITutorial/AITutorial';
+import PromptTutorial from './pages/PromptTutorial/PromptTutorial';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -178,6 +179,15 @@ function AppContent() {
               >
                 {t('common.tokenCalculator')}
               </NavLink>
+              <NavLink
+                to="/prompt-tutorial/intro"
+                className="nav-item"
+                style={({ isActive }) => ({
+                  color: isActive ? '#1890ff' : '#595959'
+                })}
+              >
+                {t('common.promptTutorial')}
+              </NavLink>
               <div className="nav-item nav-item-dropdown">
                 <div
                   className={`nav-item-link ${location.pathname.startsWith('/chrome-plugin') ? 'active' : ''}`}
@@ -234,7 +244,9 @@ function AppContent() {
           <Route path="/ai-daily/history" element={<AIDailyHistory />} />
           <Route path="/ai-daily/:date" element={<AIDailyDetail />} />
           <Route path="/ai-daily/:date/news/:newsId" element={<NewsDetail />} />
-          <Route path="/ai-tutorial" element={<AITutorial />} />
+            <Route path="/ai-tutorial" element={<AITutorial />} />
+            <Route path="/prompt-tutorial" element={<Navigate to="/prompt-tutorial/intro" replace />} />
+            <Route path="/prompt-tutorial/*" element={<PromptTutorial />} />
             <Route path="/token-calculator" element={<TokenCalculator />}>
               <Route path="text" element={<TextTokens />} />
               <Route path="image" element={<ImageTokens />} />
