@@ -2,7 +2,7 @@
 sidebar_position: 70
 ---
 
-# 🟢 Summarizing Text
+# Summarizing Text
 
 ChatGPT is notorious for producing content in the blink of an eye, and has proven to be a huge time saver.
 For content already written, ChatGPT can also save us time by helping us digest long torturous texts.  

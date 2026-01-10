@@ -1,7 +1,7 @@
 ---
 sidebar_position: 5
 ---
-# 🟢 质量增强器
+# 质量增强器
 
 “Quality boosters”(@oppenlaender2022taxonomy)是添加到提示中以提高生成图像的某些非特定样式质量的术语。例如，“amazing”、“beautiful”和“good quality”都是质量增强器，可以用于改善生成图像的质量。
 

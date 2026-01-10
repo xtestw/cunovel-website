@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# 🟢 用GPT-3构建ChatGPT
+# 用GPT-3构建ChatGPT
 
 import Skippy from '@site/docs/assets/skippy_chatbot.png'    
 import SkippyHeader from '@site/docs/assets/skippy_chatbot_header.png'    

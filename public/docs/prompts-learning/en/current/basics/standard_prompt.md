@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# 🟢 A "Standard" Prompt
+# A "Standard" Prompt
 
 We have heard of a few different formats of prompts thus far. 
 Following Kojima et al. (@kojima2022large), we will refer to prompts that consist 

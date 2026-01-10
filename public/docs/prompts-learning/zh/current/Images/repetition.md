@@ -1,7 +1,7 @@
 ---
 sidebar_position: 50
 ---
-# 🟢 重复
+# 重复
 
 在提示中重复相同的词语或者类似短语会导致模型在生成的图片中强调该词语。例如，[@Phillip Isola](https://twitter.com/phillip_isola/status/1532189632217112577) 使用 DALLE 生成了这些瀑布：
 

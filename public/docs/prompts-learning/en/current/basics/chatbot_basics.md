@@ -2,7 +2,7 @@
 sidebar_position: 80
 ---
 
-# 🟢 Chatbot Basics
+# Chatbot Basics
 
 One of the most common ways prompting can be useful is when interacting with the numerous chatbots available to the public, such as [ChatGPT](http://chat.openai.com). Note that ChatGPT is different from GPT-3. The main difference is that chatbots can remember your conversation history. Just like GPT-3, they can also answer questions, provide writing summary and analysis, write text or code, and more at a high level, which is an exciting prospect—but the real value of chatbots is only accessible when you get specific with your prompts. In this article, we’ll explore some basic methods for how to better utilize chatbots, such as using style guidance, descriptors, and priming. 
 

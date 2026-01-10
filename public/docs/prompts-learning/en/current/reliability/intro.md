@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 🟢 Introduction
+# Introduction
 
 This chapter covers how to make completions more reliable, as well as how to 
 implement checks to ensure that outputs are reliable. 

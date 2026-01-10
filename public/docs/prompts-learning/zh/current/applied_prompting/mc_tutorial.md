@@ -3,7 +3,7 @@ sidebar_position: 2
 locale: en-us
 ---
 
-# 🟢 多项选择题
+# 多项选择题
 
 让我们使用 GPT 来解决一道 LSAT[^1] 问题！
 

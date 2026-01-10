@@ -1,7 +1,7 @@
 ---
 sidebar_position: 200
 ---
-# 🟢 Understanding AI Minds
+# Understanding AI Minds
 
 Hello reader, congratulations on getting through the intro chapter. You are off to a great start in this very exciting field. There are a few simple things you should know about different AIs and how they work before you start reading the rest of the course.
 

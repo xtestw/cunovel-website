@@ -2,7 +2,7 @@
 sidebar_position: 100
 ---
 
-# 🟢 Resources
+# Resources
 
 The image prompt engineering field is very diverse. Here is a good list of 
 resources that covers parts of it.

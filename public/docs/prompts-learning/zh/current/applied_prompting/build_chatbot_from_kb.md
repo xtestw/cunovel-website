@@ -2,7 +2,7 @@
 sidebar_position: 40
 ---
 
-# 🟢 聊天机器人 + 知识库
+# 聊天机器人 + 知识库
 
 import ImageIntents from '@site/docs/assets/chatbot_from_kb_intents.png'
 import ImageGPT3 from '@site/docs/assets/chatbot_from_kb_gpt3.png'

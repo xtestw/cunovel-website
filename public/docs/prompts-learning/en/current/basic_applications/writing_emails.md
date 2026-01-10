@@ -2,7 +2,7 @@
 sidebar_position: 10
 ---
 
-# 🟢 Writing An Email
+# Writing An Email
 
 Writing emails can be a time consuming task, especially when you need to read through an email you received first. This section will cover use cases ranging from a simple email telling your boss you are sick today to more complex cold lead emails.
 

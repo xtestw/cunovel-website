@@ -2,7 +2,7 @@
 sidebar_position: 60
 ---
 
-# 🟢 Weighted Terms
+# Weighted Terms
 
 Some models (Stable Diffusion, Midjourney, etc.) allow you to weight terms in a prompt. This can be used to emphasize certain words or phrases in the generated image. It can 
 also be used to de-emphasize certain words or phrases in the generated image. Let's consider a simple example:

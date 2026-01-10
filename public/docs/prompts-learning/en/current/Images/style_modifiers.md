@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 ---
-# 🟢 Style Modifiers
+# Style Modifiers
 
 Style modifiers are simply descriptors which consistently
 produce certain styles (e.g. 'tinted red', 'made of glass', 'rendered in Unity')(@oppenlaender2022taxonomy). They can be combined together to

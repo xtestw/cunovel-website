@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 🟢 Prompt Injection
+# Prompt Injection
 
 
 Prompt injection is a technique used to hijack a language model's output(@branch2022evaluating)(@crothers2022machine)(@goodside2022inject)(@simon2022inject). 

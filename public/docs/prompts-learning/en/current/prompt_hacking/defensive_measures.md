@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# 🟢 Defensive Measures
+# Defensive Measures
 
 Preventing prompt injection can be extremely difficult, and there exist few to no 
 defenses against it(@crothers2022machine). That being said, there are some commonsense

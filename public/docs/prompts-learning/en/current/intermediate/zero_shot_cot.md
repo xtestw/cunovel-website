@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# 🟢 Zero Shot Chain of Thought
+# Zero Shot Chain of Thought
 
 
 Zero Shot Chain of Thought (Zero-shot-CoT) prompting (@kojima2022large) is a 

@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# 🟢 Music Generation
+# Music Generation
 
 Music generation models are becoming increasingly popular, and will eventually have a large impact on the music industry. 
 

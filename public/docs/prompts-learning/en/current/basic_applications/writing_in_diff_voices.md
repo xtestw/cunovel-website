@@ -2,7 +2,7 @@
 sidebar_position: 60
 ---
 
-# 🟢 Different Writing Styles
+# Different Writing Styles
 
 AIs like [ChatGPT](https://chat.openai.com/chat) are known for crafting essays and blog articles in a heartbeat. But often, the articles they produce are generic and dry. You need to do something extra to give the words some spirit or pizzazz. 
 One of the fastest ways to do that is to specify a writing style or naming a famous author in the prompt.     

@@ -1,7 +1,7 @@
 ---
 sidebar_position: 99
 ---
-# 🟢 Midjourney
+# Midjourney
 
 [Midjourney](https://www.midjourney.com) is an AI image generator that operates through a Discord bot interface as well as a web app (an API version of Midjourney is planned). The process for generating images with Midjourney follows the same fundamental principles as other AI image generators, including the use of prompts to guide the generation process. 
 

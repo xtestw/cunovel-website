@@ -2,7 +2,7 @@
 sidebar_position: 600
 ---
 
-# 🟢 Zapier for Emails
+# Zapier for Emails
 
 import Basic from '../assets/Zapiermail/Basic.png';
 import Diagram from '../assets/Zapiermail/Diagram.png';

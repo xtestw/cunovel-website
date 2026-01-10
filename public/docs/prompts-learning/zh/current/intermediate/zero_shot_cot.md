@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# 🟢 零样本思维链
+# 零样本思维链
 
 零样本思维链（Zero Shot Chain of Thought，Zero-shot-CoT）提示过程(@kojima2022large)是对 %%CoT prompting|CoT prompting%% (@wei2022chain) 的后续研究，引入了一种非常简单的零样本提示。他们发现，通过在问题的结尾附加“**让我们一步步思考。**”这几个词，大语言模型能够生成一个回答问题的思维链。从这个思维链中，他们能够提取更准确的答案。
 

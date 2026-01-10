@@ -1,7 +1,7 @@
 ---
 sidebar_position: 5
 ---
-# 🟢 Quality Boosters
+# Quality Boosters
 
 Quality boosters(@oppenlaender2022taxonomy) are terms added to a prompt to improve
 certain non-style-specific qualities of the generated image. For example "amazing", "beautiful", and "good quality" are all quality boosters that can be used to improve the quality of the generated image.

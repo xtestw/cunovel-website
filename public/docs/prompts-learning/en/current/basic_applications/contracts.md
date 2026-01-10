@@ -2,7 +2,7 @@
 sidebar_position: 50
 ---
 
-# 🟢 Contracts
+# Contracts
 
 Tired of reading and writing long, boring contracts? AI can help!
 

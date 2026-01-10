@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# 🟢 Jailbreaking
+# Jailbreaking
 
 Jailbreaking is a type of prompt injection, in which prompts attempt to bypass **safety** and **moderation** features placed on LLMs by their creators(@perez2022jailbreak)(@brundage_2022)(@wang2022jailbreak).
 

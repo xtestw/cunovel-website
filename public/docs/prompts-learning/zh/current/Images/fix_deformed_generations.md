@@ -1,7 +1,7 @@
 ---
 sidebar_position: 90
 ---
-# 🟢 修复变形生成
+# 修复变形生成
 
 变形生成在许多模型中都是一个常见问题，特别是在人体部位（如手、脚）上。通过良好的反向提示语(@blake2022with)，可以在一定程度上解决这个问题。以下示例来自于[这篇Reddit帖子](https://www.reddit.com/r/StableDiffusion/comments/z7salo/with_the_right_prompt_stable_diffusion_20_can_do/)。
 

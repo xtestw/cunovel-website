@@ -2,7 +2,7 @@
 sidebar_position: 40
 ---
 
-# 🟢 Finding Emojis
+# Finding Emojis
 
 🤔 Do you ever need the **perfect emoji** for a tweet or post? 
 

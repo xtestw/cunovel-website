@@ -1,7 +1,7 @@
 ---
 sidebar_position: 50
 ---
-# 🟢 Repetition
+# Repetition
 
 Repeating the same word within a prompt, or similar phrases can cause the model
 to emphasize that word in the generated image(@oppenlaender2022taxonomy). For example, [@Phillip Isola](https://twitter.com/phillip_isola/status/1532189632217112577) generated these waterfalls with DALLE:

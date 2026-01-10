@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 🟢 提示注入
+# 提示注入
 
 
 提示注入是一种用于劫持语言模型输出(@branch2022evaluating)(@crothers2022machine)(@goodside2022inject)(@simon2022inject)的技术。

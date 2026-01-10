@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 ---
-# 🟢 Giving Instructions
+# Giving Instructions
 
 One of the simplest prompting methods is just giving instructions. We already saw a simple instruction
 in a previous section (`What is 1,000,000 * 9,000? Make sure to put the right amount of zeros, even if there are many:`). However,

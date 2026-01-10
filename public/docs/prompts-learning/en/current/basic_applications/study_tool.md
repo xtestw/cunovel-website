@@ -2,7 +2,7 @@
 sidebar_position: 30
 ---
 
-# 🟢 Study Buddy
+# Study Buddy
 
 One of our favorite ways to use LLMs is as a study tool! In particular, it is useful for explaining confusing terms as well as quizzing you on test content.
 

@@ -1,7 +1,7 @@
 ---
 sidebar_position: 90
 ---
-# 🟢 Fix Deformed Generations
+# Fix Deformed Generations
 
 Deformed generations, particularly on human body parts (e.g. hands, feet), are a common issue with many models. This can be dealt with to some extent with good negative prompts(@blake2022with). The following example is adapted from [this Reddit post](https://www.reddit.com/r/StableDiffusion/comments/z7salo/with_the_right_prompt_stable_diffusion_20_can_do/).
 

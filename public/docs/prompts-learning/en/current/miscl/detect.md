@@ -2,7 +2,7 @@
 sidebar_position: 1
 --- 
 
-# 🟢 Detecting AI Generated Text
+# Detecting AI Generated Text
 
 Detecting AI generated text is a big problem for safety researchers and educators,
 among others. Tools like [GPTZero](https://gptzero.me), [GPT2 detector](https://openai-openai-detector.hf.space), and [bilingual detectors](https://github.com/Hello-SimpleAI/chatgpt-comparison-detection) have seen significant success,

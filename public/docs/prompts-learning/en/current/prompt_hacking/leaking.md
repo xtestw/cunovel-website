@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# 🟢 Prompt Leaking
+# Prompt Leaking
 
 
 Prompt leaking is a form of prompt injection in which the model is asked to
