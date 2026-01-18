@@ -309,6 +309,78 @@
   color: #1890ff;
 }
 
+/* 下一个触发时间 */
+.next-runs-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.next-runs-section label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: #595959;
+  font-size: 14px;
+}
+
+.next-runs-loading,
+.next-runs-error {
+  padding: 12px;
+  color: #8c8c8c;
+  font-size: 14px;
+  text-align: center;
+}
+
+.next-runs-error {
+  color: #ff4d4f;
+  background: #fff1f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+}
+
+.next-runs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.next-run-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.next-run-item:hover {
+  background: #f0f7ff;
+  border-color: #1890ff;
+}
+
+.next-run-date {
+  font-weight: 500;
+  color: #595959;
+  min-width: 100px;
+}
+
+.next-run-time {
+  font-family: monospace;
+  color: #1890ff;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.next-run-weekday {
+  color: #8c8c8c;
+  font-size: 13px;
+  margin-left: auto;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .cron-section {
@@ -343,6 +415,16 @@
 
   .cron-info {
     padding: 16px;
+  }
+
+  .next-run-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .next-run-weekday {
+    margin-left: 0;
   }
 }
 

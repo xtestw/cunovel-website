@@ -72,6 +72,11 @@
           "result": {
             "label": "Generated Cron Expression"
           },
+          "nextRuns": {
+            "title": "Next Trigger Times",
+            "loading": "Calculating...",
+            "error": "Unable to calculate next runs for this expression"
+          },
           "buttons": {
             "copy": "Copy",
             "explain": "Explain"
