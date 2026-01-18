@@ -1,0 +1,100 @@
+---
+title: "将技能集成到您的智能体中"
+sidebarTitle: "集成技能"
+description: "如何为您的智能体或工具添加 Agent Skills 支持。"
+---
+
+本指南解释了如何为 AI 智能体或开发工具添加技能支持。
+
+## 集成方法
+
+集成技能的两种主要方法是：
+
+**基于文件系统的智能体**在计算机环境（bash/unix）内运行，代表最强大的选项。当模型发出 shell 命令（如 `cat /path/to/my-skill/SKILL.md`）时，技能会被激活。通过 shell 命令访问捆绑的资源。
+
+**基于工具的智能体**在没有专用计算机环境的情况下运行。相反，它们实现允许模型触发技能和访问捆绑资源的工具。具体的工具实现由开发人员决定。
+
+## 概述
+
+技能兼容的智能体需要：
+
+1. **发现**配置目录中的技能
+2. **加载元数据**（名称和描述）在启动时
+3. **匹配**用户任务到相关技能
+4. **激活**通过加载完整指令来激活技能
+5. **执行**根据需要执行脚本和访问资源
+
+## 技能发现
+
+技能是包含 `SKILL.md` 文件的文件夹。您的智能体应该扫描配置的目录以查找有效技能。
+
+## 加载元数据
+
+启动时，仅解析每个 `SKILL.md` 文件的 frontmatter。这使初始上下文使用保持较低。
+
+### 解析 frontmatter
+
+```
+function parseMetadata(skillPath):
+    content = readFile(skillPath + "/SKILL.md")
+    frontmatter = extractYAMLFrontmatter(content)
+
+    return {
+        name: frontmatter.name,
+        description: frontmatter.description,
+        path: skillPath
+    }
+```
+
+### 注入到上下文
+
+在系统提示中包含技能元数据，以便模型知道有哪些技能可用。
+
+遵循您平台的系统提示更新指南。例如，对于 Claude 模型，推荐的格式使用 XML：
+
+```xml
+<available_skills>
+  <skill>
+    <name>pdf-processing</name>
+    <description>从 PDF 文件中提取文本和表格，填写表单，合并文档。</description>
+    <location>/path/to/skills/pdf-processing/SKILL.md</location>
+  </skill>
+  <skill>
+    <name>data-analysis</name>
+    <description>分析数据集，生成图表，并创建摘要报告。</description>
+    <location>/path/to/skills/data-analysis/SKILL.md</location>
+  </skill>
+</available_skills>
+```
+
+对于基于文件系统的智能体，包含 `location` 字段，其中包含 SKILL.md 文件的绝对路径。对于基于工具的智能体，可以省略位置。
+
+保持元数据简洁。每个技能应该向上下文添加大约 50-100 个 token。
+
+## 安全考虑
+
+脚本执行会带来安全风险。考虑：
+
+- **沙箱化**：在隔离环境中运行脚本
+- **允许列表**：仅执行来自受信任技能的脚本
+- **确认**：在运行可能危险的操作之前询问用户
+- **日志记录**：记录所有脚本执行以进行审计
+
+## 参考实现
+
+[skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref) 库提供了用于处理技能的 Python 实用程序和 CLI。
+
+例如：
+
+**验证技能目录：** 
+```
+skills-ref validate <path>
+```
+
+**为智能体提示生成 `<available_skills>` XML：**
+```
+skills-ref to-prompt <path>...
+```
+
+使用库源代码作为参考实现。
+
