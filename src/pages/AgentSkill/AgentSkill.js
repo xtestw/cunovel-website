@@ -224,13 +224,106 @@ const AgentSkill = () => {
 
   const lang = getLanguageCode();
   const isZh = lang === 'zh';
+  
+  // 获取当前页面路径
+  const pathMatch = location.pathname.match(/\/agent-skill\/(.*)/);
+  const currentPath = pathMatch ? pathMatch[1] : 'intro';
+  const actualPath = currentPath === 'intro' ? 'home' : currentPath;
+  
+  // 根据路径生成 SEO 信息
+  const getSEOTitle = () => {
+    const titleMap = {
+      'home': isZh ? 'Agent Skills 概述 - AI 智能体技能教程 | CUTool' : 'Agent Skills Overview - AI Agent Skills Tutorial | CUTool',
+      'what-are-skills': isZh ? '什么是 Agent Skills？- AI 智能体技能指南 | CUTool' : 'What are Agent Skills? - AI Agent Skills Guide | CUTool',
+      'specification': isZh ? 'Agent Skills 规范 - 完整格式说明 | CUTool' : 'Agent Skills Specification - Complete Format Guide | CUTool',
+      'integrate-skills': isZh ? '集成 Agent Skills - 为智能体添加技能支持 | CUTool' : 'Integrate Agent Skills - Add Skills Support to Your Agent | CUTool',
+    };
+    return titleMap[actualPath] || (isZh ? 'Agent Skill | CUTool' : 'Agent Skill | CUTool');
+  };
+  
+  const getSEODescription = () => {
+    const descMap = {
+      'home': isZh 
+        ? 'Agent Skills 是一个简单、开放的格式，用于为 AI 智能体提供新的能力和专业知识。了解如何通过技能扩展智能体的功能。'
+        : 'Agent Skills is a simple, open format for giving AI agents new capabilities and expertise. Learn how to extend agent functionality through skills.',
+      'what-are-skills': isZh
+        ? '了解 Agent Skills 是什么，它们如何工作，以及为什么重要。Agent Skills 是一种轻量级、开放的格式，用于通过专业知识和工作流扩展 AI 智能体的能力。'
+        : 'Learn what Agent Skills are, how they work, and why they matter. Agent Skills is a lightweight, open format for extending AI agent capabilities with specialized knowledge and workflows.',
+      'specification': isZh
+        ? 'Agent Skills 格式的完整规范说明，包括 SKILL.md 文件格式、目录结构、元数据字段和最佳实践。'
+        : 'Complete specification for the Agent Skills format, including SKILL.md file format, directory structure, metadata fields, and best practices.',
+      'integrate-skills': isZh
+        ? '学习如何为您的 AI 智能体或开发工具添加 Agent Skills 支持。包括技能发现、元数据加载、匹配和激活的完整指南。'
+        : 'Learn how to add Agent Skills support to your AI agent or development tool. Complete guide including skill discovery, metadata loading, matching, and activation.',
+    };
+    return descMap[actualPath] || (isZh ? 'AI Agent 技能教程和文档' : 'AI Agent Skills Tutorial and Documentation');
+  };
+  
+  const getSEOKeywords = () => {
+    const keywordsMap = {
+      'home': isZh 
+        ? 'Agent Skills,AI Agent,智能体技能,AI 技能,Agent 技能格式,AI 工具,智能体开发'
+        : 'Agent Skills,AI Agent,agent skills,AI skills,agent skill format,AI tools,agent development',
+      'what-are-skills': isZh
+        ? 'Agent Skills,什么是技能,SKILL.md,智能体技能,AI Agent 技能,技能格式'
+        : 'Agent Skills,what are skills,SKILL.md,agent skills,AI agent skills,skill format',
+      'specification': isZh
+        ? 'Agent Skills 规范,SKILL.md 格式,技能规范,智能体技能格式,元数据,技能开发'
+        : 'Agent Skills specification,SKILL.md format,skill specification,agent skill format,metadata,skill development',
+      'integrate-skills': isZh
+        ? '集成 Agent Skills,智能体集成,技能支持,AI Agent 开发,技能发现,技能激活'
+        : 'integrate Agent Skills,agent integration,skills support,AI agent development,skill discovery,skill activation',
+    };
+    return keywordsMap[actualPath] || (isZh ? 'Agent Skill,AI Agent,AI教程' : 'Agent Skill,AI Agent,AI Tutorial');
+  };
+  
+  const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}${location.pathname}` : 'https://cutool.online/agent-skill';
+  const seoTitle = getSEOTitle();
+  const seoDescription = getSEODescription();
+  const seoKeywords = getSEOKeywords();
 
   return (
     <>
       <Helmet>
-        <title>{isZh ? 'Agent Skill | CUTool' : 'Agent Skill | CUTool'}</title>
-        <meta name="description" content={isZh ? 'AI Agent 技能教程' : 'AI Agent Skills Tutorial'} />
-        <meta name="keywords" content={isZh ? 'Agent Skill,AI Agent,AI教程' : 'Agent Skill,AI Agent,AI Tutorial'} />
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <meta name="keywords" content={seoKeywords} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:site_name" content="CUTool" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+        <link rel="canonical" href={currentUrl} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": seoTitle,
+            "description": seoDescription,
+            "url": currentUrl,
+            "author": {
+              "@type": "Organization",
+              "name": "CUTool"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "CUTool",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://cutool.online/logo512.png"
+              }
+            },
+            "datePublished": "2026-01-18",
+            "dateModified": "2026-01-18",
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": currentUrl
+            }
+          })}
+        </script>
       </Helmet>
       <div className="agent-skill-container">
         <div className={`agent-skill-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
