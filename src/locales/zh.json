@@ -11,7 +11,10 @@
       "plugins": "插件",
       "chromePlugin": "Chrome 插件",
       "ideaPlugin": "IDEA 插件",
-      "feedback": "反馈"
+      "feedback": "反馈",
+      "aiAgent": "AI Agent",
+      "agentSkill": "Agent Skill",
+      "aiTools": "AI 工具"
     },
     "nav": {
       "categories": {

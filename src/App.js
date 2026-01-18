@@ -16,6 +16,7 @@ import AIDailyHistory from './pages/AIDaily/AIDailyHistory';
 import NewsDetail from './pages/AIDaily/NewsDetail';
 import AITutorial from './pages/AITutorial/AITutorial';
 import PromptTutorial from './pages/PromptTutorial/PromptTutorial';
+import AgentSkill from './pages/AgentSkill/AgentSkill';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -170,24 +171,59 @@ function AppContent() {
               >
                 {t('common.promptTutorial')}
               </NavLink>
-              <NavLink
-                to="/token-calculator/text"
-                className="nav-item"
-                style={({ isActive }) => ({
-                  color: isActive ? '#1890ff' : '#595959'
-                })}
-              >
-                {t('common.tokenCalculator')}
-              </NavLink>
-              <NavLink
-                to="/ai-nav"
-                className="nav-item"
-                style={({ isActive }) => ({
-                  color: isActive ? '#1890ff' : '#595959'
-                })}
-              >
-                {t('common.aiNav')}
-              </NavLink>
+              <div className="nav-item nav-item-dropdown">
+                <div
+                  className={`nav-item-link ${location.pathname.startsWith('/agent-skill') ? 'active' : ''}`}
+                  style={{
+                    color: location.pathname.startsWith('/agent-skill') ? '#1890ff' : '#595959',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {t('common.aiAgent')}
+                </div>
+                <div className="nav-dropdown-menu">
+                  <NavLink
+                    to="/agent-skill"
+                    className={({ isActive }) => {
+                      const isActivePath = location.pathname.startsWith('/agent-skill');
+                      return `nav-dropdown-item ${isActivePath ? 'active' : ''}`;
+                    }}
+                  >
+                    {t('common.agentSkill')}
+                  </NavLink>
+                </div>
+              </div>
+              <div className="nav-item nav-item-dropdown">
+                <div
+                  className={`nav-item-link ${location.pathname.startsWith('/token-calculator') || location.pathname.startsWith('/ai-nav') ? 'active' : ''}`}
+                  style={{
+                    color: location.pathname.startsWith('/token-calculator') || location.pathname.startsWith('/ai-nav') ? '#1890ff' : '#595959',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {t('common.aiTools')}
+                </div>
+                <div className="nav-dropdown-menu">
+                  <NavLink
+                    to="/token-calculator/text"
+                    className={({ isActive }) => {
+                      const isActivePath = location.pathname.startsWith('/token-calculator');
+                      return `nav-dropdown-item ${isActivePath ? 'active' : ''}`;
+                    }}
+                  >
+                    {t('common.tokenCalculator')}
+                  </NavLink>
+                  <NavLink
+                    to="/ai-nav"
+                    className={({ isActive }) => {
+                      const isActivePath = location.pathname.startsWith('/ai-nav');
+                      return `nav-dropdown-item ${isActivePath ? 'active' : ''}`;
+                    }}
+                  >
+                    {t('common.aiNav')}
+                  </NavLink>
+                </div>
+              </div>
               <div className="nav-item nav-item-dropdown">
                 <div
                   className={`nav-item-link ${location.pathname.startsWith('/chrome-plugin') ? 'active' : ''}`}
@@ -254,6 +290,8 @@ function AppContent() {
             </Route>
             <Route path="/" element={<Navigate to="/ai-daily" replace />} />
             <Route path="/chrome-plugin" element={<ChromePlugin />} />
+            <Route path="/agent-skill" element={<Navigate to="/agent-skill/intro" replace />} />
+            <Route path="/agent-skill/*" element={<AgentSkill />} />
             <Route path="*" element={<Navigate to="/ai-daily" replace />} />
           </Routes>
         </Content>

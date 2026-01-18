@@ -10,7 +10,10 @@
     "plugins": "Plugins",
     "chromePlugin": "Chrome Extension",
     "ideaPlugin": "IDEA Plugin",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "aiAgent": "AI Agent",
+    "agentSkill": "Agent Skill",
+    "aiTools": "AI Tools"
   },
   "nav": {
     "categories": {
