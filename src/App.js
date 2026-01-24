@@ -17,6 +17,8 @@ import NewsDetail from './pages/AIDaily/NewsDetail';
 import AITutorial from './pages/AITutorial/AITutorial';
 import PromptTutorial from './pages/PromptTutorial/PromptTutorial';
 import AgentSkill from './pages/AgentSkill/AgentSkill';
+import VehicleVerify from './pages/VehicleVerify/VehicleVerify';
+import VehicleVerifyOrders from './pages/VehicleVerify/VehicleVerifyOrders';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -28,7 +30,7 @@ const Content = styled.div`
 `;
 
 function AppContent() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const feedbackEmail = 'xuwei8091@gmail.com';
   const [hasAds, setHasAds] = useState(false);
@@ -224,6 +226,39 @@ function AppContent() {
                   </NavLink>
                 </div>
               </div>
+              {i18n.language.startsWith('zh') && (
+                <div className="nav-item nav-item-dropdown">
+                  <NavLink
+                    to="/vehicle-verify"
+                    className={`nav-item-link ${location.pathname.startsWith('/vehicle-verify') ? 'active' : ''}`}
+                    style={{
+                      color: location.pathname.startsWith('/vehicle-verify') ? '#1890ff' : '#595959'
+                    }}
+                  >
+                    {t('common.vehicleVerify')}
+                  </NavLink>
+                  <div className="nav-dropdown-menu">
+                    <NavLink
+                      to="/vehicle-verify"
+                      className={({ isActive }) => {
+                        const isActivePath = location.pathname === '/vehicle-verify';
+                        return `nav-dropdown-item ${isActivePath ? 'active' : ''}`;
+                      }}
+                    >
+                      {t('common.vehicleInfoVerify')}
+                    </NavLink>
+                    <NavLink
+                      to="/vehicle-verify/orders"
+                      className={({ isActive }) => {
+                        const isActivePath = location.pathname === '/vehicle-verify/orders';
+                        return `nav-dropdown-item ${isActivePath ? 'active' : ''}`;
+                      }}
+                    >
+                      {t('common.orderHistory')}
+                    </NavLink>
+                  </div>
+                </div>
+              )}
               <div className="nav-item nav-item-dropdown">
                 <div
                   className={`nav-item-link ${location.pathname.startsWith('/chrome-plugin') ? 'active' : ''}`}
@@ -292,6 +327,8 @@ function AppContent() {
             <Route path="/chrome-plugin" element={<ChromePlugin />} />
             <Route path="/agent-skill" element={<Navigate to="/agent-skill/intro" replace />} />
             <Route path="/agent-skill/*" element={<AgentSkill />} />
+            <Route path="/vehicle-verify" element={<VehicleVerify />} />
+            <Route path="/vehicle-verify/orders" element={<VehicleVerifyOrders />} />
             <Route path="*" element={<Navigate to="/ai-daily" replace />} />
           </Routes>
         </Content>

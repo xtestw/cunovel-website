@@ -75,7 +75,9 @@ gunicorn -w 4 -b 0.0.0.0:3003 app:app
 cp env.example .env
 ```
 
-然后编辑 `.env` 文件，设置正确的数据库密码（当前默认密码：xw123456）
+然后编辑 `.env` 文件，设置正确的配置信息。
+
+### 数据库配置
 
 - `DB_HOST` - 数据库主机地址（默认：localhost）
 - `DB_PORT` - 数据库端口（默认：3306）
@@ -84,6 +86,32 @@ cp env.example .env
 - `DB_NAME` - 数据库名称（默认：cutool_db）
 - `DB_CHARSET` - 数据库字符集（默认：utf8mb4）
 - `PORT` - 服务器端口（默认：3003）
+
+### 阿里云配置
+
+- `ALIYUN_ACCESS_KEY_ID` - 阿里云 AccessKey ID
+- `ALIYUN_ACCESS_KEY_SECRET` - 阿里云 AccessKey Secret
+- `ALIYUN_ENDPOINT` - 阿里云服务端点（默认：cloudauth.aliyuncs.com）
+
+### 支付宝配置
+
+**详细配置指南请参考：[ALIPAY_CONFIG_GUIDE.md](./ALIPAY_CONFIG_GUIDE.md)**
+
+支付宝配置需要以下信息：
+
+1. **注册支付宝开放平台账号**：https://open.alipay.com/
+2. **创建应用并获取 APPID**
+3. **生成密钥对（RSA2）**
+4. **上传应用公钥，获取支付宝公钥**
+
+配置项：
+- `ALIPAY_APP_ID` - 支付宝应用ID（APPID）
+- `ALIPAY_APP_PRIVATE_KEY` - 应用私钥（RSA2格式）
+- `ALIPAY_PUBLIC_KEY` - 支付宝公钥（不是应用公钥）
+- `ALIPAY_SIGN_TYPE` - 签名类型（默认：RSA2）
+- `ALIPAY_DEBUG` - 是否使用沙箱环境（False=生产环境，True=沙箱环境）
+- `ALIPAY_RETURN_URL` - 支付完成后跳转的页面
+- `ALIPAY_NOTIFY_URL` - 支付宝异步通知地址（必须是公网可访问的HTTPS地址）
 
 ## 数据库初始化
 

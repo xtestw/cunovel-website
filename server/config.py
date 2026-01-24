@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+# 加载 .env 文件，忽略解析错误（用于注释等）
+load_dotenv(override=True)
 
 class Config:
     # 数据库配置

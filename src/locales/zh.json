@@ -14,7 +14,10 @@
       "feedback": "反馈",
       "aiAgent": "AI Agent",
       "agentSkill": "Agent Skill",
-      "aiTools": "AI 工具"
+      "aiTools": "AI 工具",
+      "vehicleVerify": "信息核验",
+      "vehicleInfoVerify": "车辆信息核验",
+      "orderHistory": "历史订单"
     },
     "nav": {
       "categories": {
@@ -802,6 +805,83 @@
         "minimax": "MiniMax",
         "llama": "Llama",
         "mistral": "Mistral"
+      }
+    },
+    "vehicleVerify": {
+      "title": "车辆信息核验",
+      "verifyType": {
+        "label": "核验类型",
+        "consistency": "一致性核验",
+        "basicInfo": "基本信息查询",
+        "insuranceLog": "投保日志查询"
+      },
+      "form": {
+        "name": "姓名",
+        "namePlaceholder": "请输入姓名",
+        "idCard": "身份证号",
+        "idCardPlaceholder": "请输入身份证号",
+        "plateNumber": "车牌号",
+        "plateNumberPlaceholder": "请输入车牌号",
+        "vehicleType": "车辆类型",
+        "vehicleTypePlaceholder": "请选择车辆类型",
+        "vehicleTypeOptions": {
+          "02": "普通小客车",
+          "52": "新能源小客车"
+        },
+        "vin": "车辆识别码（VIN）",
+        "vinPlaceholder": "请输入车辆识别码（VIN）",
+        "verifyButton": "核验",
+        "queryButton": "查询",
+        "resetButton": "重置"
+      },
+      "result": {
+        "title": "核验结果",
+        "loading": "正在核验...",
+        "success": "核验成功",
+        "failed": "核验失败",
+        "noRecord": "查无记录",
+        "consistent": "校验一致",
+        "inconsistent": "校验不一致",
+        "vehicleInfo": "车辆信息",
+        "insuranceLog": "投保日志",
+        "noData": "暂无数据"
+      },
+      "payment": {
+        "title": "支付订单",
+        "amount": "支付金额",
+        "createOrder": "创建订单",
+        "paying": "支付中...",
+        "paid": "已支付",
+        "failed": "支付失败",
+        "waiting": "等待支付..."
+      },
+      "orders": {
+        "title": "历史订单",
+        "orderId": "订单号",
+        "type": "类型",
+        "status": "状态",
+        "amount": "金额",
+        "createTime": "创建时间",
+        "payTime": "支付时间",
+        "noOrders": "暂无订单",
+        "viewDetail": "查看详情",
+        "statusPending": "待支付",
+        "statusPaid": "已支付",
+        "statusFailed": "支付失败",
+        "statusCompleted": "已完成"
+      },
+      "errors": {
+        "nameRequired": "请输入姓名",
+        "idCardRequired": "请输入身份证号",
+        "plateNumberRequired": "请输入车牌号",
+        "vehicleTypeRequired": "请选择车辆类型",
+        "vinRequired": "请输入车辆识别码（VIN）",
+        "idCardInvalid": "身份证号格式不正确",
+        "plateNumberInvalid": "车牌号格式不正确",
+        "vinInvalid": "车辆识别码格式不正确",
+        "apiError": "接口调用失败",
+        "paymentError": "支付失败",
+        "networkError": "网络错误，请稍后重试"
       }
     }
   }
