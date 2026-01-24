@@ -684,6 +684,70 @@ def init_alipay_client():
         return None
 
 
+# 核验类型价格配置（单位：元）
+VERIFY_TYPE_PRICES = {
+    'consistency': {
+        '2': 19.90,  # 二要素核验价格
+        '3': 19.90  # 三要素核验价格
+    },
+    'basicInfo': 29.90,      # 基本信息查询价格
+    'insuranceLog': 29.90    # 投保日志查询价格
+}
+
+def get_verify_price(verify_type, form_data=None):
+    """
+    根据核验类型获取价格
+    verify_type: consistency, basicInfo, insuranceLog
+    form_data: 表单数据，用于判断一致性核验是二要素还是三要素
+    """
+    if verify_type == 'consistency':
+        # 一致性核验：根据是否有身份证号判断是二要素还是三要素
+        if form_data and form_data.get('idCard') and form_data.get('idCard').strip():
+            return VERIFY_TYPE_PRICES['consistency']['3']  # 三要素
+        else:
+            return VERIFY_TYPE_PRICES['consistency']['2']  # 二要素
+    elif verify_type == 'basicInfo':
+        return VERIFY_TYPE_PRICES['basicInfo']
+    elif verify_type == 'insuranceLog':
+        return VERIFY_TYPE_PRICES['insuranceLog']
+    else:
+        return 1.00  # 默认价格
+
+# 获取核验价格接口
+@app.route('/api/vehicle-verify/price', methods=['POST'])
+def get_verify_price_endpoint():
+    """获取核验价格"""
+    try:
+        data = request.json
+        verify_type = data.get('type')
+        form_data = data.get('data')
+        
+        if not verify_type:
+            return jsonify({'error': '参数不完整'}), 400
+        
+        price = get_verify_price(verify_type, form_data)
+        
+        # 获取价格说明
+        price_description = ''
+        if verify_type == 'consistency':
+            if form_data and form_data.get('idCard') and form_data.get('idCard').strip():
+                price_description = '三要素核验'
+            else:
+                price_description = '二要素核验'
+        elif verify_type == 'basicInfo':
+            price_description = '基本信息查询'
+        elif verify_type == 'insuranceLog':
+            price_description = '投保日志查询'
+        
+        return jsonify({
+            'price': price,
+            'type': verify_type,
+            'description': price_description
+        })
+    except Exception as e:
+        app.logger.error(f'获取价格错误: {str(e)}', exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
 # 创建支付订单
 @app.route('/api/vehicle-verify/create-order', methods=['POST'])
 def create_vehicle_verify_order():
@@ -692,7 +756,10 @@ def create_vehicle_verify_order():
         data = request.json
         verify_type = data.get('type')
         form_data = data.get('data')
-        amount = data.get('amount', 1.00)
+        # 如果前端传了金额，使用前端金额；否则根据核验类型自动计算
+        amount = data.get('amount')
+        if amount is None:
+            amount = get_verify_price(verify_type, form_data)
         
         if not verify_type or not form_data:
             return jsonify({'error': '参数不完整'}), 400

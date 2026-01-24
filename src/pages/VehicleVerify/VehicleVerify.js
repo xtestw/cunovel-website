@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../../config/api';
@@ -21,6 +21,8 @@ const VehicleVerify = () => {
   const [paymentStatus, setPaymentStatus] = useState(''); // pending, paid, failed
   const [plateNumberError, setPlateNumberError] = useState('');
   const [isComposing, setIsComposing] = useState(false); // 用于处理中文输入法
+  const [price, setPrice] = useState(null); // 当前核验类型的价格
+  const [priceLoading, setPriceLoading] = useState(false); // 价格加载状态
 
   // 验证身份证号格式
   const validateIdCard = (idCard) => {
@@ -212,8 +214,35 @@ const VehicleVerify = () => {
     return true;
   };
 
+  // 获取核验价格
+  const getVerifyPrice = async (type, data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/vehicle-verify/price`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          type,
+          data
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('获取价格失败');
+      }
+
+      const result = await response.json();
+      return result.price;
+    } catch (err) {
+      console.error('获取价格错误:', err);
+      // 如果获取价格失败，返回默认价格
+      return 1.00;
+    }
+  };
+
   // 创建支付订单
-  const createPaymentOrder = async (type, data) => {
+  const createPaymentOrder = async (type, data, amount) => {
     try {
       const response = await fetch(`${API_BASE_URL}/vehicle-verify/create-order`, {
         method: 'POST',
@@ -223,7 +252,7 @@ const VehicleVerify = () => {
         body: JSON.stringify({
           type,
           data,
-          amount: 1.00 // 固定金额1元，可根据实际情况调整
+          amount // 使用传入的价格
         })
       });
 
@@ -296,6 +325,48 @@ const VehicleVerify = () => {
     }
   };
 
+  // 获取价格（当核验类型或表单数据变化时）
+  useEffect(() => {
+    const fetchPrice = async () => {
+      // 只有在表单有基本数据时才获取价格
+      if (verifyType === 'consistency' && formData.plateNumber && formData.name) {
+        setPriceLoading(true);
+        try {
+          const currentPrice = await getVerifyPrice(verifyType, formData);
+          setPrice(currentPrice);
+        } catch (err) {
+          console.error('获取价格失败:', err);
+        } finally {
+          setPriceLoading(false);
+        }
+      } else if (verifyType === 'basicInfo' && formData.plateNumber && formData.vehicleType) {
+        setPriceLoading(true);
+        try {
+          const currentPrice = await getVerifyPrice(verifyType, formData);
+          setPrice(currentPrice);
+        } catch (err) {
+          console.error('获取价格失败:', err);
+        } finally {
+          setPriceLoading(false);
+        }
+      } else if (verifyType === 'insuranceLog' && formData.plateNumber && formData.vehicleType && formData.vin) {
+        setPriceLoading(true);
+        try {
+          const currentPrice = await getVerifyPrice(verifyType, formData);
+          setPrice(currentPrice);
+        } catch (err) {
+          console.error('获取价格失败:', err);
+        } finally {
+          setPriceLoading(false);
+        }
+      } else {
+        setPrice(null);
+      }
+    };
+
+    fetchPrice();
+  }, [verifyType, formData.name, formData.idCard, formData.plateNumber, formData.vehicleType, formData.vin]);
+
   // 处理核验/查询
   const handleVerify = async () => {
     setError('');
@@ -305,12 +376,24 @@ const VehicleVerify = () => {
       return;
     }
 
+    // 获取当前价格
+    let currentPrice = price;
+    if (!currentPrice) {
+      try {
+        currentPrice = await getVerifyPrice(verifyType, formData);
+        setPrice(currentPrice);
+      } catch (err) {
+        console.error('获取价格失败:', err);
+        currentPrice = 1.00; // 默认价格
+      }
+    }
+
     setLoading(true);
     setPaymentStatus('pending');
 
     try {
-      // 1. 创建支付订单
-      const orderResult = await createPaymentOrder(verifyType, formData);
+      // 1. 创建支付订单（使用获取到的价格）
+      const orderResult = await createPaymentOrder(verifyType, formData, currentPrice);
       setOrderId(orderResult.orderId);
       setPaymentStatus('pending');
 
@@ -608,11 +691,20 @@ const VehicleVerify = () => {
               </div>
             )}
 
+            {/* 价格显示 */}
+            {price !== null && (
+              <div className="price-display">
+                <span className="price-label">{t('vehicleVerify.payment.amount')}:</span>
+                <span className="price-value">¥{price.toFixed(2)}</span>
+                {priceLoading && <span className="price-loading">（加载中...）</span>}
+              </div>
+            )}
+
             <div className="form-actions">
               <button
                 className="btn-primary"
                 onClick={handleVerify}
-                disabled={loading}
+                disabled={loading || priceLoading}
               >
                 {loading ? t('vehicleVerify.result.loading') : 
                  verifyType === 'consistency' ? t('vehicleVerify.form.verifyButton') : 
