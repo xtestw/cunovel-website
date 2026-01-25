@@ -1,11 +1,16 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect, session, url_for
 from flask_cors import CORS
 from datetime import datetime, timedelta
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from models import Base, AIDaily, AINews, AITutorial
+from models import Base, AIDaily, AINews, AITutorial, User
 from config import Config
 from vehicle_verify_helper import call_aliyun_vehicle_verify
+from auth_helper import (
+    init_oauth, generate_jwt_token, verify_jwt_token, 
+    get_current_user, handle_github_callback, 
+    handle_google_callback, handle_wechat_callback
+)
 import os
 import uuid
 import hashlib
@@ -24,10 +29,14 @@ except ImportError:
     ALIPAY_SDK_AVAILABLE = False
 
 app = Flask(__name__)
-CORS(app)  # 启用跨域支持
+CORS(app, supports_credentials=True)  # 启用跨域支持，允许携带凭证
 
 # 配置
 app.config.from_object(Config)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', os.urandom(24).hex())
+
+# 初始化OAuth
+oauth = init_oauth(app)
 
 # 创建数据库引擎和会话
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], pool_pre_ping=True)
@@ -970,6 +979,191 @@ def alipay_notify():
     except Exception as e:
         app.logger.error(f'支付宝回调错误: {str(e)}', exc_info=True)
         return 'fail'
+
+# ========== 第三方登录相关接口 ==========
+
+@app.route('/api/auth/login/github', methods=['GET'])
+def github_login():
+    """GitHub登录入口"""
+    try:
+        redirect_uri = request.args.get('redirect_uri', '')
+        if not redirect_uri:
+            # 默认回调地址
+            redirect_uri = url_for('github_callback', _external=True)
+        
+        session['oauth_redirect_uri'] = redirect_uri
+        return oauth.github.authorize_redirect(redirect_uri)
+    except Exception as e:
+        app.logger.error(f'GitHub登录失败: {str(e)}')
+        return jsonify({'error': 'GitHub登录配置错误'}), 500
+
+@app.route('/api/auth/callback/github', methods=['GET'])
+def github_callback():
+    """GitHub OAuth回调"""
+    db = get_db()
+    try:
+        user, token = handle_github_callback(oauth, db)
+        jwt_token = generate_jwt_token(user.id)
+        
+        redirect_uri = session.pop('oauth_redirect_uri', None) or request.args.get('redirect_uri', '')
+        if redirect_uri:
+            # 如果指定了前端回调地址，重定向到前端
+            separator = '&' if '?' in redirect_uri else '?'
+            return redirect(f"{redirect_uri}{separator}token={jwt_token}")
+        else:
+            # 返回JSON响应
+            return jsonify({
+                'success': True,
+                'token': jwt_token,
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'display_name': user.display_name,
+                    'avatar_url': user.avatar_url,
+                    'provider': user.provider
+                }
+            })
+    except Exception as e:
+        app.logger.error(f'GitHub回调处理失败: {str(e)}', exc_info=True)
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/auth/login/google', methods=['GET'])
+def google_login():
+    """Google登录入口"""
+    try:
+        redirect_uri = request.args.get('redirect_uri', '')
+        if not redirect_uri:
+            redirect_uri = url_for('google_callback', _external=True)
+        
+        session['oauth_redirect_uri'] = redirect_uri
+        return oauth.google.authorize_redirect(redirect_uri)
+    except Exception as e:
+        app.logger.error(f'Google登录失败: {str(e)}')
+        return jsonify({'error': 'Google登录配置错误'}), 500
+
+@app.route('/api/auth/callback/google', methods=['GET'])
+def google_callback():
+    """Google OAuth回调"""
+    db = get_db()
+    try:
+        user, token = handle_google_callback(oauth, db)
+        jwt_token = generate_jwt_token(user.id)
+        
+        redirect_uri = session.pop('oauth_redirect_uri', None) or request.args.get('redirect_uri', '')
+        if redirect_uri:
+            separator = '&' if '?' in redirect_uri else '?'
+            return redirect(f"{redirect_uri}{separator}token={jwt_token}")
+        else:
+            return jsonify({
+                'success': True,
+                'token': jwt_token,
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'display_name': user.display_name,
+                    'avatar_url': user.avatar_url,
+                    'provider': user.provider
+                }
+            })
+    except Exception as e:
+        app.logger.error(f'Google回调处理失败: {str(e)}', exc_info=True)
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/auth/login/wechat', methods=['GET'])
+def wechat_login():
+    """微信登录入口"""
+    try:
+        wechat_client_id = os.getenv('WECHAT_CLIENT_ID', '')
+        if not wechat_client_id:
+            return jsonify({'error': '微信登录未配置'}), 500
+        
+        redirect_uri = request.args.get('redirect_uri', '')
+        if not redirect_uri:
+            redirect_uri = url_for('wechat_callback', _external=True)
+        
+        # 微信OAuth URL
+        wechat_auth_url = f"https://open.weixin.qq.com/connect/qrconnect?appid={wechat_client_id}&redirect_uri={redirect_uri}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect"
+        
+        session['oauth_redirect_uri'] = redirect_uri
+        return redirect(wechat_auth_url)
+    except Exception as e:
+        app.logger.error(f'微信登录失败: {str(e)}')
+        return jsonify({'error': '微信登录配置错误'}), 500
+
+@app.route('/api/auth/callback/wechat', methods=['GET'])
+def wechat_callback():
+    """微信OAuth回调"""
+    db = get_db()
+    try:
+        code = request.args.get('code')
+        if not code:
+            return jsonify({'error': '缺少授权码'}), 400
+        
+        user, token = handle_wechat_callback(oauth, db, code)
+        jwt_token = generate_jwt_token(user.id)
+        
+        redirect_uri = session.pop('oauth_redirect_uri', None) or request.args.get('redirect_uri', '')
+        if redirect_uri:
+            separator = '&' if '?' in redirect_uri else '?'
+            return redirect(f"{redirect_uri}{separator}token={jwt_token}")
+        else:
+            return jsonify({
+                'success': True,
+                'token': jwt_token,
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'display_name': user.display_name,
+                    'avatar_url': user.avatar_url,
+                    'provider': user.provider
+                }
+            })
+    except Exception as e:
+        app.logger.error(f'微信回调处理失败: {str(e)}', exc_info=True)
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/auth/me', methods=['GET'])
+def get_current_user_info():
+    """获取当前登录用户信息"""
+    db = get_db()
+    try:
+        user = get_current_user(db)
+        if not user:
+            return jsonify({'error': '未登录'}), 401
+        
+        return jsonify({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'display_name': user.display_name,
+            'avatar_url': user.avatar_url,
+            'provider': user.provider,
+            'created_at': user.created_at.isoformat() if user.created_at else None,
+            'last_login_at': user.last_login_at.isoformat() if user.last_login_at else None
+        })
+    except Exception as e:
+        app.logger.error(f'获取用户信息失败: {str(e)}', exc_info=True)
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/auth/logout', methods=['POST'])
+def logout():
+    """登出"""
+    # JWT是无状态的，前端删除token即可
+    return jsonify({'success': True, 'message': '登出成功'})
 
 if __name__ == '__main__':
     port = app.config['PORT']

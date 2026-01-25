@@ -7,6 +7,7 @@ import i18n from './i18n';
 import Tools from './pages/Tools';
 import AINav from './pages/AINav/AINav';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import LoginButton from './components/LoginButton';
 import TokenCalculator from './pages/TokenCalculator/TokenCalculator';
 import TextTokens from './pages/TokenCalculator/TextTokens';
 import ImageTokens from './pages/TokenCalculator/ImageTokens';
@@ -292,6 +293,7 @@ function AppContent() {
               </div>
             </nav>
             <div className="right-area">
+              <LoginButton />
               <LanguageSwitcher />
               <a 
                 href={`mailto:${feedbackEmail}`}
