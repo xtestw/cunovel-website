@@ -199,10 +199,24 @@ npm start
 
 ### 2. Google 登录失败
 
-- 确认 OAuth consent screen 已配置
-- 检查重定向 URI 是否在授权列表中
-- 确认 Google+ API 已启用
-- 如果使用测试账号，确保已添加到测试用户列表
+**常见错误：连接超时或无法连接**
+
+如果服务器在中国大陆（如腾讯云、阿里云等），访问 Google 服务可能会遇到网络问题：
+
+1. **配置代理（推荐）**
+   - 在 `.env` 文件中配置代理：
+     ```bash
+     HTTP_PROXY=http://your-proxy-server:port
+     HTTPS_PROXY=http://your-proxy-server:port
+     ```
+   - 重启服务器后生效
+
+2. **其他检查项**
+   - 确认 OAuth consent screen 已配置
+   - 检查重定向 URI 是否在授权列表中
+   - 确认 Google+ API 已启用
+   - 如果使用测试账号，确保已添加到测试用户列表
+   - 检查服务器网络是否能访问 `accounts.google.com`
 
 ### 3. 微信登录失败
 

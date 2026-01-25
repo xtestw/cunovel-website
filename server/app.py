@@ -509,9 +509,7 @@ def init_alipay_client():
             try:
                 from cryptography.hazmat.primitives import serialization
                 from cryptography.hazmat.backends import default_backend
-                from cryptography.hazmat.primitives.asymmetric import rsa
-                import subprocess
-                import tempfile
+                from cryptography.hazmat.primitives.asymmetric import rsa as crypto_rsa
                 
                 # 首先尝试使用 rsa 库验证（支付宝 SDK 使用的库）
                 try:
@@ -524,59 +522,86 @@ def init_alipay_client():
                     error_msg = str(rsa_error)
                     if 'Sequence' in error_msg or 'ASN.1' in error_msg or 'Tag' in error_msg:
                         app.logger.warning('检测到私钥格式问题，可能是 PKCS8 格式编码')
-                        app.logger.info('正在尝试使用 OpenSSL 转换为 PKCS1 格式...')
+                        app.logger.info('正在尝试使用 cryptography 库转换为 PKCS1 格式...')
                         
-                        # 使用 OpenSSL 命令转换
+                        # 使用 cryptography 库进行转换（更可靠，不依赖 OpenSSL）
                         try:
-                            # 创建临时文件
-                            with tempfile.NamedTemporaryFile(mode='w', suffix='.pem', delete=False) as tmp_in:
-                                tmp_in.write(cleaned_key)
-                                tmp_in_path = tmp_in.name
+                            # 记录私钥信息用于调试
+                            key_lines = cleaned_key.split('\n')
+                            app.logger.debug(f'尝试解析的私钥行数: {len(key_lines)}')
+                            app.logger.debug(f'私钥第一行: {key_lines[0] if key_lines else "N/A"}')
+                            app.logger.debug(f'私钥最后一行: {key_lines[-1] if key_lines else "N/A"}')
                             
-                            with tempfile.NamedTemporaryFile(mode='r', suffix='.pem', delete=False) as tmp_out:
-                                tmp_out_path = tmp_out.name
+                            # 尝试不同的加载方法
+                            private_key_obj = None
+                            try:
+                                # 方法1: 尝试作为标准 PEM 格式加载（自动检测 PKCS1 或 PKCS8）
+                                private_key_obj = serialization.load_pem_private_key(
+                                    cleaned_key.encode('utf-8'),
+                                    password=None,
+                                    backend=default_backend()
+                                )
+                                app.logger.debug('使用标准 PEM 格式加载成功')
+                            except Exception as e1:
+                                app.logger.debug(f'标准 PEM 格式加载失败: {str(e1)}')
+                                try:
+                                    # 方法2: 尝试作为 DER 格式加载（如果私钥是 base64 编码的 DER）
+                                    import base64
+                                    # 提取 base64 内容
+                                    base64_content = ''.join([line for line in key_lines if line and not line.startswith('-----')])
+                                    der_data = base64.b64decode(base64_content)
+                                    private_key_obj = serialization.load_der_private_key(
+                                        der_data,
+                                        password=None,
+                                        backend=default_backend()
+                                    )
+                                    app.logger.debug('使用 DER 格式加载成功')
+                                except Exception as e2:
+                                    app.logger.debug(f'DER 格式加载失败: {str(e2)}')
+                                    # 如果都失败，抛出第一个错误
+                                    raise e1
                             
-                            # 使用 OpenSSL 转换为 PKCS1 格式（使用 -traditional 选项）
-                            result = subprocess.run(
-                                ['openssl', 'rsa', '-traditional', '-in', tmp_in_path, '-out', tmp_out_path],
-                                capture_output=True,
-                                text=True,
-                                timeout=5
+                            if private_key_obj is None:
+                                raise ValueError('无法加载私钥对象')
+                            
+                            # 检查是否是 RSA 密钥
+                            if not isinstance(private_key_obj, crypto_rsa.RSAPrivateKey):
+                                raise ValueError('私钥不是 RSA 格式')
+                            
+                            # 转换为 PKCS1 格式（传统格式，支付宝 SDK 需要的格式）
+                            pkcs1_key = private_key_obj.private_bytes(
+                                encoding=serialization.Encoding.PEM,
+                                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                                encryption_algorithm=serialization.NoEncryption()
                             )
                             
-                            if result.returncode == 0:
-                                with open(tmp_out_path, 'r') as f:
-                                    cleaned_key = f.read()
-                                app.logger.info('✓ 已成功将私钥转换为 PKCS1 格式')
-                                
-                                # 验证转换后的格式
-                                try:
-                                    rsa.PrivateKey.load_pkcs1(cleaned_key.encode('utf-8'), format='PEM')
-                                    app.logger.debug('转换后的私钥格式验证通过')
-                                except Exception as verify_error:
-                                    app.logger.warning(f'转换后的私钥验证失败: {str(verify_error)}')
-                            else:
-                                app.logger.error(f'OpenSSL 转换失败: {result.stderr}')
-                                app.logger.error('请手动使用以下命令转换私钥格式：')
-                                app.logger.error('openssl rsa -in private_key.pem -out rsa_private_key.pem')
-                                raise Exception('OpenSSL conversion failed')
+                            cleaned_key = pkcs1_key.decode('utf-8')
+                            app.logger.info('✓ 已成功将私钥转换为 PKCS1 格式（使用 cryptography 库）')
                             
-                            # 清理临时文件
+                            # 验证转换后的格式（必须通过 rsa 库验证，因为支付宝 SDK 使用该库）
                             try:
-                                os.unlink(tmp_in_path)
-                                os.unlink(tmp_out_path)
-                            except:
-                                pass
-                            
-                        except (FileNotFoundError, subprocess.TimeoutExpired) as e:
-                            app.logger.error(f'无法使用 OpenSSL 转换: {str(e)}')
+                                import rsa
+                                rsa.PrivateKey.load_pkcs1(cleaned_key.encode('utf-8'), format='PEM')
+                                app.logger.debug('转换后的私钥格式验证通过（rsa 库）')
+                            except Exception as verify_error:
+                                error_msg = str(verify_error)
+                                app.logger.error(f'转换后的私钥验证失败（rsa 库）: {error_msg}')
+                                app.logger.error('转换后的私钥仍无法被 rsa 库识别，可能存在其他格式问题')
+                                app.logger.error('请检查私钥是否完整，或从支付宝开放平台重新生成 PKCS1 格式的私钥')
+                                # 继续使用转换后的密钥，让后续代码处理错误
+                                
+                        except Exception as convert_error:
+                            error_msg = str(convert_error)
+                            app.logger.error(f'使用 cryptography 库转换私钥失败: {error_msg}')
+                            # 输出更多调试信息
+                            app.logger.error(f'私钥长度: {len(cleaned_key)} 字符')
+                            app.logger.error(f'私钥包含 BEGIN 标记: {"-----BEGIN" in cleaned_key}')
+                            app.logger.error(f'私钥包含 END 标记: {"-----END" in cleaned_key}')
+                            app.logger.error('请检查私钥是否完整，确保包含完整的 BEGIN 和 END 标记')
                             app.logger.error('请手动使用以下命令转换私钥格式：')
                             app.logger.error('openssl rsa -in private_key.pem -out rsa_private_key.pem')
                             app.logger.error('或者从支付宝开放平台重新生成 PKCS1 格式的私钥')
-                            raise Exception('PKCS8 to RSA conversion required')
-                        except Exception as e:
-                            app.logger.error(f'转换私钥格式时出错: {str(e)}')
-                            raise
+                            # 不抛出异常，让代码继续尝试使用原始密钥（可能会在后续步骤失败）
                     else:
                         # 其他错误，记录但不阻止
                         app.logger.warning(f'私钥格式验证警告: {error_msg}')
@@ -627,6 +652,143 @@ def init_alipay_client():
             app.logger.error('请检查 .env 文件中的 ALIPAY_APP_PRIVATE_KEY 配置，确保包含完整的私钥内容')
             app.logger.error('私钥应该以 -----BEGIN RSA PRIVATE KEY----- 开头，以 -----END RSA PRIVATE KEY----- 结尾')
     
+    # 在传递给 SDK 之前，强制验证并转换私钥格式
+    try:
+        import rsa
+        # 尝试使用 rsa 库加载私钥（支付宝 SDK 使用的库）
+        try:
+            rsa.PrivateKey.load_pkcs1(app_private_key.encode('utf-8'), format='PEM')
+            app.logger.debug('私钥格式验证通过（rsa 库），可以直接使用')
+        except Exception as rsa_error:
+            # rsa 库无法加载，尝试使用 cryptography 库转换
+            error_msg = str(rsa_error)
+            if 'Sequence' in error_msg or 'ASN.1' in error_msg or 'Tag' in error_msg:
+                app.logger.warning('rsa 库无法加载私钥，尝试使用 cryptography 库转换格式...')
+                conversion_success = False
+                
+                # 方法1: 尝试使用 cryptography 库转换
+                try:
+                    from cryptography.hazmat.primitives import serialization
+                    from cryptography.hazmat.backends import default_backend
+                    from cryptography.hazmat.primitives.asymmetric import rsa as crypto_rsa
+                    
+                    # 尝试不同的加载方式
+                    private_key_obj = None
+                    try:
+                        # 标准 PEM 格式
+                        private_key_obj = serialization.load_pem_private_key(
+                            app_private_key.encode('utf-8'),
+                            password=None,
+                            backend=default_backend()
+                        )
+                    except Exception:
+                        # 如果失败，尝试提取 base64 内容并作为 DER 加载
+                        try:
+                            import base64
+                            lines = app_private_key.split('\n')
+                            base64_content = ''.join([line.strip() for line in lines if line.strip() and not line.strip().startswith('-----')])
+                            if base64_content:
+                                der_data = base64.b64decode(base64_content)
+                                private_key_obj = serialization.load_der_private_key(
+                                    der_data,
+                                    password=None,
+                                    backend=default_backend()
+                                )
+                        except Exception:
+                            pass
+                    
+                    if private_key_obj and isinstance(private_key_obj, crypto_rsa.RSAPrivateKey):
+                        # 转换为 PKCS1 格式
+                        pkcs1_key = private_key_obj.private_bytes(
+                            encoding=serialization.Encoding.PEM,
+                            format=serialization.PrivateFormat.TraditionalOpenSSL,
+                            encryption_algorithm=serialization.NoEncryption()
+                        )
+                        
+                        converted_key = pkcs1_key.decode('utf-8')
+                        
+                        # 验证转换后的密钥可以被 rsa 库加载
+                        rsa.PrivateKey.load_pkcs1(converted_key.encode('utf-8'), format='PEM')
+                        app_private_key = converted_key
+                        app.logger.info('✓ 已成功将私钥转换为 PKCS1 格式（使用 cryptography 库）')
+                        app.logger.debug('转换后的私钥已通过 rsa 库验证')
+                        conversion_success = True
+                    else:
+                        raise ValueError('无法加载或转换私钥')
+                        
+                except Exception as convert_error:
+                    error_msg_crypto = str(convert_error)
+                    app.logger.warning(f'cryptography 库转换失败: {error_msg_crypto}')
+                    
+                    # 方法2: 尝试使用 OpenSSL 命令（不使用 -traditional 选项）
+                    if not conversion_success:
+                        try:
+                            import subprocess
+                            import tempfile
+                            
+                            app.logger.info('尝试使用 OpenSSL 命令转换私钥格式...')
+                            
+                            # 创建临时文件
+                            with tempfile.NamedTemporaryFile(mode='w', suffix='.pem', delete=False) as tmp_in:
+                                tmp_in.write(app_private_key)
+                                tmp_in_path = tmp_in.name
+                            
+                            with tempfile.NamedTemporaryFile(mode='r', suffix='.pem', delete=False) as tmp_out:
+                                tmp_out_path = tmp_out.name
+                            
+                            # 使用 OpenSSL 转换为 PKCS1 格式（不使用 -traditional，使用标准命令）
+                            result = subprocess.run(
+                                ['openssl', 'rsa', '-in', tmp_in_path, '-out', tmp_out_path],
+                                capture_output=True,
+                                text=True,
+                                timeout=10
+                            )
+                            
+                            if result.returncode == 0:
+                                with open(tmp_out_path, 'r') as f:
+                                    converted_key = f.read()
+                                
+                                # 验证转换后的格式
+                                rsa.PrivateKey.load_pkcs1(converted_key.encode('utf-8'), format='PEM')
+                                app_private_key = converted_key
+                                app.logger.info('✓ 已成功将私钥转换为 PKCS1 格式（使用 OpenSSL）')
+                                app.logger.debug('转换后的私钥已通过 rsa 库验证')
+                                conversion_success = True
+                                
+                                # 清理临时文件
+                                try:
+                                    os.unlink(tmp_in_path)
+                                    os.unlink(tmp_out_path)
+                                except:
+                                    pass
+                            else:
+                                app.logger.warning(f'OpenSSL 转换失败: {result.stderr}')
+                                
+                        except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+                            app.logger.warning(f'无法使用 OpenSSL 转换: {str(e)}')
+                        except Exception as openssl_error:
+                            app.logger.warning(f'OpenSSL 转换过程出错: {str(openssl_error)}')
+                
+                # 如果所有转换方法都失败
+                if not conversion_success:
+                    app.logger.error('所有私钥转换方法都失败了')
+                    app.logger.error('请手动使用以下命令转换私钥格式：')
+                    app.logger.error('openssl rsa -in private_key.pem -out rsa_private_key.pem')
+                    app.logger.error('或者从支付宝开放平台重新生成 PKCS1 格式的私钥')
+                    app.logger.error('私钥应该以 -----BEGIN RSA PRIVATE KEY----- 开头')
+                    app.logger.error('以 -----END RSA PRIVATE KEY----- 结尾')
+                    raise Exception(f'私钥格式错误，无法被 rsa 库加载，且无法自动转换')
+            else:
+                # 其他错误
+                app.logger.error(f'私钥验证失败: {error_msg}')
+                raise Exception(f'私钥格式错误: {error_msg}')
+    except ImportError:
+        app.logger.warning('rsa 库未安装，跳过私钥格式验证')
+    except Exception as e:
+        error_msg = str(e)
+        app.logger.error(f'私钥验证/转换失败: {error_msg}')
+        return None
+    
     try:
         # 确定网关地址
         if debug:
@@ -648,42 +810,7 @@ def init_alipay_client():
         # 创建支付宝客户端
         client = DefaultAlipayClient(alipay_client_config=config)
         
-        # 测试私钥格式（尝试加载私钥以验证）
-        try:
-            # 首先使用 cryptography 库验证私钥
-            try:
-                from cryptography.hazmat.primitives import serialization
-                from cryptography.hazmat.backends import default_backend
-                
-                # 尝试加载私钥
-                private_key_obj = serialization.load_pem_private_key(
-                    app_private_key.encode('utf-8'),
-                    password=None,
-                    backend=default_backend()
-                )
-                app.logger.debug('私钥格式验证通过（使用 cryptography 库）')
-            except Exception as crypto_error:
-                app.logger.warning(f'使用 cryptography 库验证私钥失败: {str(crypto_error)}')
-                # 继续尝试使用 rsa 库验证
-                try:
-                    import rsa
-                    rsa.PrivateKey.load_pkcs1(app_private_key.encode('utf-8'), format='PEM')
-                    app.logger.debug('私钥格式验证通过（使用 rsa 库）')
-                except Exception as rsa_error:
-                    error_msg = str(rsa_error)
-                    if 'Sequence' in error_msg:
-                        app.logger.error('私钥内容可能有问题，无法解析')
-                        app.logger.error('请检查私钥是否完整，是否从支付宝开放平台正确复制')
-                        app.logger.error('私钥应该以 -----BEGIN RSA PRIVATE KEY----- 开头')
-                        app.logger.error('以 -----END RSA PRIVATE KEY----- 结尾')
-                        app.logger.error('如果是支付宝沙箱环境，请确保使用沙箱环境的应用私钥')
-                        app.logger.error('获取方式：支付宝开放平台 > 开发助手 > 沙箱环境 > 查看应用私钥')
-                        app.logger.error(f'详细错误: {error_msg}')
-                    else:
-                        app.logger.warning(f'私钥格式验证警告: {error_msg}')
-        except Exception as e:
-            app.logger.warning(f'私钥验证过程出错: {str(e)}')
-        
+        app.logger.debug('支付宝客户端初始化成功')
         return client
     except Exception as e:
         error_msg = str(e)
