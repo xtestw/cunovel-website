@@ -116,10 +116,12 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 4. 提交审核（通常需要1-3个工作日）
 
 **重要提示**：
-- 授权回调域只需要填写域名部分（如 `cutool.online`）
+- 授权回调域只需要填写域名部分（如 `cutool.online` 或 `api.cutool.online`）
 - 微信会验证回调 URL 的域名是否在授权回调域列表中
-- 回调 URL 应该是：`https://your-domain.com/api/auth/callback/wechat`（后端地址）
+- **生产环境必须使用 HTTPS**：回调 URL 应该是 `https://your-domain.com/api/auth/callback/wechat`
+- 开发环境可以使用 HTTP：`http://localhost:3003/api/auth/callback/wechat`
 - 回调 URL 会自动进行 URL 编码，无需手动编码
+- 如果使用环境变量 `WECHAT_CALLBACK_URI`，确保生产环境使用 HTTPS 协议
 
 ### 3. 获取 AppID 和 AppSecret
 

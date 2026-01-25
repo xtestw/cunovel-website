@@ -990,8 +990,14 @@ def github_login():
         # 前端最终跳转地址（用于登录成功后跳转回前端）
         frontend_redirect_uri = request.args.get('redirect_uri', '')
         
-        # GitHub回调地址必须是后端的回调接口
-        backend_callback_uri = url_for('github_callback', _external=True)
+        # GitHub回调地址：优先使用环境变量配置，否则自动生成
+        backend_callback_uri = os.getenv('GITHUB_CALLBACK_URI', '')
+        if not backend_callback_uri:
+            backend_callback_uri = url_for('github_callback', _external=True)
+            # 生产环境建议使用 HTTPS
+            # 如果自动生成的地址是 http，且不是 localhost，强制改为 https
+            if backend_callback_uri.startswith('http://') and 'localhost' not in backend_callback_uri:
+                backend_callback_uri = backend_callback_uri.replace('http://', 'https://')
         
         # 保存前端跳转地址到session，用于登录成功后跳转
         if frontend_redirect_uri:
@@ -1044,8 +1050,14 @@ def google_login():
         # 前端最终跳转地址（用于登录成功后跳转回前端）
         frontend_redirect_uri = request.args.get('redirect_uri', '')
         
-        # Google回调地址必须是后端的回调接口
-        backend_callback_uri = url_for('google_callback', _external=True)
+        # Google回调地址：优先使用环境变量配置，否则自动生成
+        backend_callback_uri = os.getenv('GOOGLE_CALLBACK_URI', '')
+        if not backend_callback_uri:
+            backend_callback_uri = url_for('google_callback', _external=True)
+            # 生产环境建议使用 HTTPS
+            # 如果自动生成的地址是 http，且不是 localhost，强制改为 https
+            if backend_callback_uri.startswith('http://') and 'localhost' not in backend_callback_uri:
+                backend_callback_uri = backend_callback_uri.replace('http://', 'https://')
         
         # 保存前端跳转地址到session，用于登录成功后跳转
         if frontend_redirect_uri:
@@ -1100,8 +1112,14 @@ def wechat_login():
         # 前端最终跳转地址（用于登录成功后跳转回前端）
         frontend_redirect_uri = request.args.get('redirect_uri', '')
         
-        # 微信回调地址必须是后端的回调接口
-        backend_callback_uri = url_for('wechat_callback', _external=True)
+        # 微信回调地址：优先使用环境变量配置，否则自动生成
+        backend_callback_uri = os.getenv('WECHAT_CALLBACK_URI', '')
+        if not backend_callback_uri:
+            backend_callback_uri = url_for('wechat_callback', _external=True)
+            # 微信要求生产环境必须使用 HTTPS
+            # 如果自动生成的地址是 http，且不是 localhost，强制改为 https
+            if backend_callback_uri.startswith('http://') and 'localhost' not in backend_callback_uri:
+                backend_callback_uri = backend_callback_uri.replace('http://', 'https://')
         
         # 保存前端跳转地址到session，用于登录成功后跳转
         if frontend_redirect_uri:
