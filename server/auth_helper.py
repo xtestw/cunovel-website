@@ -67,11 +67,19 @@ def generate_jwt_token(user_id):
         'exp': datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS),
         'iat': datetime.utcnow()
     }
-    return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+    token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+    # 确保返回字符串类型（PyJWT 2.x 返回字符串，但为了兼容性确保是字符串）
+    if isinstance(token, bytes):
+        return token.decode('utf-8')
+    return token
 
 def verify_jwt_token(token):
     """验证JWT token"""
     try:
+        # 确保 token 是字符串
+        if isinstance(token, bytes):
+            token = token.decode('utf-8')
+        
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
         return payload.get('user_id')
     except jwt.ExpiredSignatureError:
@@ -85,9 +93,16 @@ def get_current_user(db: Session, token: str = None):
         # 从请求头获取token
         auth_header = request.headers.get('Authorization', '')
         if auth_header.startswith('Bearer '):
-            token = auth_header[7:]
+            token = auth_header[7:].strip()
         else:
             return None
+    
+    # 确保 token 是字符串（处理可能的 bytes 类型）
+    if isinstance(token, bytes):
+        token = token.decode('utf-8')
+    
+    # 清理 token（移除可能的引号或其他字符）
+    token = token.strip().strip('"').strip("'")
     
     user_id = verify_jwt_token(token)
     if not user_id:

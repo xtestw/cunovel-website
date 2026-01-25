@@ -1181,7 +1181,9 @@ def get_current_user_info():
         if not user:
             # 记录详细的错误信息用于调试
             auth_header = request.headers.get('Authorization', '')
-            app.logger.warning(f'获取用户信息失败: Authorization header = {auth_header[:20]}...')
+            # 只记录前50个字符，避免记录完整的token
+            header_preview = str(auth_header[:50]) if auth_header else 'None'
+            app.logger.warning(f'获取用户信息失败: Authorization header = {header_preview}...')
             return jsonify({'error': '未登录或token无效'}), 401
         
         return jsonify({
