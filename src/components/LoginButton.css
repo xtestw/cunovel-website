@@ -1,0 +1,352 @@
+/* 登录触发按钮 */
+.login-trigger-button {
+  padding: 8px 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  color: #595959;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.login-trigger-button:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+  background: #f0f8ff;
+}
+
+/* 登录弹窗遮罩层 */
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 登录弹窗 */
+.login-modal {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 弹窗头部 */
+.login-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.login-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.login-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #8c8c8c;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.login-modal-close:hover {
+  background: #f5f5f5;
+  color: #262626;
+}
+
+/* 弹窗内容 */
+.login-modal-content {
+  padding: 24px;
+}
+
+.login-modal-description {
+  margin: 0 0 20px 0;
+  color: #8c8c8c;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 登录选项容器 */
+.login-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 登录选项按钮 */
+.login-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+.login-option:hover:not(:disabled) {
+  border-color: #1890ff;
+  background: #f0f8ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
+}
+
+.login-option:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 登录选项图标 */
+.login-option-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.login-option-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* GitHub图标颜色 */
+.github-option .login-option-icon svg {
+  color: #24292e;
+}
+
+/* Google图标保持原色 */
+.google-option .login-option-icon svg {
+  width: 44px;
+  height: 44px;
+}
+
+/* 微信图标颜色 */
+.wechat-option .login-option-icon svg {
+  color: #07c160;
+}
+
+/* 登录选项内容 */
+.login-option-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.login-option-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 4px;
+}
+
+.login-option-desc {
+  font-size: 13px;
+  color: #8c8c8c;
+}
+
+/* 登录选项箭头 */
+.login-option-arrow {
+  font-size: 20px;
+  color: #bfbfbf;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.login-option:hover:not(:disabled) .login-option-arrow {
+  color: #1890ff;
+  transform: translateX(4px);
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 14px;
+  color: #595959;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-button {
+  padding: 6px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  color: #595959;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.logout-button:hover {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+  background: #fff1f0;
+}
+
+/* 用户菜单样式 */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 14px;
+  color: #595959;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-button {
+  padding: 6px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  color: #595959;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.logout-button:hover {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+  background: #fff1f0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .login-modal {
+    width: 95%;
+    max-width: none;
+    margin: 20px;
+  }
+
+  .login-modal-header {
+    padding: 16px 20px;
+  }
+
+  .login-modal-header h2 {
+    font-size: 18px;
+  }
+
+  .login-modal-content {
+    padding: 20px;
+  }
+
+  .login-option {
+    padding: 14px;
+  }
+
+  .login-option-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .login-option-name {
+    font-size: 15px;
+  }
+
+  .login-option-desc {
+    font-size: 12px;
+  }
+
+  .user-name {
+    max-width: 100px;
+  }
+}
+

@@ -1,0 +1,243 @@
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import './LoginButton.css';
+import { API_BASE_URL } from '../config/api';
+
+const LoginButton = ({ onLoginSuccess }) => {
+  const { t, i18n } = useTranslation();
+  const [user, setUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // 检查URL中是否有token（OAuth回调）
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    
+    if (token) {
+      // 保存token
+      localStorage.setItem('auth_token', token);
+      // 清除URL中的token
+      window.history.replaceState({}, document.title, window.location.pathname);
+      // 获取用户信息
+      fetchUserInfo(token);
+    } else {
+      // 检查本地存储的token
+      const savedToken = localStorage.getItem('auth_token');
+      if (savedToken) {
+        fetchUserInfo(savedToken);
+      }
+    }
+  }, []);
+
+  // 点击外部关闭弹窗
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showModal && event.target.classList.contains('login-modal-overlay')) {
+        setShowModal(false);
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener('click', handleClickOutside);
+      // 阻止背景滚动
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showModal]);
+
+  // ESC键关闭弹窗
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape' && showModal) {
+        setShowModal(false);
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEsc);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [showModal]);
+
+  const fetchUserInfo = async (token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+        if (onLoginSuccess) {
+          onLoginSuccess(userData);
+        }
+      } else {
+        // Token无效，清除
+        localStorage.removeItem('auth_token');
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('获取用户信息失败:', error);
+      localStorage.removeItem('auth_token');
+      setUser(null);
+    }
+  };
+
+  const handleLogin = (provider) => {
+    setLoading(true);
+    setShowModal(false);
+    const redirectUri = `${window.location.origin}${window.location.pathname}`;
+    const loginUrl = `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = loginUrl;
+  };
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+      localStorage.removeItem('auth_token');
+      setUser(null);
+      if (onLoginSuccess) {
+        onLoginSuccess(null);
+      }
+    } catch (error) {
+      console.error('登出失败:', error);
+      localStorage.removeItem('auth_token');
+      setUser(null);
+    }
+  };
+
+  if (user) {
+    return (
+      <div className="user-menu">
+        <div className="user-info">
+          {user.avatar_url && (
+            <img src={user.avatar_url} alt={user.display_name || user.username} className="user-avatar" />
+          )}
+          <span className="user-name">{user.display_name || user.username || user.email}</span>
+        </div>
+        <button className="logout-button" onClick={handleLogout}>
+          {i18n.language.startsWith('zh') ? '登出' : 'Logout'}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <button 
+        className="login-trigger-button" 
+        onClick={() => setShowModal(true)}
+      >
+        {i18n.language.startsWith('zh') ? '登录' : 'Login'}
+      </button>
+
+      {showModal && (
+        <div className="login-modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowModal(false)}>
+          <div className="login-modal">
+            <div className="login-modal-header">
+              <h2>{i18n.language.startsWith('zh') ? '选择登录方式' : 'Choose Login Method'}</h2>
+              <button 
+                className="login-modal-close" 
+                onClick={() => setShowModal(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="login-modal-content">
+              <p className="login-modal-description">
+                {i18n.language.startsWith('zh') 
+                  ? '请选择以下方式之一登录' 
+                  : 'Please choose one of the following methods to login'}
+              </p>
+              
+              <div className="login-options">
+                <button 
+                  className="login-option github-option" 
+                  onClick={() => handleLogin('github')}
+                  disabled={loading}
+                >
+                  <div className="login-option-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                  </div>
+                  <div className="login-option-content">
+                    <div className="login-option-name">GitHub</div>
+                    <div className="login-option-desc">
+                      {i18n.language.startsWith('zh') ? '使用GitHub账号登录' : 'Login with GitHub'}
+                    </div>
+                  </div>
+                  <div className="login-option-arrow">→</div>
+                </button>
+
+                <button 
+                  className="login-option google-option" 
+                  onClick={() => handleLogin('google')}
+                  disabled={loading}
+                >
+                  <div className="login-option-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                  </div>
+                  <div className="login-option-content">
+                    <div className="login-option-name">Google</div>
+                    <div className="login-option-desc">
+                      {i18n.language.startsWith('zh') ? '使用Google账号登录' : 'Login with Google'}
+                    </div>
+                  </div>
+                  <div className="login-option-arrow">→</div>
+                </button>
+
+                {i18n.language.startsWith('zh') && (
+                  <button 
+                    className="login-option wechat-option" 
+                    onClick={() => handleLogin('wechat')}
+                    disabled={loading}
+                  >
+                    <div className="login-option-icon">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.042-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.35-8.597-6.35zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 3.336c-1.693 0-3.001.932-3.001 2.064 0 1.132 1.308 2.063 3 2.063 1.692 0 3.001-.931 3.001-2.063 0-1.132-1.309-2.064-3-2.064zm-1.08 2.408c-.33 0-.598-.272-.598-.607 0-.336.268-.608.598-.608.33 0 .599.272.599.608 0 .335-.269.607-.599.607zm-2.16-1.214c-.33 0-.598-.272-.598-.607 0-.336.268-.608.598-.608.33 0 .599.272.599.608 0 .335-.269.607-.599.607zm5.34 1.214c-.33 0-.598-.272-.598-.607 0-.336.268-.608.598-.608.33 0 .599.272.599.608 0 .335-.269.607-.599.607zm-2.16-1.214c-.33 0-.598-.272-.598-.607 0-.336.268-.608.598-.608.33 0 .599.272.599.608 0 .335-.269.607-.599.607z"/>
+                      </svg>
+                    </div>
+                    <div className="login-option-content">
+                      <div className="login-option-name">微信</div>
+                      <div className="login-option-desc">使用微信账号登录</div>
+                    </div>
+                    <div className="login-option-arrow">→</div>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default LoginButton;
+
