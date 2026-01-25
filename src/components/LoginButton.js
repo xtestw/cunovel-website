@@ -7,6 +7,7 @@ const LoginButton = ({ onLoginSuccess }) => {
   const { t, i18n } = useTranslation();
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -67,6 +68,23 @@ const LoginButton = ({ onLoginSuccess }) => {
     };
   }, [showModal]);
 
+  // 点击外部关闭用户菜单
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showUserMenu && !event.target.closest('.user-menu-container')) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showUserMenu]);
+
   const fetchUserInfo = async (token) => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -126,16 +144,48 @@ const LoginButton = ({ onLoginSuccess }) => {
 
   if (user) {
     return (
-      <div className="user-menu">
-        <div className="user-info">
+      <div className="user-menu-container">
+        <div 
+          className="user-info" 
+          onClick={() => setShowUserMenu(!showUserMenu)}
+          style={{ cursor: 'pointer' }}
+        >
           {user.avatar_url && (
             <img src={user.avatar_url} alt={user.display_name || user.username} className="user-avatar" />
           )}
           <span className="user-name">{user.display_name || user.username || user.email}</span>
+          <span className="user-menu-arrow">{showUserMenu ? '▲' : '▼'}</span>
         </div>
-        <button className="logout-button" onClick={handleLogout}>
-          {i18n.language.startsWith('zh') ? '登出' : 'Logout'}
-        </button>
+        
+        {showUserMenu && (
+          <div className="user-dropdown-menu">
+            <div className="user-dropdown-header">
+              <div className="user-dropdown-avatar">
+                {user.avatar_url && (
+                  <img src={user.avatar_url} alt={user.display_name || user.username} />
+                )}
+              </div>
+              <div className="user-dropdown-info">
+                <div className="user-dropdown-name">{user.display_name || user.username || user.email}</div>
+                {user.email && user.email !== (user.display_name || user.username) && (
+                  <div className="user-dropdown-email">{user.email}</div>
+                )}
+                <div className="user-dropdown-provider">
+                  {user.provider === 'github' && 'GitHub'}
+                  {user.provider === 'google' && 'Google'}
+                  {user.provider === 'wechat' && '微信'}
+                </div>
+              </div>
+            </div>
+            <div className="user-dropdown-divider"></div>
+            <button 
+              className="user-dropdown-item logout-item" 
+              onClick={handleLogout}
+            >
+              <span>{i18n.language.startsWith('zh') ? '登出' : 'Logout'}</span>
+            </button>
+          </div>
+        )}
       </div>
     );
   }
