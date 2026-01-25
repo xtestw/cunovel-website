@@ -1179,7 +1179,10 @@ def get_current_user_info():
     try:
         user = get_current_user(db)
         if not user:
-            return jsonify({'error': '未登录'}), 401
+            # 记录详细的错误信息用于调试
+            auth_header = request.headers.get('Authorization', '')
+            app.logger.warning(f'获取用户信息失败: Authorization header = {auth_header[:20]}...')
+            return jsonify({'error': '未登录或token无效'}), 401
         
         return jsonify({
             'id': user.id,

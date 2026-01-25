@@ -12,7 +12,8 @@ from sqlalchemy.orm import Session
 from models import User
 
 # JWT配置
-JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_urlsafe(32))
+# 优先使用 JWT_SECRET_KEY，如果没有则使用 SECRET_KEY，最后才使用随机生成
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY') or os.getenv('SECRET_KEY') or secrets.token_urlsafe(32)
 JWT_ALGORITHM = 'HS256'
 JWT_EXPIRATION_HOURS = 24 * 7  # 7天
 
