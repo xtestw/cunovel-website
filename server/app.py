@@ -15,6 +15,7 @@ import os
 import uuid
 import hashlib
 import json
+import urllib.parse
 try:
     from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
     from alipay.aop.api.request.AlipayTradePagePayRequest import AlipayTradePagePayRequest
@@ -986,13 +987,18 @@ def alipay_notify():
 def github_login():
     """GitHub登录入口"""
     try:
-        redirect_uri = request.args.get('redirect_uri', '')
-        if not redirect_uri:
-            # 默认回调地址
-            redirect_uri = url_for('github_callback', _external=True)
+        # 前端最终跳转地址（用于登录成功后跳转回前端）
+        frontend_redirect_uri = request.args.get('redirect_uri', '')
         
-        session['oauth_redirect_uri'] = redirect_uri
-        return oauth.github.authorize_redirect(redirect_uri)
+        # GitHub回调地址必须是后端的回调接口
+        backend_callback_uri = url_for('github_callback', _external=True)
+        
+        # 保存前端跳转地址到session，用于登录成功后跳转
+        if frontend_redirect_uri:
+            session['oauth_redirect_uri'] = frontend_redirect_uri
+        
+        # 使用后端回调地址进行GitHub授权
+        return oauth.github.authorize_redirect(backend_callback_uri)
     except Exception as e:
         app.logger.error(f'GitHub登录失败: {str(e)}')
         return jsonify({'error': 'GitHub登录配置错误'}), 500
@@ -1035,12 +1041,18 @@ def github_callback():
 def google_login():
     """Google登录入口"""
     try:
-        redirect_uri = request.args.get('redirect_uri', '')
-        if not redirect_uri:
-            redirect_uri = url_for('google_callback', _external=True)
+        # 前端最终跳转地址（用于登录成功后跳转回前端）
+        frontend_redirect_uri = request.args.get('redirect_uri', '')
         
-        session['oauth_redirect_uri'] = redirect_uri
-        return oauth.google.authorize_redirect(redirect_uri)
+        # Google回调地址必须是后端的回调接口
+        backend_callback_uri = url_for('google_callback', _external=True)
+        
+        # 保存前端跳转地址到session，用于登录成功后跳转
+        if frontend_redirect_uri:
+            session['oauth_redirect_uri'] = frontend_redirect_uri
+        
+        # 使用后端回调地址进行Google授权
+        return oauth.google.authorize_redirect(backend_callback_uri)
     except Exception as e:
         app.logger.error(f'Google登录失败: {str(e)}')
         return jsonify({'error': 'Google登录配置错误'}), 500
@@ -1085,14 +1097,22 @@ def wechat_login():
         if not wechat_client_id:
             return jsonify({'error': '微信登录未配置'}), 500
         
-        redirect_uri = request.args.get('redirect_uri', '')
-        if not redirect_uri:
-            redirect_uri = url_for('wechat_callback', _external=True)
+        # 前端最终跳转地址（用于登录成功后跳转回前端）
+        frontend_redirect_uri = request.args.get('redirect_uri', '')
         
-        # 微信OAuth URL
-        wechat_auth_url = f"https://open.weixin.qq.com/connect/qrconnect?appid={wechat_client_id}&redirect_uri={redirect_uri}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect"
+        # 微信回调地址必须是后端的回调接口
+        backend_callback_uri = url_for('wechat_callback', _external=True)
         
-        session['oauth_redirect_uri'] = redirect_uri
+        # 保存前端跳转地址到session，用于登录成功后跳转
+        if frontend_redirect_uri:
+            session['oauth_redirect_uri'] = frontend_redirect_uri
+        
+        # 对微信回调地址进行URL编码（微信要求）
+        encoded_callback_uri = urllib.parse.quote(backend_callback_uri, safe='')
+        
+        # 微信OAuth URL（redirect_uri必须编码）
+        wechat_auth_url = f"https://open.weixin.qq.com/connect/qrconnect?appid={wechat_client_id}&redirect_uri={encoded_callback_uri}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect"
+        
         return redirect(wechat_auth_url)
     except Exception as e:
         app.logger.error(f'微信登录失败: {str(e)}')

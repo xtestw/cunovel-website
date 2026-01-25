@@ -27,9 +27,16 @@ mysql -u root -p cutool_db < create_users_table.sql
    - **Application name**: CUTool（或您的应用名称）
    - **Homepage URL**: `https://your-domain.com`（您的网站地址）
    - **Authorization callback URL**: `https://your-domain.com/api/auth/callback/github`
-     - 开发环境可以使用：`http://localhost:3003/api/auth/callback/github`
+     - **重要**：必须使用后端回调地址，不是前端地址
+     - 生产环境：`https://api.cutool.online/api/auth/callback/github` 或 `https://cutool.online/api/auth/callback/github`
+     - 开发环境：`http://localhost:3003/api/auth/callback/github`
 4. 点击 "Register application"
 5. 复制 **Client ID** 和 **Client Secret**
+
+**重要提示**：
+- Authorization callback URL 必须与代码中使用的回调地址完全一致
+- 如果使用多个环境（开发/生产），需要创建多个 OAuth App 或使用环境变量动态配置
+- 回调 URL 必须包含完整的协议（http/https）和路径
 
 ### 2. 配置环境变量
 
@@ -103,8 +110,16 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
    - **应用名称**: CUTool
    - **应用简介**: 您的应用描述
    - **应用官网**: `https://your-domain.com`
-   - **授权回调域**: `your-domain.com`（不需要协议和路径）
+   - **授权回调域**: `your-domain.com`（**重要**：只需要域名，不需要协议和路径）
+     - 例如：`cutool.online` 或 `www.cutool.online`
+     - 不要填写：`https://cutool.online` 或 `cutool.online/api/auth/callback/wechat`
 4. 提交审核（通常需要1-3个工作日）
+
+**重要提示**：
+- 授权回调域只需要填写域名部分（如 `cutool.online`）
+- 微信会验证回调 URL 的域名是否在授权回调域列表中
+- 回调 URL 应该是：`https://your-domain.com/api/auth/callback/wechat`（后端地址）
+- 回调 URL 会自动进行 URL 编码，无需手动编码
 
 ### 3. 获取 AppID 和 AppSecret
 
@@ -161,9 +176,24 @@ npm start
 
 ### 1. GitHub 登录失败
 
-- 检查回调 URL 是否正确配置
-- 确认 Client ID 和 Secret 是否正确
-- 检查网络连接是否正常
+**常见错误：redirect_uri is not associated with this application**
+
+可能的原因：
+1. **回调 URL 配置不匹配**
+   - 在 GitHub OAuth App 中配置的 Authorization callback URL 必须与代码中使用的完全一致
+   - 检查回调 URL 是否包含正确的协议（http/https）
+   - 检查回调 URL 的域名和路径是否正确
+   - 生产环境应该是：`https://api.cutool.online/api/auth/callback/github` 或 `https://cutool.online/api/auth/callback/github`
+   - 开发环境应该是：`http://localhost:3003/api/auth/callback/github`
+
+2. **多个环境配置问题**
+   - 如果开发和生产使用不同的域名，需要在 GitHub 创建多个 OAuth App
+   - 或者使用同一个 OAuth App，但确保回调 URL 配置正确
+
+3. **其他检查项**
+   - 确认 Client ID 和 Client Secret 是否正确配置到 `.env` 文件
+   - 检查网络连接是否正常
+   - 确认 OAuth App 没有被删除或禁用
 
 ### 2. Google 登录失败
 
