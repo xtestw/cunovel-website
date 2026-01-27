@@ -310,18 +310,21 @@ const VehicleVerify = () => {
     }
   };
 
-  // 保存订单到本地存储
-  const saveOrderToLocal = (order) => {
+  // 保存订单号到本地存储（只保存订单号，不保存完整订单信息）
+  const saveOrderIdToLocal = (orderId) => {
     try {
-      const orders = JSON.parse(localStorage.getItem('vehicleVerifyOrders') || '[]');
-      orders.unshift(order); // 添加到开头
-      // 只保留最近100条订单
-      if (orders.length > 100) {
-        orders.pop();
+      const orderIds = JSON.parse(localStorage.getItem('vehicleVerifyOrderIds') || '[]');
+      // 如果订单号已存在，先移除（避免重复）
+      const filteredIds = orderIds.filter(id => id !== orderId);
+      // 添加到开头
+      filteredIds.unshift(orderId);
+      // 只保留最近100条订单号
+      if (filteredIds.length > 100) {
+        filteredIds.pop();
       }
-      localStorage.setItem('vehicleVerifyOrders', JSON.stringify(orders));
+      localStorage.setItem('vehicleVerifyOrderIds', JSON.stringify(filteredIds));
     } catch (err) {
-      console.error('保存订单失败:', err);
+      console.error('保存订单号失败:', err);
     }
   };
 
@@ -397,12 +400,15 @@ const VehicleVerify = () => {
       setOrderId(orderResult.orderId);
       setPaymentStatus('pending');
 
-      // 2. 打开支付宝支付页面
+      // 2. 立即保存订单号到本地存储
+      saveOrderIdToLocal(orderResult.orderId);
+
+      // 3. 打开支付宝支付页面
       if (orderResult.paymentUrl) {
         window.open(orderResult.paymentUrl, '_blank');
       }
 
-      // 3. 轮询检查支付状态
+      // 4. 轮询检查支付状态
       let checkCount = 0;
       const maxChecks = 30; // 最多检查30次（60秒）
       
@@ -415,22 +421,16 @@ const VehicleVerify = () => {
             clearInterval(checkInterval);
             setPaymentStatus('paid');
 
-            // 4. 支付成功后调用阿里云API
-            const apiResult = await callAliyunAPI(verifyType, formData);
-            setResult(apiResult);
-            setLoading(false);
-
-            // 5. 保存订单到本地存储
-            saveOrderToLocal({
-              orderId: orderResult.orderId,
-              type: verifyType,
-              status: 'completed',
-              amount: orderResult.amount,
-              createTime: new Date().toISOString(),
-              payTime: new Date().toISOString(),
-              data: formData,
-              result: apiResult
-            });
+            // 5. 支付成功后调用阿里云API
+            try {
+              const apiResult = await callAliyunAPI(verifyType, formData);
+              setResult(apiResult);
+              setLoading(false);
+            } catch (apiErr) {
+              console.error('调用阿里云API错误:', apiErr);
+              setError(apiErr.message || '查询失败');
+              setLoading(false);
+            }
           } else if (paymentResult.status === 'failed') {
             clearInterval(checkInterval);
             setPaymentStatus('failed');

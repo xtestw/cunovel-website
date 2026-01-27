@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, redirect, session, url_for
 from flask_cors import CORS
 from datetime import datetime, timedelta
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, or_, and_
 from sqlalchemy.orm import sessionmaker
 from models import Base, AIDaily, AINews, AITutorial, User, Order
 from config import Config
@@ -1429,8 +1429,25 @@ def get_orders():
         
         # 构建查询
         if user:
-            # 用户已登录，查询该用户的所有订单
-            query = db.query(Order).filter(Order.user_id == user.id)
+            # 用户已登录，查询该用户的所有订单，同时也要包含本地缓存的订单号（用于合并）
+            if order_ids:
+                # 合并查询：用户订单 OR (本地订单号列表 AND (订单未关联用户 OR 订单属于当前用户))
+                # 这样确保只能查询到自己的订单或未关联用户的订单（创建时未登录）
+                query = db.query(Order).filter(
+                    or_(
+                        Order.user_id == user.id,
+                        and_(
+                            Order.order_id.in_(order_ids),
+                            or_(
+                                Order.user_id.is_(None),
+                                Order.user_id == user.id
+                            )
+                        )
+                    )
+                )
+            else:
+                # 只查询用户订单
+                query = db.query(Order).filter(Order.user_id == user.id)
         elif order_ids:
             # 用户未登录，查询指定订单ID列表的订单
             query = db.query(Order).filter(Order.order_id.in_(order_ids))
