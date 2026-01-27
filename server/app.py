@@ -3,7 +3,7 @@ from flask_cors import CORS
 from datetime import datetime, timedelta
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from models import Base, AIDaily, AINews, AITutorial, User
+from models import Base, AIDaily, AINews, AITutorial, User, Order
 from config import Config
 from vehicle_verify_helper import call_aliyun_vehicle_verify
 from auth_helper import (
@@ -53,6 +53,38 @@ def get_db():
         return db
     finally:
         pass  # 注意：这里不关闭session，让调用者负责关闭
+
+def get_client_ip():
+    """获取客户端IP地址"""
+    if request.headers.get('X-Forwarded-For'):
+        # 如果使用了代理，X-Forwarded-For 可能包含多个IP，取第一个
+        ip = request.headers.get('X-Forwarded-For').split(',')[0].strip()
+    elif request.headers.get('X-Real-IP'):
+        ip = request.headers.get('X-Real-IP')
+    else:
+        ip = request.remote_addr
+    return ip
+
+def execute_vehicle_verify_and_save(order, db):
+    """执行车辆核验并保存结果到订单"""
+    """如果订单已有结果，则不重复查询"""
+    if order.result_data:
+        app.logger.info(f'订单 {order.order_id} 已有查询结果，跳过重复查询')
+        return
+    
+    try:
+        # 调用阿里云API进行查询
+        result = call_aliyun_vehicle_verify(order.verify_type, order.form_data)
+        
+        # 保存查询结果到订单
+        order.result_data = result
+        order.verified_at = datetime.now()
+        db.commit()
+        
+        app.logger.info(f'订单 {order.order_id} 查询完成，结果已保存')
+    except Exception as e:
+        app.logger.error(f'订单 {order.order_id} 查询失败: {str(e)}', exc_info=True)
+        # 查询失败不影响订单状态，只记录错误
 
 # AI日报接口 - 获取今天的日报
 @app.route('/api/ai-daily/today', methods=['GET'])
@@ -942,7 +974,13 @@ def create_vehicle_verify_order():
         
         # 获取回调URL
         return_url = os.getenv('ALIPAY_RETURN_URL', '')
+        if not return_url:
+            # 如果没有配置，使用自动生成的同步返回接口URL
+            return_url = url_for('alipay_return', _external=True)
         notify_url = os.getenv('ALIPAY_NOTIFY_URL', '')
+        if not notify_url:
+            # 如果没有配置，使用自动生成的异步通知接口URL
+            notify_url = url_for('alipay_notify', _external=True)
         
         # 构建支付请求
         try:
@@ -971,7 +1009,42 @@ def create_vehicle_verify_order():
                 'hint': '请检查支付宝配置是否正确，特别是私钥和公钥格式'
             }), 500
         
-        # 这里应该将订单信息保存到数据库，暂时返回
+        # 获取用户ID（如果已登录）
+        user_id = None
+        db = get_db()
+        try:
+            user = get_current_user(db)
+            if user:
+                user_id = user.id
+        except Exception:
+            # 用户未登录或token无效，不影响订单创建
+            pass
+        
+        # 获取客户端IP
+        client_ip = get_client_ip()
+        
+        # 保存订单信息到数据库
+        try:
+            order = Order(
+                order_id=order_id,
+                verify_type=verify_type,
+                form_data=form_data,
+                user_id=user_id,
+                client_ip=client_ip,
+                amount=float(amount),
+                status='pending',
+                subject=subject
+            )
+            db.add(order)
+            db.commit()
+            app.logger.info(f'订单创建成功: {order_id}, IP: {client_ip}, 用户: {user_id}')
+        except Exception as e:
+            db.rollback()
+            app.logger.error(f'保存订单到数据库失败: {str(e)}', exc_info=True)
+            # 即使保存失败，也返回支付URL，避免影响用户体验
+        finally:
+            db.close()
+        
         return jsonify({
             'orderId': order_id,
             'paymentUrl': payment_url,
@@ -989,7 +1062,28 @@ def create_vehicle_verify_order():
 @app.route('/api/vehicle-verify/check-payment/<order_id>', methods=['GET'])
 def check_payment_status(order_id):
     """检查支付状态"""
+    db = get_db()
     try:
+        # 先从数据库查询订单信息
+        order = db.query(Order).filter(Order.order_id == order_id).first()
+        
+        if order:
+            # 如果订单已支付，直接返回
+            if order.status == 'paid':
+                return jsonify({
+                    'status': 'paid',
+                    'orderId': order_id,
+                    'tradeNo': order.trade_no,
+                    'paidAt': order.paid_at.isoformat() if order.paid_at else None
+                })
+            # 如果订单已取消或失败，直接返回
+            elif order.status in ['cancelled', 'failed']:
+                return jsonify({
+                    'status': order.status,
+                    'orderId': order_id
+                })
+        
+        # 如果订单不存在或状态为pending，查询支付宝API
         if not ALIPAY_SDK_AVAILABLE:
             return jsonify({'error': '支付宝SDK未安装'}), 500
         
@@ -1007,13 +1101,42 @@ def check_payment_status(order_id):
         # 调用API
         response = alipay_client.execute(query_request)
         
-        # 解析响应
+        # 解析响应并更新数据库
         if response and hasattr(response, 'code') and response.code == '10000':
             trade_status = getattr(response, 'trade_status', None)
+            trade_no = getattr(response, 'trade_no', None)
+            
+            # 更新数据库中的订单状态
+            if order:
+                order.trade_status = trade_status
+                order.trade_no = trade_no
+                
+                if trade_status == 'TRADE_SUCCESS' or trade_status == 'TRADE_FINISHED':
+                    order.status = 'paid'
+                    if not order.paid_at:
+                        order.paid_at = datetime.now()
+                    
+                    # 如果订单已支付但还没有查询结果，尝试执行查询
+                    if not order.result_data:
+                        app.logger.info(f'订单 {order_id} 已支付但未查询，尝试执行查询')
+                        execute_vehicle_verify_and_save(order, db)
+                        # 重新加载订单以获取最新结果
+                        db.refresh(order)
+                elif trade_status == 'TRADE_CLOSED':
+                    order.status = 'cancelled'
+                elif trade_status == 'WAIT_BUYER_PAY':
+                    order.status = 'pending'
+                else:
+                    order.status = 'failed'
+                
+                db.commit()
+            
+            # 返回状态
             if trade_status == 'TRADE_SUCCESS' or trade_status == 'TRADE_FINISHED':
                 return jsonify({
                     'status': 'paid',
-                    'orderId': order_id
+                    'orderId': order_id,
+                    'tradeNo': trade_no
                 })
             elif trade_status == 'WAIT_BUYER_PAY':
                 return jsonify({
@@ -1026,19 +1149,29 @@ def check_payment_status(order_id):
                     'orderId': order_id
                 })
         else:
+            # API查询失败，返回数据库中的状态（如果有）
+            if order:
+                return jsonify({
+                    'status': order.status,
+                    'orderId': order_id
+                })
             return jsonify({
                 'status': 'pending',
                 'orderId': order_id
             })
             
     except Exception as e:
+        db.rollback()
         app.logger.error(f'查询支付状态错误: {str(e)}', exc_info=True)
         return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
 
 # 车辆核验接口
 @app.route('/api/vehicle-verify/verify', methods=['POST'])
 def vehicle_verify():
     """车辆信息核验接口"""
+    db = get_db()
     try:
         data = request.json
         verify_type = data.get('type')
@@ -1048,17 +1181,36 @@ def vehicle_verify():
         if not verify_type or not form_data or not order_id:
             return jsonify({'error': '参数不完整'}), 400
         
-        # 验证订单是否已支付（这里应该从数据库查询，暂时简化）
-        # 实际应该检查订单状态
+        # 从数据库验证订单是否已支付
+        order = db.query(Order).filter(Order.order_id == order_id).first()
+        if not order:
+            return jsonify({'error': '订单不存在'}), 404
+        
+        if order.status != 'paid':
+            return jsonify({
+                'error': '订单未支付',
+                'status': order.status
+            }), 400
+        
+        # 验证订单的核验类型和表单数据是否匹配
+        if order.verify_type != verify_type:
+            return jsonify({'error': '订单核验类型不匹配'}), 400
         
         # 调用阿里云API
         result = call_aliyun_vehicle_verify(verify_type, form_data)
         
+        # 保存查询结果到订单
+        order.result_data = result
+        order.verified_at = datetime.now()
+        db.commit()
+        
         return jsonify(result)
         
     except Exception as e:
-        app.logger.error(f'车辆核验错误: {str(e)}')
+        app.logger.error(f'车辆核验错误: {str(e)}', exc_info=True)
         return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
 
 # 支付宝回调接口
 @app.route('/api/vehicle-verify/alipay/notify', methods=['POST'])
@@ -1095,18 +1247,252 @@ def alipay_notify():
         # 处理支付成功逻辑
         trade_status = data.get('trade_status')
         out_trade_no = data.get('out_trade_no')
+        trade_no = data.get('trade_no')  # 支付宝交易号
         
-        if trade_status == 'TRADE_SUCCESS' or trade_status == 'TRADE_FINISHED':
-            # 更新订单状态为已支付
-            # 这里应该更新数据库中的订单状态
-            app.logger.info(f'订单 {out_trade_no} 支付成功')
-            return 'success'
+        # 更新数据库中的订单状态
+        db = get_db()
+        try:
+            order = db.query(Order).filter(Order.order_id == out_trade_no).first()
+            if order:
+                order.trade_status = trade_status
+                order.trade_no = trade_no
+                
+                if trade_status == 'TRADE_SUCCESS' or trade_status == 'TRADE_FINISHED':
+                    order.status = 'paid'
+                    order.paid_at = datetime.now()
+                    app.logger.info(f'订单 {out_trade_no} 支付成功，交易号: {trade_no}')
+                    
+                    # 支付成功后自动执行查询并保存结果
+                    execute_vehicle_verify_and_save(order, db)
+                elif trade_status == 'TRADE_CLOSED':
+                    order.status = 'cancelled'
+                    app.logger.info(f'订单 {out_trade_no} 已关闭')
+                else:
+                    # 其他状态保持pending
+                    app.logger.info(f'订单 {out_trade_no} 状态更新: {trade_status}')
+                
+                db.commit()
+            else:
+                app.logger.warning(f'订单 {out_trade_no} 在数据库中不存在')
+        except Exception as e:
+            db.rollback()
+            app.logger.error(f'更新订单状态失败: {str(e)}', exc_info=True)
+        finally:
+            db.close()
         
         return 'success'
         
     except Exception as e:
         app.logger.error(f'支付宝回调错误: {str(e)}', exc_info=True)
         return 'fail'
+
+# 支付宝同步返回接口（用户支付完成后跳转）
+@app.route('/api/vehicle-verify/alipay/return', methods=['GET'])
+def alipay_return():
+    """支付宝同步返回接口（return_url回调）"""
+    try:
+        # 获取返回参数
+        data = request.args.to_dict()
+        out_trade_no = data.get('out_trade_no')
+        
+        if not out_trade_no:
+            app.logger.warning('支付宝返回缺少订单号')
+            # 跳转到前端页面，显示错误
+            frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+            return redirect(f'{frontend_url}/vehicle-verify?error=missing_order_id')
+        
+        # 查询订单信息
+        db = get_db()
+        try:
+            order = db.query(Order).filter(Order.order_id == out_trade_no).first()
+            
+            if not order:
+                app.logger.warning(f'订单 {out_trade_no} 不存在')
+                frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+                return redirect(f'{frontend_url}/vehicle-verify?error=order_not_found&orderId={out_trade_no}')
+            
+            # 如果订单已支付但还没有查询结果，尝试执行查询
+            if order.status == 'paid' and not order.result_data:
+                app.logger.info(f'订单 {out_trade_no} 已支付但未查询，尝试执行查询')
+                execute_vehicle_verify_and_save(order, db)
+                # 重新加载订单以获取最新结果
+                db.refresh(order)
+            
+            # 跳转到前端查询结果页面，带上订单ID
+            frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+            redirect_url = f'{frontend_url}/vehicle-verify?orderId={out_trade_no}'
+            
+            # 如果用户未登录，订单ID已经在URL参数中，前端可以从URL获取
+            # 如果用户已登录，前端可以从API获取订单详情
+            
+            return redirect(redirect_url)
+            
+        except Exception as e:
+            app.logger.error(f'处理支付宝返回错误: {str(e)}', exc_info=True)
+            frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+            return redirect(f'{frontend_url}/vehicle-verify?error=server_error&orderId={out_trade_no}')
+        finally:
+            db.close()
+            
+    except Exception as e:
+        app.logger.error(f'支付宝返回接口错误: {str(e)}', exc_info=True)
+        frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+        return redirect(f'{frontend_url}/vehicle-verify?error=unknown_error')
+
+# 获取订单详情
+@app.route('/api/vehicle-verify/order/<order_id>', methods=['GET'])
+def get_order_detail(order_id):
+    """获取订单详情"""
+    db = get_db()
+    try:
+        order = db.query(Order).filter(Order.order_id == order_id).first()
+        
+        if not order:
+            return jsonify({'error': '订单不存在'}), 404
+        
+        # 如果用户已登录，检查订单是否属于该用户
+        try:
+            user = get_current_user(db)
+            if user and order.user_id and order.user_id != user.id:
+                return jsonify({'error': '无权访问此订单'}), 403
+        except Exception:
+            # 用户未登录，允许访问（用于浏览器缓存中的订单）
+            pass
+        
+        # 如果订单已支付但还没有查询结果，尝试执行查询
+        if order.status == 'paid' and not order.result_data:
+            app.logger.info(f'订单 {order_id} 已支付但未查询，尝试执行查询')
+            execute_vehicle_verify_and_save(order, db)
+            # 重新加载订单以获取最新结果
+            db.refresh(order)
+        
+        return jsonify({
+            'id': order.id,
+            'orderId': order.order_id,
+            'tradeNo': order.trade_no,
+            'verifyType': order.verify_type,
+            'formData': order.form_data,
+            'userId': order.user_id,
+            'clientIp': order.client_ip,
+            'amount': float(order.amount),
+            'status': order.status,
+            'tradeStatus': order.trade_status,
+            'subject': order.subject,
+            'resultData': order.result_data,
+            'createdAt': order.created_at.isoformat() if order.created_at else None,
+            'updatedAt': order.updated_at.isoformat() if order.updated_at else None,
+            'paidAt': order.paid_at.isoformat() if order.paid_at else None,
+            'verifiedAt': order.verified_at.isoformat() if order.verified_at else None
+        })
+    except Exception as e:
+        app.logger.error(f'获取订单详情错误: {str(e)}', exc_info=True)
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+# 获取历史订单列表
+@app.route('/api/vehicle-verify/orders', methods=['GET'])
+def get_orders():
+    """获取历史订单列表"""
+    db = get_db()
+    try:
+        # 获取分页参数
+        page = request.args.get('page', '1')
+        page_size = request.args.get('pageSize', '20')
+        try:
+            page = int(page)
+            page_size = int(page_size)
+            if page < 1:
+                page = 1
+            if page_size < 1 or page_size > 100:
+                page_size = 20
+        except ValueError:
+            page = 1
+            page_size = 20
+        
+        # 获取订单ID列表（用于未登录用户从浏览器缓存获取）
+        order_ids_param = request.args.get('orderIds', '')
+        order_ids = []
+        if order_ids_param:
+            try:
+                order_ids = json.loads(order_ids_param) if order_ids_param.startswith('[') else order_ids_param.split(',')
+                order_ids = [oid.strip() for oid in order_ids if oid.strip()]
+            except Exception:
+                pass
+        
+        # 尝试获取当前用户
+        user = None
+        try:
+            user = get_current_user(db)
+        except Exception:
+            pass
+        
+        # 构建查询
+        if user:
+            # 用户已登录，查询该用户的所有订单
+            query = db.query(Order).filter(Order.user_id == user.id)
+        elif order_ids:
+            # 用户未登录，查询指定订单ID列表的订单
+            query = db.query(Order).filter(Order.order_id.in_(order_ids))
+        else:
+            # 既没有登录也没有提供订单ID列表，返回空列表
+            return jsonify({
+                'data': [],
+                'pagination': {
+                    'page': page,
+                    'pageSize': page_size,
+                    'total': 0,
+                    'totalPages': 0
+                }
+            })
+        
+        # 按创建时间降序排序
+        query = query.order_by(Order.created_at.desc())
+        
+        # 获取总数
+        total = query.count()
+        
+        # 分页查询
+        offset = (page - 1) * page_size
+        orders = query.offset(offset).limit(page_size).all()
+        
+        # 构建返回数据
+        result = []
+        for order in orders:
+            result.append({
+                'id': order.id,
+                'orderId': order.order_id,
+                'tradeNo': order.trade_no,
+                'verifyType': order.verify_type,
+                'formData': order.form_data,
+                'amount': float(order.amount),
+                'status': order.status,
+                'tradeStatus': order.trade_status,
+                'subject': order.subject,
+                'hasResult': order.result_data is not None,
+                'createdAt': order.created_at.isoformat() if order.created_at else None,
+                'updatedAt': order.updated_at.isoformat() if order.updated_at else None,
+                'paidAt': order.paid_at.isoformat() if order.paid_at else None,
+                'verifiedAt': order.verified_at.isoformat() if order.verified_at else None
+            })
+        
+        # 计算总页数
+        total_pages = (total + page_size - 1) // page_size if total > 0 else 0
+        
+        return jsonify({
+            'data': result,
+            'pagination': {
+                'page': page,
+                'pageSize': page_size,
+                'total': total,
+                'totalPages': total_pages
+            }
+        })
+    except Exception as e:
+        app.logger.error(f'获取订单列表错误: {str(e)}', exc_info=True)
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
 
 # ========== 第三方登录相关接口 ==========
 

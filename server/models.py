@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Date, DateTime, ForeignKey, JSON, UniqueConstraint, Index
+from sqlalchemy import Column, Integer, String, Text, Date, DateTime, ForeignKey, JSON, UniqueConstraint, Index, Numeric
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
@@ -75,5 +75,38 @@ class User(Base):
     __table_args__ = (
         UniqueConstraint('provider', 'provider_user_id', name='uq_provider_user'),
         Index('idx_provider_user', 'provider', 'provider_user_id'),
+    )
+
+class Order(Base):
+    """订单模型 - 存储支付宝订单信息"""
+    __tablename__ = 'orders'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True, comment='订单ID')
+    order_id = Column(String(64), unique=True, nullable=False, comment='订单号（out_trade_no）')
+    trade_no = Column(String(64), nullable=True, comment='支付宝交易号（trade_no）')
+    verify_type = Column(String(50), nullable=False, comment='核验类型：consistency, basicInfo, insuranceLog')
+    form_data = Column(JSON, nullable=False, comment='查询的具体内容（JSON格式）')
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), nullable=True, comment='用户ID（可选）')
+    client_ip = Column(String(45), nullable=True, comment='订单发起的IP地址')
+    amount = Column(Numeric(10, 2), nullable=False, comment='订单金额')
+    status = Column(String(20), nullable=False, default='pending', comment='订单状态：pending, paid, failed, cancelled')
+    trade_status = Column(String(20), nullable=True, comment='支付宝交易状态：WAIT_BUYER_PAY, TRADE_SUCCESS, TRADE_FINISHED等')
+    subject = Column(String(255), nullable=False, comment='订单标题')
+    result_data = Column(JSON, nullable=True, comment='查询结果（JSON格式）')
+    verified_at = Column(DateTime, nullable=True, comment='查询完成时间')
+    created_at = Column(DateTime, default=datetime.now, comment='创建时间')
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment='更新时间')
+    paid_at = Column(DateTime, nullable=True, comment='支付时间')
+    
+    # 关联关系
+    user = relationship('User', backref='orders')
+    
+    # 索引
+    __table_args__ = (
+        Index('idx_order_id', 'order_id'),
+        Index('idx_trade_no', 'trade_no'),
+        Index('idx_user_id', 'user_id'),
+        Index('idx_status', 'status'),
+        Index('idx_created_at', 'created_at'),
     )
 
