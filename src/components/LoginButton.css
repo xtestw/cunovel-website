@@ -377,6 +377,65 @@
   color: #ff4d4f;
 }
 
+/* 微信二维码浮窗 */
+.wechat-qr-modal {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+.wechat-qr-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.wechat-qr-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.wechat-qr-modal-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wechat-qr-tip {
+  margin: 0 0 20px 0;
+  color: #8c8c8c;
+  font-size: 14px;
+  text-align: center;
+}
+
+.wechat-qr-iframe-container {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fafafa;
+  position: relative;
+}
+
+.wechat-qr-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .login-modal {
@@ -421,6 +480,28 @@
   .user-dropdown-menu {
     right: -10px;
     min-width: 200px;
+  }
+
+  .wechat-qr-modal {
+    width: 95%;
+    max-width: none;
+    margin: 20px;
+  }
+
+  .wechat-qr-modal-header {
+    padding: 16px 20px;
+  }
+
+  .wechat-qr-modal-header h2 {
+    font-size: 18px;
+  }
+
+  .wechat-qr-modal-content {
+    padding: 20px;
+  }
+
+  .wechat-qr-iframe-container {
+    max-width: 250px;
   }
 }
 

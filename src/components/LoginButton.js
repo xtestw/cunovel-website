@@ -9,6 +9,8 @@ const LoginButton = ({ onLoginSuccess }) => {
   const [showModal, setShowModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showWechatQR, setShowWechatQR] = useState(false);
+  const [wechatAuthUrl, setWechatAuthUrl] = useState('');
 
   useEffect(() => {
     // 检查URL中是否有token（OAuth回调）
@@ -37,9 +39,12 @@ const LoginButton = ({ onLoginSuccess }) => {
       if (showModal && event.target.classList.contains('login-modal-overlay')) {
         setShowModal(false);
       }
+      if (showWechatQR && event.target.classList.contains('login-modal-overlay')) {
+        setShowWechatQR(false);
+      }
     };
 
-    if (showModal) {
+    if (showModal || showWechatQR) {
       document.addEventListener('click', handleClickOutside);
       // 阻止背景滚动
       document.body.style.overflow = 'hidden';
@@ -49,24 +54,74 @@ const LoginButton = ({ onLoginSuccess }) => {
       document.removeEventListener('click', handleClickOutside);
       document.body.style.overflow = 'unset';
     };
-  }, [showModal]);
+  }, [showModal, showWechatQR]);
 
   // ESC键关闭弹窗
   useEffect(() => {
     const handleEsc = (event) => {
-      if (event.key === 'Escape' && showModal) {
-        setShowModal(false);
+      if (event.key === 'Escape') {
+        if (showModal) {
+          setShowModal(false);
+        }
+        if (showWechatQR) {
+          setShowWechatQR(false);
+        }
       }
     };
 
-    if (showModal) {
+    if (showModal || showWechatQR) {
       document.addEventListener('keydown', handleEsc);
     }
 
     return () => {
       document.removeEventListener('keydown', handleEsc);
     };
-  }, [showModal]);
+  }, [showModal, showWechatQR]);
+
+  // 监听微信登录iframe的加载，检测登录成功
+  useEffect(() => {
+    if (!showWechatQR || !wechatAuthUrl) return;
+
+    const checkLoginSuccess = () => {
+      try {
+        const iframe = document.querySelector('.wechat-qr-iframe');
+        if (iframe && iframe.contentWindow) {
+          try {
+            const iframeUrl = iframe.contentWindow.location.href;
+            const urlParams = new URLSearchParams(iframeUrl.split('?')[1]);
+            const token = urlParams.get('token');
+            
+            if (token) {
+              // 登录成功
+              localStorage.setItem('auth_token', token);
+              setShowWechatQR(false);
+              fetchUserInfo(token);
+            }
+          } catch (e) {
+            // 跨域错误，忽略
+          }
+        }
+      } catch (error) {
+        // 忽略错误
+      }
+    };
+
+    // 定期检查iframe URL（因为跨域限制，可能无法直接访问）
+    const interval = setInterval(checkLoginSuccess, 1000);
+
+    // 监听iframe的load事件
+    const iframe = document.querySelector('.wechat-qr-iframe');
+    if (iframe) {
+      iframe.addEventListener('load', checkLoginSuccess);
+    }
+
+    return () => {
+      clearInterval(interval);
+      if (iframe) {
+        iframe.removeEventListener('load', checkLoginSuccess);
+      }
+    };
+  }, [showWechatQR, wechatAuthUrl]);
 
   // 点击外部关闭用户菜单
   useEffect(() => {
@@ -111,12 +166,42 @@ const LoginButton = ({ onLoginSuccess }) => {
     }
   };
 
-  const handleLogin = (provider) => {
+  const handleLogin = async (provider) => {
     setLoading(true);
-    setShowModal(false);
-    const redirectUri = `${window.location.origin}${window.location.pathname}`;
-    const loginUrl = `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}`;
-    window.location.href = loginUrl;
+    
+    if (provider === 'wechat') {
+      // 微信登录：显示浮窗二维码
+      try {
+        const redirectUri = `${window.location.origin}${window.location.pathname}`;
+        const response = await fetch(
+          `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}&return_url=true`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.auth_url) {
+            setWechatAuthUrl(data.auth_url);
+            setShowModal(false);
+            setShowWechatQR(true);
+            setLoading(false);
+          } else {
+            throw new Error('获取微信授权URL失败');
+          }
+        } else {
+          throw new Error('获取微信授权URL失败');
+        }
+      } catch (error) {
+        console.error('微信登录失败:', error);
+        alert(i18n.language.startsWith('zh') ? '获取微信登录二维码失败，请稍后重试' : 'Failed to get WeChat QR code, please try again later');
+        setLoading(false);
+      }
+    } else {
+      // GitHub和Google登录：直接跳转
+      setShowModal(false);
+      const redirectUri = `${window.location.origin}${window.location.pathname}`;
+      const loginUrl = `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}`;
+      window.location.href = loginUrl;
+    }
   };
 
   const handleLogout = async () => {
@@ -280,6 +365,39 @@ const LoginButton = ({ onLoginSuccess }) => {
                   </div>
                   <div className="login-option-arrow">→</div>
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 微信登录二维码浮窗 */}
+      {showWechatQR && (
+        <div className="login-modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowWechatQR(false)}>
+          <div className="wechat-qr-modal">
+            <div className="wechat-qr-modal-header">
+              <h2>{i18n.language.startsWith('zh') ? '微信扫码登录' : 'WeChat QR Code Login'}</h2>
+              <button 
+                className="login-modal-close" 
+                onClick={() => setShowWechatQR(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="wechat-qr-modal-content">
+              <p className="wechat-qr-tip">
+                {i18n.language.startsWith('zh') 
+                  ? '请使用微信扫描下方二维码完成登录' 
+                  : 'Please scan the QR code below with WeChat to complete login'}
+              </p>
+              <div className="wechat-qr-iframe-container">
+                <iframe
+                  src={wechatAuthUrl}
+                  title="WeChat QR Code"
+                  className="wechat-qr-iframe"
+                  allow="camera"
+                />
               </div>
             </div>
           </div>

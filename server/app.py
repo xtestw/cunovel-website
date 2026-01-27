@@ -1661,7 +1661,17 @@ def wechat_login():
         # 微信OAuth URL（redirect_uri必须编码）
         wechat_auth_url = f"https://open.weixin.qq.com/connect/qrconnect?appid={wechat_client_id}&redirect_uri={encoded_callback_uri}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect"
         
-        return redirect(wechat_auth_url)
+        # 检查是否请求返回URL（用于浮窗显示）
+        return_url = request.args.get('return_url', 'false')
+        if return_url.lower() == 'true':
+            # 返回JSON格式的授权URL，供前端在浮窗中使用
+            return jsonify({
+                'auth_url': wechat_auth_url,
+                'success': True
+            })
+        else:
+            # 保持向后兼容，直接重定向
+            return redirect(wechat_auth_url)
     except Exception as e:
         app.logger.error(f'微信登录失败: {str(e)}')
         return jsonify({'error': '微信登录配置错误'}), 500
