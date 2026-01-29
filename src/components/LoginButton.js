@@ -82,20 +82,49 @@ const LoginButton = ({ onLoginSuccess }) => {
   useEffect(() => {
     if (!showWechatQR || !wechatAuthUrl) return;
 
-    const checkLoginSuccess = () => {
+    const checkLoginSuccess = async () => {
       try {
         const iframe = document.querySelector('.wechat-qr-iframe');
         if (iframe && iframe.contentWindow) {
           try {
             const iframeUrl = iframe.contentWindow.location.href;
-            const urlParams = new URLSearchParams(iframeUrl.split('?')[1]);
-            const token = urlParams.get('token');
             
-            if (token) {
-              // 登录成功
-              localStorage.setItem('auth_token', token);
-              setShowWechatQR(false);
-              fetchUserInfo(token);
+            // 检查URL中是否有token参数
+            if (iframeUrl.includes('token=')) {
+              const urlParams = new URLSearchParams(iframeUrl.split('?')[1]);
+              const token = urlParams.get('token');
+              
+              if (token) {
+                // 登录成功
+                localStorage.setItem('auth_token', token);
+                setShowWechatQR(false);
+                await fetchUserInfo(token);
+                return;
+              }
+            }
+            
+            // 尝试读取iframe内容（可能是JSON响应）
+            try {
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+              const bodyText = iframeDoc.body?.innerText || iframeDoc.body?.textContent || '';
+              
+              // 检查是否是JSON响应
+              if (bodyText.trim().startsWith('{')) {
+                try {
+                  const jsonData = JSON.parse(bodyText);
+                  if (jsonData.token) {
+                    // 登录成功，从JSON中获取token
+                    localStorage.setItem('auth_token', jsonData.token);
+                    setShowWechatQR(false);
+                    await fetchUserInfo(jsonData.token);
+                    return;
+                  }
+                } catch (e) {
+                  // JSON解析失败，忽略
+                }
+              }
+            } catch (e) {
+              // 跨域错误，忽略
             }
           } catch (e) {
             // 跨域错误，忽略
@@ -106,7 +135,7 @@ const LoginButton = ({ onLoginSuccess }) => {
       }
     };
 
-    // 定期检查iframe URL（因为跨域限制，可能无法直接访问）
+    // 定期检查iframe URL和内容（因为跨域限制，可能无法直接访问）
     const interval = setInterval(checkLoginSuccess, 1000);
 
     // 监听iframe的load事件
@@ -172,7 +201,9 @@ const LoginButton = ({ onLoginSuccess }) => {
     if (provider === 'wechat') {
       // 微信登录：显示浮窗二维码
       try {
-        const redirectUri = `${window.location.origin}${window.location.pathname}`;
+        // 确保传递完整的重定向URI，包括当前路径和查询参数
+        const currentPath = window.location.pathname + window.location.search;
+        const redirectUri = `${window.location.origin}${currentPath}`;
         const response = await fetch(
           `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}&return_url=true`
         );

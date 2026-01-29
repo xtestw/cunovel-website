@@ -1689,22 +1689,23 @@ def wechat_callback():
         jwt_token = generate_jwt_token(user.id)
         
         redirect_uri = session.pop('oauth_redirect_uri', None) or request.args.get('redirect_uri', '')
-        if redirect_uri:
-            separator = '&' if '?' in redirect_uri else '?'
-            return redirect(f"{redirect_uri}{separator}token={jwt_token}")
-        else:
-            return jsonify({
-                'success': True,
-                'token': jwt_token,
-                'user': {
-                    'id': user.id,
-                    'username': user.username,
-                    'email': user.email,
-                    'display_name': user.display_name,
-                    'avatar_url': user.avatar_url,
-                    'provider': user.provider
-                }
-            })
+        
+        # 如果没有指定重定向地址，使用默认的前端地址
+        if not redirect_uri:
+            # 尝试从Referer获取前端地址
+            referer = request.headers.get('Referer', '')
+            if referer:
+                # 从Referer中提取前端基础URL
+                from urllib.parse import urlparse
+                parsed = urlparse(referer)
+                redirect_uri = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+            else:
+                # 默认使用当前请求的origin
+                redirect_uri = request.headers.get('Origin', '') or f"{request.scheme}://{request.host}"
+        
+        # 确保重定向到前端页面，带上token
+        separator = '&' if '?' in redirect_uri else '?'
+        return redirect(f"{redirect_uri}{separator}token={jwt_token}")
     except Exception as e:
         app.logger.error(f'微信回调处理失败: {str(e)}', exc_info=True)
         db.rollback()

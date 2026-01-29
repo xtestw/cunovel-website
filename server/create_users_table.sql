@@ -16,3 +16,4 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `idx_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
+

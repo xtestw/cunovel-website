@@ -26,3 +26,4 @@ CREATE TABLE IF NOT EXISTS `orders` (
   CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单表 - 存储支付宝订单信息';
 
+
