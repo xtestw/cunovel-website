@@ -15,6 +15,7 @@ import os
 import uuid
 import hashlib
 import json
+import base64
 import urllib.parse
 try:
     from alipay.aop.api.DefaultAlipayClient import DefaultAlipayClient
@@ -1692,11 +1693,21 @@ def wechat_login():
         if in_iframe:
             session['oauth_in_iframe'] = True
         
+        # 在回调URL中包含前端重定向地址（作为state参数的一部分，或通过其他方式传递）
+        # 注意：微信的state参数可以用于传递自定义信息
+        state_data = {}
+        if frontend_redirect_uri:
+            state_data['redirect_uri'] = frontend_redirect_uri
+        if in_iframe:
+            state_data['in_iframe'] = True
+        # 将state数据编码为base64（微信会原样返回）
+        state_encoded = base64.urlsafe_b64encode(json.dumps(state_data).encode('utf-8')).decode('utf-8')
+        
         # 对微信回调地址进行URL编码（微信要求）
         encoded_callback_uri = urllib.parse.quote(backend_callback_uri, safe='')
         
-        # 微信OAuth URL（redirect_uri必须编码）
-        wechat_auth_url = f"https://open.weixin.qq.com/connect/qrconnect?appid={wechat_client_id}&redirect_uri={encoded_callback_uri}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect"
+        # 微信OAuth URL（redirect_uri必须编码，state用于传递前端重定向地址）
+        wechat_auth_url = f"https://open.weixin.qq.com/connect/qrconnect?appid={wechat_client_id}&redirect_uri={encoded_callback_uri}&response_type=code&scope=snsapi_login&state={state_encoded}#wechat_redirect"
         
         # 检查是否请求返回URL（用于浮窗显示）
         return_url = request.args.get('return_url', 'false')
@@ -1725,14 +1736,42 @@ def wechat_callback():
         user, token = handle_wechat_callback(oauth, db, code)
         jwt_token = generate_jwt_token(user.id)
         
-        redirect_uri = session.pop('oauth_redirect_uri', None) or request.args.get('redirect_uri', '')
+        # 从state参数中解析前端重定向地址（微信会原样返回state）
+        redirect_uri = None
+        in_iframe_from_state = False
+        state = request.args.get('state', '')
+        if state and state != 'STATE':  # 排除默认的STATE值
+            try:
+                state_decoded = base64.urlsafe_b64decode(state.encode('utf-8')).decode('utf-8')
+                state_data = json.loads(state_decoded)
+                redirect_uri = state_data.get('redirect_uri', '')
+                in_iframe_from_state = state_data.get('in_iframe', False)
+            except Exception as e:
+                app.logger.warning(f'解析state参数失败: {str(e)}')
+        
+        # 优先从state参数获取，然后从请求参数，最后从session（因为session可能丢失）
+        redirect_uri = redirect_uri or request.args.get('redirect_uri', '') or session.pop('oauth_redirect_uri', None)
+        
+        # 验证redirect_uri是否有效（不能是localhost，除非是开发环境）
+        if redirect_uri:
+            # 检查是否是localhost（生产环境不应该使用localhost）
+            if 'localhost' in redirect_uri and 'localhost' not in os.getenv('FRONTEND_URL', ''):
+                app.logger.warning(f'检测到localhost重定向地址: {redirect_uri}，可能不正确')
+                # 如果环境变量配置了FRONTEND_URL，使用环境变量
+                frontend_url = os.getenv('FRONTEND_URL', '')
+                if frontend_url:
+                    redirect_uri = frontend_url
+                    app.logger.info(f'使用环境变量FRONTEND_URL: {redirect_uri}')
         
         # 如果没有指定重定向地址，使用环境变量中的前端地址
         if not redirect_uri:
             redirect_uri = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+            app.logger.info(f'使用默认FRONTEND_URL: {redirect_uri}')
         
-        # 检查是否在iframe中（通过session、请求参数或Referer判断）
-        in_iframe = session.pop('oauth_in_iframe', False) or request.args.get('in_iframe', 'false').lower() == 'true'
+        app.logger.info(f'微信登录回调，重定向地址: {redirect_uri}')
+        
+        # 检查是否在iframe中（优先从state参数，然后从session、请求参数或Referer判断）
+        in_iframe = in_iframe_from_state or session.pop('oauth_in_iframe', False) or request.args.get('in_iframe', 'false').lower() == 'true'
         referer = request.headers.get('Referer', '')
         # 如果Referer包含微信域名，可能是在iframe中
         if 'open.weixin.qq.com' in referer:

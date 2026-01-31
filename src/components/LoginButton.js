@@ -13,6 +13,18 @@ const LoginButton = ({ onLoginSuccess }) => {
   const [wechatAuthUrl, setWechatAuthUrl] = useState('');
 
   useEffect(() => {
+    // 如果不是在iframe中，保存当前地址作为主窗口地址
+    try {
+      if (window.top === window.self) {
+        // 不在iframe中，保存当前地址
+        const currentPath = window.location.pathname + window.location.search;
+        const mainUrl = `${window.location.origin}${currentPath}`;
+        localStorage.setItem('main_window_url', mainUrl);
+      }
+    } catch (e) {
+      // 跨域限制，忽略
+    }
+
     // 检查URL中是否有token（OAuth回调）
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
@@ -249,27 +261,55 @@ const LoginButton = ({ onLoginSuccess }) => {
       try {
         // 获取主窗口地址（如果是在iframe中，需要获取top window的地址）
         let redirectUri;
+        let isInIframe = false;
         try {
           // 尝试获取主窗口地址
           if (window.top && window.top !== window.self) {
             // 在iframe中，尝试获取主窗口地址
-            const topLocation = window.top.location;
-            const currentPath = topLocation.pathname + topLocation.search;
-            redirectUri = `${topLocation.origin}${currentPath}`;
+            isInIframe = true;
+            try {
+              const topLocation = window.top.location;
+              const currentPath = topLocation.pathname + topLocation.search;
+              redirectUri = `${topLocation.origin}${currentPath}`;
+            } catch (e) {
+              // 跨域限制，无法访问top window
+              // 使用document.referrer或从localStorage获取之前保存的地址
+              const referrer = document.referrer;
+              if (referrer && !referrer.includes('open.weixin.qq.com')) {
+                // 使用referrer作为主窗口地址
+                redirectUri = referrer;
+              } else {
+                // 尝试从localStorage获取之前保存的主窗口地址
+                const savedMainUrl = localStorage.getItem('main_window_url');
+                if (savedMainUrl) {
+                  redirectUri = savedMainUrl;
+                } else {
+                  // 最后使用当前窗口地址（虽然可能不准确，但总比localhost好）
+                  const currentPath = window.location.pathname + window.location.search;
+                  redirectUri = `${window.location.origin}${currentPath}`;
+                }
+              }
+            }
           } else {
             // 不在iframe中，使用当前窗口地址
             const currentPath = window.location.pathname + window.location.search;
             redirectUri = `${window.location.origin}${currentPath}`;
+            // 保存主窗口地址到localStorage，供iframe场景使用
+            localStorage.setItem('main_window_url', redirectUri);
           }
         } catch (e) {
-          // 跨域限制，无法访问top window，使用当前窗口地址
-          // 后端会通过JavaScript处理iframe跳转
-          const currentPath = window.location.pathname + window.location.search;
-          redirectUri = `${window.location.origin}${currentPath}`;
+          // 出错时，尝试从localStorage获取
+          const savedMainUrl = localStorage.getItem('main_window_url');
+          if (savedMainUrl) {
+            redirectUri = savedMainUrl;
+          } else {
+            const currentPath = window.location.pathname + window.location.search;
+            redirectUri = `${window.location.origin}${currentPath}`;
+          }
         }
         
         const response = await fetch(
-          `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}&return_url=true&in_iframe=true`
+          `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}&return_url=true&in_iframe=${isInIframe}`
         );
         
         if (response.ok) {
