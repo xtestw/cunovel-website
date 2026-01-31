@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, text, or_, and_
 from sqlalchemy.orm import sessionmaker
 from models import Base, AIDaily, AINews, AITutorial, User, Order
 from config import Config
-from vehicle_verify_helper import call_aliyun_vehicle_verify
+from vehicle_verify_helper import call_aliyun_vehicle_verify, call_aliyun_phone_verify
 from auth_helper import (
     init_oauth, generate_jwt_token, verify_jwt_token, 
     get_current_user, handle_github_callback, 
@@ -66,15 +66,21 @@ def get_client_ip():
     return ip
 
 def execute_vehicle_verify_and_save(order, db):
-    """执行车辆核验并保存结果到订单"""
+    """执行核验并保存结果到订单（支持车辆核验和手机号核验）"""
     """如果订单已有结果，则不重复查询"""
     if order.result_data:
         app.logger.info(f'订单 {order.order_id} 已有查询结果，跳过重复查询')
         return
     
     try:
-        # 调用阿里云API进行查询
-        result = call_aliyun_vehicle_verify(order.verify_type, order.form_data)
+        # 判断是车辆核验还是手机号核验
+        verify_type = order.verify_type
+        if verify_type in ['mobile2Meta', 'mobile3Meta', 'mobileOnlineTime']:
+            # 手机号核验
+            result = call_aliyun_phone_verify(verify_type, order.form_data)
+        else:
+            # 车辆核验
+            result = call_aliyun_vehicle_verify(verify_type, order.form_data)
         
         # 保存查询结果到订单
         order.result_data = result
@@ -860,13 +866,16 @@ VERIFY_TYPE_PRICES = {
         '3': 19.90  # 三要素核验价格
     },
     'basicInfo': 29.90,      # 基本信息查询价格
-    'insuranceLog': 29.90    # 投保日志查询价格
+    'insuranceLog': 29.90,    # 投保日志查询价格
+    'mobile2Meta': 9.90,      # 手机号二要素核验价格（手机号+姓名）
+    'mobile3Meta': 9.90,      # 手机号三要素核验价格（手机号+身份证+姓名）
+    'mobileOnlineTime': 6.90  # 手机号在网状态查询价格
 }
 
 def get_verify_price(verify_type, form_data=None):
     """
     根据核验类型获取价格
-    verify_type: consistency, basicInfo, insuranceLog
+    verify_type: consistency, basicInfo, insuranceLog, mobile2Meta, mobile3Meta, mobileOnlineTime
     form_data: 表单数据，用于判断一致性核验是二要素还是三要素
     """
     if verify_type == 'consistency':
@@ -879,6 +888,12 @@ def get_verify_price(verify_type, form_data=None):
         return VERIFY_TYPE_PRICES['basicInfo']
     elif verify_type == 'insuranceLog':
         return VERIFY_TYPE_PRICES['insuranceLog']
+    elif verify_type == 'mobile2Meta':
+        return VERIFY_TYPE_PRICES['mobile2Meta']
+    elif verify_type == 'mobile3Meta':
+        return VERIFY_TYPE_PRICES['mobile3Meta']
+    elif verify_type == 'mobileOnlineTime':
+        return VERIFY_TYPE_PRICES['mobileOnlineTime']
     else:
         return 1.00  # 默认价格
 
@@ -907,6 +922,12 @@ def get_verify_price_endpoint():
             price_description = '基本信息查询'
         elif verify_type == 'insuranceLog':
             price_description = '投保日志查询'
+        elif verify_type == 'mobile2Meta':
+            price_description = '手机号二要素核验'
+        elif verify_type == 'mobile3Meta':
+            price_description = '手机号三要素核验'
+        elif verify_type == 'mobileOnlineTime':
+            price_description = '手机号在网状态查询'
         
         return jsonify({
             'price': price,
@@ -964,13 +985,19 @@ def create_vehicle_verify_order():
             }), 500
         
         # 创建支付订单
-        subject = '车辆信息核验'
+        subject = '信息核验'
         if verify_type == 'consistency':
             subject = '车辆信息一致性核验'
         elif verify_type == 'basicInfo':
             subject = '车辆基本信息查询'
         elif verify_type == 'insuranceLog':
             subject = '车辆投保日志查询'
+        elif verify_type == 'mobile2Meta':
+            subject = '手机号二要素核验'
+        elif verify_type == 'mobile3Meta':
+            subject = '手机号三要素核验'
+        elif verify_type == 'mobileOnlineTime':
+            subject = '手机号在网状态查询'
         
         # 获取回调URL
         return_url = os.getenv('ALIPAY_RETURN_URL', '')
@@ -1170,7 +1197,7 @@ def check_payment_status(order_id):
 # 车辆核验接口
 @app.route('/api/vehicle-verify/verify', methods=['POST'])
 def vehicle_verify():
-    """车辆信息核验接口"""
+    """信息核验接口（支持车辆核验和手机号核验）"""
     db = get_db()
     try:
         data = request.json
@@ -1196,8 +1223,13 @@ def vehicle_verify():
         if order.verify_type != verify_type:
             return jsonify({'error': '订单核验类型不匹配'}), 400
         
-        # 调用阿里云API
-        result = call_aliyun_vehicle_verify(verify_type, form_data)
+        # 判断是车辆核验还是手机号核验
+        if verify_type in ['mobile2Meta', 'mobile3Meta', 'mobileOnlineTime']:
+            # 手机号核验
+            result = call_aliyun_phone_verify(verify_type, form_data)
+        else:
+            # 车辆核验
+            result = call_aliyun_vehicle_verify(verify_type, form_data)
         
         # 保存查询结果到订单
         order.result_data = result
@@ -1207,7 +1239,7 @@ def vehicle_verify():
         return jsonify(result)
         
     except Exception as e:
-        app.logger.error(f'车辆核验错误: {str(e)}', exc_info=True)
+        app.logger.error(f'核验错误: {str(e)}', exc_info=True)
         return jsonify({'error': str(e)}), 500
     finally:
         db.close()
@@ -1655,6 +1687,11 @@ def wechat_login():
         if frontend_redirect_uri:
             session['oauth_redirect_uri'] = frontend_redirect_uri
         
+        # 保存是否在iframe中的标识
+        in_iframe = request.args.get('in_iframe', 'false').lower() == 'true'
+        if in_iframe:
+            session['oauth_in_iframe'] = True
+        
         # 对微信回调地址进行URL编码（微信要求）
         encoded_callback_uri = urllib.parse.quote(backend_callback_uri, safe='')
         
@@ -1690,22 +1727,64 @@ def wechat_callback():
         
         redirect_uri = session.pop('oauth_redirect_uri', None) or request.args.get('redirect_uri', '')
         
-        # 如果没有指定重定向地址，使用默认的前端地址
+        # 如果没有指定重定向地址，使用环境变量中的前端地址
         if not redirect_uri:
-            # 尝试从Referer获取前端地址
-            referer = request.headers.get('Referer', '')
-            if referer:
-                # 从Referer中提取前端基础URL
-                from urllib.parse import urlparse
-                parsed = urlparse(referer)
-                redirect_uri = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
-            else:
-                # 默认使用当前请求的origin
-                redirect_uri = request.headers.get('Origin', '') or f"{request.scheme}://{request.host}"
+            redirect_uri = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+        
+        # 检查是否在iframe中（通过session、请求参数或Referer判断）
+        in_iframe = session.pop('oauth_in_iframe', False) or request.args.get('in_iframe', 'false').lower() == 'true'
+        referer = request.headers.get('Referer', '')
+        # 如果Referer包含微信域名，可能是在iframe中
+        if 'open.weixin.qq.com' in referer:
+            in_iframe = True
         
         # 确保重定向到前端页面，带上token
         separator = '&' if '?' in redirect_uri else '?'
-        return redirect(f"{redirect_uri}{separator}token={jwt_token}")
+        redirect_url = f"{redirect_uri}{separator}token={jwt_token}"
+        
+        # 如果在iframe中，返回HTML页面，使用JavaScript让主窗口跳转
+        if in_iframe:
+            html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录成功</title>
+</head>
+<body>
+    <script>
+        // 尝试让主窗口跳转
+        try {{
+            if (window.top && window.top !== window.self) {{
+                // 在iframe中，让主窗口跳转
+                window.top.location.href = '{redirect_url}';
+            }} else {{
+                // 不在iframe中，直接跳转
+                window.location.href = '{redirect_url}';
+            }}
+        }} catch (e) {{
+            // 跨域限制，无法访问top window，尝试使用postMessage
+            if (window.parent && window.parent !== window.self) {{
+                window.parent.postMessage({{
+                    type: 'wechat_login_success',
+                    token: '{jwt_token}',
+                    redirect_url: '{redirect_url}'
+                }}, '*');
+            }} else {{
+                // 最后尝试直接跳转
+                window.location.href = '{redirect_url}';
+            }}
+        }}
+    </script>
+    <p>登录成功，正在跳转...</p>
+    <p>如果页面没有自动跳转，请<a href="{redirect_url}">点击这里</a></p>
+</body>
+</html>
+"""
+            return html, 200, {'Content-Type': 'text/html; charset=utf-8'}
+        else:
+            # 不在iframe中，直接重定向
+            return redirect(redirect_url)
     except Exception as e:
         app.logger.error(f'微信回调处理失败: {str(e)}', exc_info=True)
         db.rollback()

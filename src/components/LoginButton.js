@@ -31,6 +31,32 @@ const LoginButton = ({ onLoginSuccess }) => {
         fetchUserInfo(savedToken);
       }
     }
+
+    // 监听postMessage，处理iframe中的登录成功回调
+    const handleMessage = async (event) => {
+      // 验证消息来源（可以根据需要添加更严格的验证）
+      if (event.data && event.data.type === 'wechat_login_success') {
+        const { token: messageToken, redirect_url } = event.data;
+        if (messageToken) {
+          // 保存token
+          localStorage.setItem('auth_token', messageToken);
+          // 获取用户信息
+          await fetchUserInfo(messageToken);
+          // 如果提供了redirect_url，跳转到该地址
+          if (redirect_url) {
+            window.location.href = redirect_url;
+          } else {
+            // 清除URL中的token（如果有）
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   // 点击外部关闭弹窗
@@ -89,9 +115,9 @@ const LoginButton = ({ onLoginSuccess }) => {
           try {
             const iframeUrl = iframe.contentWindow.location.href;
             
-            // 检查URL中是否有token参数
+            // 检查URL中是否有token参数（直接跳转的情况）
             if (iframeUrl.includes('token=')) {
-              const urlParams = new URLSearchParams(iframeUrl.split('?')[1]);
+              const urlParams = new URLSearchParams(iframeUrl.split('?')[1] || iframeUrl.split('#')[1]);
               const token = urlParams.get('token');
               
               if (token) {
@@ -103,7 +129,20 @@ const LoginButton = ({ onLoginSuccess }) => {
               }
             }
             
-            // 尝试读取iframe内容（可能是JSON响应）
+            // 检查URL是否包含回调地址（说明已经跳转回来了）
+            if (iframeUrl.includes('/api/auth/callback/wechat')) {
+              // 尝试从URL中提取token
+              const urlParams = new URLSearchParams(iframeUrl.split('?')[1] || '');
+              const token = urlParams.get('token');
+              if (token) {
+                localStorage.setItem('auth_token', token);
+                setShowWechatQR(false);
+                await fetchUserInfo(token);
+                return;
+              }
+            }
+            
+            // 尝试读取iframe内容（可能是JSON响应或HTML页面）
             try {
               const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
               const bodyText = iframeDoc.body?.innerText || iframeDoc.body?.textContent || '';
@@ -123,8 +162,15 @@ const LoginButton = ({ onLoginSuccess }) => {
                   // JSON解析失败，忽略
                 }
               }
+              
+              // 检查是否是HTML页面（后端返回的登录成功页面）
+              if (bodyText.includes('登录成功') || bodyText.includes('正在跳转')) {
+                // 后端会通过JavaScript处理跳转，这里只需要等待
+                // 如果后端使用了postMessage，会被上面的message监听器处理
+                return;
+              }
             } catch (e) {
-              // 跨域错误，忽略
+              // 跨域错误，忽略（后端会通过postMessage或直接跳转处理）
             }
           } catch (e) {
             // 跨域错误，忽略
@@ -201,11 +247,29 @@ const LoginButton = ({ onLoginSuccess }) => {
     if (provider === 'wechat') {
       // 微信登录：显示浮窗二维码
       try {
-        // 确保传递完整的重定向URI，包括当前路径和查询参数
-        const currentPath = window.location.pathname + window.location.search;
-        const redirectUri = `${window.location.origin}${currentPath}`;
+        // 获取主窗口地址（如果是在iframe中，需要获取top window的地址）
+        let redirectUri;
+        try {
+          // 尝试获取主窗口地址
+          if (window.top && window.top !== window.self) {
+            // 在iframe中，尝试获取主窗口地址
+            const topLocation = window.top.location;
+            const currentPath = topLocation.pathname + topLocation.search;
+            redirectUri = `${topLocation.origin}${currentPath}`;
+          } else {
+            // 不在iframe中，使用当前窗口地址
+            const currentPath = window.location.pathname + window.location.search;
+            redirectUri = `${window.location.origin}${currentPath}`;
+          }
+        } catch (e) {
+          // 跨域限制，无法访问top window，使用当前窗口地址
+          // 后端会通过JavaScript处理iframe跳转
+          const currentPath = window.location.pathname + window.location.search;
+          redirectUri = `${window.location.origin}${currentPath}`;
+        }
+        
         const response = await fetch(
-          `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}&return_url=true`
+          `${API_BASE_URL}/auth/login/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}&return_url=true&in_iframe=true`
         );
         
         if (response.ok) {

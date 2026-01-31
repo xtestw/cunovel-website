@@ -13,7 +13,14 @@
     "feedback": "Feedback",
     "aiAgent": "AI Agent",
     "agentSkill": "Agent Skill",
-    "aiTools": "AI Tools"
+    "aiTools": "AI Tools",
+    "vehicleVerify": "Information Verification",
+    "vehicleInfoVerify": "Vehicle Information Verification",
+    "phoneVerify": "Phone Verification",
+    "phoneConsistency2": "Human-Machine Consistency (Phone + Name)",
+    "phoneConsistency3": "Human-Machine Consistency (Phone + ID + Name)",
+    "phoneOnlineTime": "Phone Online Status Verification",
+    "orderHistory": "Order History"
   },
   "nav": {
     "categories": {

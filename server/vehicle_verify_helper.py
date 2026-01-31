@@ -264,6 +264,188 @@ class AliyunVehicleVerify:
             raise Exception(f'调用阿里云API失败: {str(e)} - 响应内容: {error_detail}')
         except Exception as e:
             raise Exception(f'调用阿里云API失败: {str(e)}')
+    
+    def mobile2_meta_verify(self, mobile, name):
+        """
+        手机号二要素核验（手机号+姓名）
+        根据阿里云官方文档：https://next.api.aliyun.com/document/Cloudauth/2019-03-07/Mobile2MetaVerify
+        Action: Mobile2MetaVerify
+        """
+        # 参数清理和验证
+        mobile_cleaned = str(mobile).strip()
+        name_cleaned = str(name).strip()
+        
+        if not mobile_cleaned:
+            raise Exception('手机号不能为空')
+        if not name_cleaned:
+            raise Exception('姓名不能为空')
+        
+        # 验证手机号格式（11位数字，1开头）
+        if not mobile_cleaned.isdigit() or len(mobile_cleaned) != 11 or not mobile_cleaned.startswith('1'):
+            raise Exception('手机号格式不正确，应为11位数字且以1开头')
+        
+        # 验证姓名长度（通常2-20个字符）
+        if len(name_cleaned) < 2 or len(name_cleaned) > 20:
+            raise Exception('姓名长度应在2-20个字符之间')
+        
+        params = {
+            'ParamType': 'normal',
+            'Mobile': mobile_cleaned,
+            'Name': name_cleaned
+        }
+        
+        request_params = self._build_params('Mobile2MetaVerify', params)
+        url = f'https://{self.endpoint}'
+        
+        try:
+            response = requests.get(url, params=request_params, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            error_detail = ''
+            error_json = {}
+            try:
+                error_detail = response.text
+                error_json = response.json()
+            except:
+                pass
+            
+            if error_json.get('Code') == 'InvalidAction.NotFound':
+                current_action = request_params.get('Action', 'Unknown')
+                raise Exception(
+                    f'API Action未找到: {error_json.get("Message", "未知错误")}\n'
+                    f'请检查：\n'
+                    f'1. Action名称是否正确（当前使用: {current_action}）\n'
+                    f'2. API版本是否正确（当前使用: {self.api_version}）\n'
+                    f'3. 端点配置是否正确（当前使用: {self.endpoint}）\n'
+                    f'4. 是否已在阿里云控制台开通实人认证服务\n'
+                    f'响应详情: {error_detail}'
+                )
+            raise Exception(f'调用阿里云API失败: {str(e)} - 响应内容: {error_detail}')
+        except Exception as e:
+            raise Exception(f'调用阿里云API失败: {str(e)}')
+    
+    def mobile3_meta_detail_standard_verify(self, mobile, name, identify_num):
+        """
+        手机号三要素核验（手机号+身份证+姓名）
+        根据阿里云官方文档：https://next.api.aliyun.com/document/Cloudauth/2019-03-07/Mobile3MetaDetailStandardVerify
+        Action: Mobile3MetaDetailStandardVerify
+        """
+        # 参数清理和验证
+        mobile_cleaned = str(mobile).strip()
+        name_cleaned = str(name).strip()
+        identify_num_cleaned = str(identify_num).strip().upper()
+        
+        if not mobile_cleaned:
+            raise Exception('手机号不能为空')
+        if not name_cleaned:
+            raise Exception('姓名不能为空')
+        if not identify_num_cleaned:
+            raise Exception('身份证号不能为空')
+        
+        # 验证手机号格式
+        if not mobile_cleaned.isdigit() or len(mobile_cleaned) != 11 or not mobile_cleaned.startswith('1'):
+            raise Exception('手机号格式不正确，应为11位数字且以1开头')
+        
+        # 验证姓名长度
+        if len(name_cleaned) < 2 or len(name_cleaned) > 20:
+            raise Exception('姓名长度应在2-20个字符之间')
+        
+        # 验证身份证号格式（18位，最后一位可以是X）
+        if len(identify_num_cleaned) != 18:
+            raise Exception('身份证号应为18位')
+        if not (identify_num_cleaned[:17].isdigit() and (identify_num_cleaned[17].isdigit() or identify_num_cleaned[17] == 'X')):
+            raise Exception('身份证号格式不正确')
+        
+        params = {
+            'ParamType': 'normal',
+            'Mobile': mobile_cleaned,
+            'Name': name_cleaned,
+            'IdentifyNum': identify_num_cleaned
+        }
+        
+        request_params = self._build_params('Mobile3MetaDetailStandardVerify', params)
+        url = f'https://{self.endpoint}'
+        
+        try:
+            response = requests.get(url, params=request_params, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            error_detail = ''
+            error_json = {}
+            try:
+                error_detail = response.text
+                error_json = response.json()
+            except:
+                pass
+            
+            if error_json.get('Code') == 'InvalidAction.NotFound':
+                current_action = request_params.get('Action', 'Unknown')
+                raise Exception(
+                    f'API Action未找到: {error_json.get("Message", "未知错误")}\n'
+                    f'请检查：\n'
+                    f'1. Action名称是否正确（当前使用: {current_action}）\n'
+                    f'2. API版本是否正确（当前使用: {self.api_version}）\n'
+                    f'3. 端点配置是否正确（当前使用: {self.endpoint}）\n'
+                    f'4. 是否已在阿里云控制台开通实人认证服务\n'
+                    f'响应详情: {error_detail}'
+                )
+            raise Exception(f'调用阿里云API失败: {str(e)} - 响应内容: {error_detail}')
+        except Exception as e:
+            raise Exception(f'调用阿里云API失败: {str(e)}')
+    
+    def mobile_online_time(self, mobile):
+        """
+        手机号在网状态查询
+        根据阿里云官方文档：https://next.api.aliyun.com/document/Cloudauth/2019-03-07/MobileOnlineTime
+        Action: MobileOnlineTime
+        """
+        # 参数清理和验证
+        mobile_cleaned = str(mobile).strip()
+        
+        if not mobile_cleaned:
+            raise Exception('手机号不能为空')
+        
+        # 验证手机号格式
+        if not mobile_cleaned.isdigit() or len(mobile_cleaned) != 11 or not mobile_cleaned.startswith('1'):
+            raise Exception('手机号格式不正确，应为11位数字且以1开头')
+        
+        params = {
+            'ParamType': 'normal',
+            'Mobile': mobile_cleaned
+        }
+        
+        request_params = self._build_params('MobileOnlineTime', params)
+        url = f'https://{self.endpoint}'
+        
+        try:
+            response = requests.get(url, params=request_params, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            error_detail = ''
+            error_json = {}
+            try:
+                error_detail = response.text
+                error_json = response.json()
+            except:
+                pass
+            
+            if error_json.get('Code') == 'InvalidAction.NotFound':
+                current_action = request_params.get('Action', 'Unknown')
+                raise Exception(
+                    f'API Action未找到: {error_json.get("Message", "未知错误")}\n'
+                    f'请检查：\n'
+                    f'1. Action名称是否正确（当前使用: {current_action}）\n'
+                    f'2. API版本是否正确（当前使用: {self.api_version}）\n'
+                    f'3. 端点配置是否正确（当前使用: {self.endpoint}）\n'
+                    f'4. 是否已在阿里云控制台开通实人认证服务\n'
+                    f'响应详情: {error_detail}'
+                )
+            raise Exception(f'调用阿里云API失败: {str(e)} - 响应内容: {error_detail}')
+        except Exception as e:
+            raise Exception(f'调用阿里云API失败: {str(e)}')
 
 
 def call_aliyun_vehicle_verify(verify_type, data):
@@ -352,6 +534,152 @@ def call_aliyun_vehicle_verify(verify_type, data):
         if result.get('Code') == '200':
             return {
                 'insuranceLog': result.get('ResultObject', {})
+            }
+        else:
+            raise Exception(f"API调用失败: {result.get('Message', '未知错误')}")
+    
+    else:
+        raise Exception('不支持的核验类型')
+
+
+def call_aliyun_phone_verify(verify_type, data):
+    """
+    调用阿里云手机号核验API的统一入口
+    verify_type: mobile2Meta (手机号+姓名), mobile3Meta (手机号+身份证+姓名), mobileOnlineTime (手机号在网状态)
+    data: 包含手机号、姓名、身份证号等信息
+    """
+    access_key_id = os.getenv('ALIYUN_ACCESS_KEY_ID', '')
+    access_key_secret = os.getenv('ALIYUN_ACCESS_KEY_SECRET', '')
+    endpoint = os.getenv('ALIYUN_ENDPOINT', 'cloudauth.cn-shanghai.aliyuncs.com')
+    
+    if not access_key_id or not access_key_secret:
+        raise Exception('阿里云配置未设置，请设置 ALIYUN_ACCESS_KEY_ID 和 ALIYUN_ACCESS_KEY_SECRET')
+    
+    client = AliyunVehicleVerify(access_key_id, access_key_secret, endpoint)
+    
+    if verify_type == 'mobile2Meta':
+        # 手机号二要素核验（手机号+姓名）
+        mobile = data.get('mobile', '').strip()
+        name = data.get('name', '').strip()
+        
+        if not mobile:
+            raise Exception('手机号是必填参数')
+        if not name:
+            raise Exception('姓名是必填参数')
+        
+        # 参数验证已在 mobile2_meta_verify 方法中完成，这里只做基本检查
+        
+        result = client.mobile2_meta_verify(mobile, name)
+        
+        # 解析返回结果
+        if result.get('Code') == '200':
+            result_object = result.get('ResultObject', {})
+            biz_code = result_object.get('BizCode', '3')
+            
+            # 解析BizCode含义
+            # 1: 一致（手机号和姓名匹配）
+            # 2: 不一致（手机号和姓名不匹配）
+            # 3: 无记录（无法查询到相关信息）
+            biz_code_desc = {
+                '1': '一致',
+                '2': '不一致',
+                '3': '无记录'
+            }.get(biz_code, '未知')
+            
+            return {
+                'bizCode': biz_code,
+                'bizCodeDesc': biz_code_desc,
+                'mobile': mobile,
+                'name': name,
+                'result': result_object,
+                'verifyTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+        else:
+            raise Exception(f"API调用失败: {result.get('Message', '未知错误')}")
+    
+    elif verify_type == 'mobile3Meta':
+        # 手机号三要素核验（手机号+身份证+姓名）
+        mobile = data.get('mobile', '').strip()
+        name = data.get('name', '').strip()
+        identify_num = data.get('idCard', '').strip()
+        
+        if not mobile:
+            raise Exception('手机号是必填参数')
+        if not name:
+            raise Exception('姓名是必填参数')
+        if not identify_num:
+            raise Exception('身份证号是必填参数')
+        
+        # 参数验证已在 mobile3_meta_detail_standard_verify 方法中完成，这里只做基本检查
+        
+        result = client.mobile3_meta_detail_standard_verify(mobile, name, identify_num)
+        
+        # 解析返回结果
+        if result.get('Code') == '200':
+            result_object = result.get('ResultObject', {})
+            biz_code = result_object.get('BizCode', '3')
+            
+            # 解析BizCode含义
+            # 1: 一致（手机号、身份证号和姓名三者匹配）
+            # 2: 不一致（三者不匹配）
+            # 3: 无记录（无法查询到相关信息）
+            biz_code_desc = {
+                '1': '一致',
+                '2': '不一致',
+                '3': '无记录'
+            }.get(biz_code, '未知')
+            
+            return {
+                'bizCode': biz_code,
+                'bizCodeDesc': biz_code_desc,
+                'mobile': mobile,
+                'name': name,
+                'idCard': identify_num,
+                'result': result_object,
+                'verifyTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+        else:
+            raise Exception(f"API调用失败: {result.get('Message', '未知错误')}")
+    
+    elif verify_type == 'mobileOnlineTime':
+        # 手机号在网状态查询
+        mobile = data.get('mobile', '').strip()
+        
+        if not mobile:
+            raise Exception('手机号是必填参数')
+        
+        # 参数验证已在 mobile_online_time 方法中完成，这里只做基本检查
+        
+        result = client.mobile_online_time(mobile)
+        
+        # 解析返回结果
+        if result.get('Code') == '200':
+            result_object = result.get('ResultObject', {})
+            
+            # 提取在网状态信息
+            # 根据阿里云文档，可能包含以下字段：
+            # - OnlineStatus: 在网状态（1:在网, 2:不在网, 3:未知）
+            # - OnlineTime: 在网时长（月）
+            # - Carrier: 运营商
+            online_status = result_object.get('OnlineStatus', '')
+            online_time = result_object.get('OnlineTime', '')
+            carrier = result_object.get('Carrier', '')
+            
+            # 解析在网状态描述
+            status_desc = {
+                '1': '在网',
+                '2': '不在网',
+                '3': '未知'
+            }.get(str(online_status), '未知')
+            
+            return {
+                'mobile': mobile,
+                'onlineStatus': online_status,
+                'onlineStatusDesc': status_desc,
+                'onlineTime': online_time,
+                'carrier': carrier,
+                'result': result_object,
+                'verifyTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
         else:
             raise Exception(f"API调用失败: {result.get('Message', '未知错误')}")

@@ -20,6 +20,7 @@ import PromptTutorial from './pages/PromptTutorial/PromptTutorial';
 import AgentSkill from './pages/AgentSkill/AgentSkill';
 import VehicleVerify from './pages/VehicleVerify/VehicleVerify';
 import VehicleVerifyOrders from './pages/VehicleVerify/VehicleVerifyOrders';
+import PhoneVerify from './pages/PhoneVerify/PhoneVerify';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -230,19 +231,28 @@ function AppContent() {
               {i18n.language.startsWith('zh') && (
                 <div className="nav-item nav-item-dropdown">
                   <NavLink
-                    to="/vehicle-verify"
-                    className={`nav-item-link ${location.pathname.startsWith('/vehicle-verify') ? 'active' : ''}`}
+                    to="/phone-verify"
+                    className={`nav-item-link ${location.pathname.startsWith('/vehicle-verify') || location.pathname.startsWith('/phone-verify') ? 'active' : ''}`}
                     style={{
-                      color: location.pathname.startsWith('/vehicle-verify') ? '#1890ff' : '#595959'
+                      color: location.pathname.startsWith('/vehicle-verify') || location.pathname.startsWith('/phone-verify') ? '#1890ff' : '#595959'
                     }}
                   >
                     {t('common.vehicleVerify')}
                   </NavLink>
                   <div className="nav-dropdown-menu">
                     <NavLink
+                      to="/phone-verify"
+                      className={({ isActive }) => {
+                        const isActivePath = location.pathname.startsWith('/phone-verify');
+                        return `nav-dropdown-item ${isActivePath ? 'active' : ''}`;
+                      }}
+                    >
+                      {t('common.phoneVerify')}
+                    </NavLink>
+                    <NavLink
                       to="/vehicle-verify"
                       className={({ isActive }) => {
-                        const isActivePath = location.pathname === '/vehicle-verify';
+                        const isActivePath = location.pathname === '/vehicle-verify' && !location.pathname.includes('/orders');
                         return `nav-dropdown-item ${isActivePath ? 'active' : ''}`;
                       }}
                     >
@@ -331,6 +341,8 @@ function AppContent() {
             <Route path="/agent-skill/*" element={<AgentSkill />} />
             <Route path="/vehicle-verify" element={<VehicleVerify />} />
             <Route path="/vehicle-verify/orders" element={<VehicleVerifyOrders />} />
+            <Route path="/phone-verify" element={<PhoneVerify />} />
+            <Route path="/phone-verify/online-time" element={<PhoneVerify />} />
             <Route path="*" element={<Navigate to="/ai-daily" replace />} />
           </Routes>
         </Content>
