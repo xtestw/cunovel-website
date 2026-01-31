@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, text, or_, and_
 from sqlalchemy.orm import sessionmaker
 from models import Base, AIDaily, AINews, AITutorial, User, Order
 from config import Config
-from vehicle_verify_helper import call_aliyun_vehicle_verify, call_aliyun_phone_verify
+from vehicle_verify_helper import call_aliyun_vehicle_verify, call_aliyun_phone_verify, call_aliyun_bank_card_verify
 from auth_helper import (
     init_oauth, generate_jwt_token, verify_jwt_token, 
     get_current_user, handle_github_callback, 
@@ -67,18 +67,21 @@ def get_client_ip():
     return ip
 
 def execute_vehicle_verify_and_save(order, db):
-    """执行核验并保存结果到订单（支持车辆核验和手机号核验）"""
+    """执行核验并保存结果到订单（支持车辆核验、手机号核验和银行卡核验）"""
     """如果订单已有结果，则不重复查询"""
     if order.result_data:
         app.logger.info(f'订单 {order.order_id} 已有查询结果，跳过重复查询')
         return
     
     try:
-        # 判断是车辆核验还是手机号核验
+        # 判断是车辆核验、手机号核验还是银行卡核验
         verify_type = order.verify_type
         if verify_type in ['mobile2Meta', 'mobile3Meta', 'mobileOnlineTime']:
             # 手机号核验
             result = call_aliyun_phone_verify(verify_type, order.form_data)
+        elif verify_type == 'bankCardVerify':
+            # 银行卡核验
+            result = call_aliyun_bank_card_verify(order.form_data)
         else:
             # 车辆核验
             result = call_aliyun_vehicle_verify(verify_type, order.form_data)
@@ -870,13 +873,14 @@ VERIFY_TYPE_PRICES = {
     'insuranceLog': 29.90,    # 投保日志查询价格
     'mobile2Meta': 9.90,      # 手机号二要素核验价格（手机号+姓名）
     'mobile3Meta': 9.90,      # 手机号三要素核验价格（手机号+身份证+姓名）
-    'mobileOnlineTime': 6.90  # 手机号在网状态查询价格
+    'mobileOnlineTime': 6.90,  # 手机号在网状态查询价格
+    'bankCardVerify': 19.90   # 银行卡核验价格（银行卡号+姓名+身份证号）
 }
 
 def get_verify_price(verify_type, form_data=None):
     """
     根据核验类型获取价格
-    verify_type: consistency, basicInfo, insuranceLog, mobile2Meta, mobile3Meta, mobileOnlineTime
+    verify_type: consistency, basicInfo, insuranceLog, mobile2Meta, mobile3Meta, mobileOnlineTime, bankCardVerify
     form_data: 表单数据，用于判断一致性核验是二要素还是三要素
     """
     if verify_type == 'consistency':
@@ -895,6 +899,8 @@ def get_verify_price(verify_type, form_data=None):
         return VERIFY_TYPE_PRICES['mobile3Meta']
     elif verify_type == 'mobileOnlineTime':
         return VERIFY_TYPE_PRICES['mobileOnlineTime']
+    elif verify_type == 'bankCardVerify':
+        return VERIFY_TYPE_PRICES['bankCardVerify']
     else:
         return 1.00  # 默认价格
 
@@ -929,6 +935,8 @@ def get_verify_price_endpoint():
             price_description = '手机号三要素核验'
         elif verify_type == 'mobileOnlineTime':
             price_description = '手机号在网状态查询'
+        elif verify_type == 'bankCardVerify':
+            price_description = '银行卡核验'
         
         return jsonify({
             'price': price,
@@ -999,6 +1007,8 @@ def create_vehicle_verify_order():
             subject = '手机号三要素核验'
         elif verify_type == 'mobileOnlineTime':
             subject = '手机号在网状态查询'
+        elif verify_type == 'bankCardVerify':
+            subject = '银行卡核验'
         
         # 获取回调URL
         return_url = os.getenv('ALIPAY_RETURN_URL', '')
@@ -1198,7 +1208,7 @@ def check_payment_status(order_id):
 # 车辆核验接口
 @app.route('/api/vehicle-verify/verify', methods=['POST'])
 def vehicle_verify():
-    """信息核验接口（支持车辆核验和手机号核验）"""
+    """信息核验接口（支持车辆核验、手机号核验和银行卡核验）"""
     db = get_db()
     try:
         data = request.json
@@ -1224,10 +1234,13 @@ def vehicle_verify():
         if order.verify_type != verify_type:
             return jsonify({'error': '订单核验类型不匹配'}), 400
         
-        # 判断是车辆核验还是手机号核验
+        # 判断是车辆核验、手机号核验还是银行卡核验
         if verify_type in ['mobile2Meta', 'mobile3Meta', 'mobileOnlineTime']:
             # 手机号核验
             result = call_aliyun_phone_verify(verify_type, form_data)
+        elif verify_type == 'bankCardVerify':
+            # 银行卡核验
+            result = call_aliyun_bank_card_verify(form_data)
         else:
             # 车辆核验
             result = call_aliyun_vehicle_verify(verify_type, form_data)

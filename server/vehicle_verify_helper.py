@@ -446,6 +446,82 @@ class AliyunVehicleVerify:
             raise Exception(f'调用阿里云API失败: {str(e)} - 响应内容: {error_detail}')
         except Exception as e:
             raise Exception(f'调用阿里云API失败: {str(e)}')
+    
+    def bank_meta_verify(self, bank_card_no, name, identify_num):
+        """
+        银行卡核验（银行卡号+姓名+身份证号）
+        根据阿里云官方文档：https://next.api.aliyun.com/document/Cloudauth/2019-03-07/BankMetaVerify
+        Action: BankMetaVerify
+        
+        参数说明：
+        - ParamType: 必选，加密方式（normal或md5）
+        - BankCardNo: 必选，银行卡号
+        - Name: 必选，姓名
+        - IdentifyNum: 必选，身份证号
+        """
+        # 参数清理和验证
+        bank_card_no_cleaned = str(bank_card_no).strip().replace(' ', '').replace('\t', '').replace('\n', '')
+        name_cleaned = str(name).strip()
+        identify_num_cleaned = str(identify_num).strip().upper()
+        
+        if not bank_card_no_cleaned:
+            raise Exception('银行卡号不能为空')
+        if not name_cleaned:
+            raise Exception('姓名不能为空')
+        if not identify_num_cleaned:
+            raise Exception('身份证号不能为空')
+        
+        # 验证银行卡号格式（通常为16-19位数字）
+        if not bank_card_no_cleaned.isdigit() or len(bank_card_no_cleaned) < 16 or len(bank_card_no_cleaned) > 19:
+            raise Exception('银行卡号格式不正确，应为16-19位数字')
+        
+        # 验证姓名长度
+        if len(name_cleaned) < 2 or len(name_cleaned) > 20:
+            raise Exception('姓名长度应在2-20个字符之间')
+        
+        # 验证身份证号格式（18位，最后一位可以是X）
+        if len(identify_num_cleaned) != 18:
+            raise Exception('身份证号应为18位')
+        if not (identify_num_cleaned[:17].isdigit() and (identify_num_cleaned[17].isdigit() or identify_num_cleaned[17] == 'X')):
+            raise Exception('身份证号格式不正确')
+        
+        params = {
+            'ParamType': 'normal',
+            'BankCardNo': bank_card_no_cleaned,
+            'Name': name_cleaned,
+            'IdentifyNum': identify_num_cleaned
+        }
+        
+        request_params = self._build_params('BankMetaVerify', params)
+        url = f'https://{self.endpoint}'
+        
+        try:
+            response = requests.get(url, params=request_params, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            error_detail = ''
+            error_json = {}
+            try:
+                error_detail = response.text
+                error_json = response.json()
+            except:
+                pass
+            
+            if error_json.get('Code') == 'InvalidAction.NotFound':
+                current_action = request_params.get('Action', 'Unknown')
+                raise Exception(
+                    f'API Action未找到: {error_json.get("Message", "未知错误")}\n'
+                    f'请检查：\n'
+                    f'1. Action名称是否正确（当前使用: {current_action}）\n'
+                    f'2. API版本是否正确（当前使用: {self.api_version}）\n'
+                    f'3. 端点配置是否正确（当前使用: {self.endpoint}）\n'
+                    f'4. 是否已在阿里云控制台开通实人认证服务\n'
+                    f'响应详情: {error_detail}'
+                )
+            raise Exception(f'调用阿里云API失败: {str(e)} - 响应内容: {error_detail}')
+        except Exception as e:
+            raise Exception(f'调用阿里云API失败: {str(e)}')
 
 
 def call_aliyun_vehicle_verify(verify_type, data):
@@ -686,4 +762,62 @@ def call_aliyun_phone_verify(verify_type, data):
     
     else:
         raise Exception('不支持的核验类型')
+
+
+def call_aliyun_bank_card_verify(data):
+    """
+    调用阿里云银行卡核验API的统一入口
+    data: 包含银行卡号、姓名、身份证号等信息
+    """
+    access_key_id = os.getenv('ALIYUN_ACCESS_KEY_ID', '')
+    access_key_secret = os.getenv('ALIYUN_ACCESS_KEY_SECRET', '')
+    endpoint = os.getenv('ALIYUN_ENDPOINT', 'cloudauth.cn-shanghai.aliyuncs.com')
+    
+    if not access_key_id or not access_key_secret:
+        raise Exception('阿里云配置未设置，请设置 ALIYUN_ACCESS_KEY_ID 和 ALIYUN_ACCESS_KEY_SECRET')
+    
+    client = AliyunVehicleVerify(access_key_id, access_key_secret, endpoint)
+    
+    # 提取并清理参数（移除空格、制表符、换行符等）
+    bank_card_no = data.get('bankCardNo', '').strip().replace(' ', '').replace('\t', '').replace('\n', '')
+    name = data.get('name', '').strip()
+    identify_num = data.get('idCard', '').strip().upper()
+    
+    if not bank_card_no:
+        raise Exception('银行卡号是必填参数')
+    if not name:
+        raise Exception('姓名是必填参数')
+    if not identify_num:
+        raise Exception('身份证号是必填参数')
+    
+    # 参数验证已在 bank_meta_verify 方法中完成，这里只做基本检查
+    
+    result = client.bank_meta_verify(bank_card_no, name, identify_num)
+    
+    # 解析返回结果
+    if result.get('Code') == '200':
+        result_object = result.get('ResultObject', {})
+        biz_code = result_object.get('BizCode', '3')
+        
+        # 解析BizCode含义
+        # 1: 一致（银行卡号、身份证号和姓名三者匹配）
+        # 2: 不一致（三者不匹配）
+        # 3: 无记录（无法查询到相关信息）
+        biz_code_desc = {
+            '1': '一致',
+            '2': '不一致',
+            '3': '无记录'
+        }.get(biz_code, '未知')
+        
+        return {
+            'bizCode': biz_code,
+            'bizCodeDesc': biz_code_desc,
+            'bankCardNo': bank_card_no,
+            'name': name,
+            'idCard': identify_num,
+            'result': result_object,
+            'verifyTime': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+    else:
+        raise Exception(f"API调用失败: {result.get('Message', '未知错误')}")
 

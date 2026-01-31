@@ -20,6 +20,7 @@
     "phoneConsistency2": "Human-Machine Consistency (Phone + Name)",
     "phoneConsistency3": "Human-Machine Consistency (Phone + ID + Name)",
     "phoneOnlineTime": "Phone Online Status Verification",
+    "bankCardVerify": "Bank Card Verification",
     "orderHistory": "Order History"
   },
   "nav": {
@@ -808,6 +809,47 @@
         "description": "View AI industry history daily reports, learn about past artificial intelligence industry news and updates",
         "keywords": "AI history daily,AI news history,artificial intelligence history,AI industry trends history"
       }
+    }
+  },
+  "bankCardVerify": {
+    "title": "Bank Card Verification",
+    "description": "Verify if bank card number, name and ID card number are consistent, 19.9 yuan per verification",
+    "form": {
+      "bankCardNo": "Bank Card Number",
+      "bankCardNoPlaceholder": "Enter bank card number",
+      "bankCardNoHint": "Enter 16-19 digit bank card number",
+      "name": "Name",
+      "namePlaceholder": "Enter name",
+      "nameHint": "Enter real name (2-20 characters)",
+      "idCard": "ID Card Number",
+      "idCardPlaceholder": "Enter 18-digit ID card number",
+      "idCardHint": "Enter 18-digit ID card number",
+      "verifyButton": "Verify",
+      "verifying": "Verifying...",
+      "resetButton": "Reset"
+    },
+    "result": {
+      "title": "Verification Result",
+      "consistent": "Consistent",
+      "inconsistent": "Inconsistent",
+      "noRecord": "No Record",
+      "detail": "Details"
+    },
+    "payment": {
+      "waiting": "Waiting for payment..."
+    },
+    "price": {
+      "label": "Verification Fee",
+      "loading": "Loading..."
+    },
+    "errors": {
+      "bankCardNoRequired": "Please enter bank card number",
+      "bankCardNoInvalid": "Invalid bank card number format, should be 16-19 digits",
+      "nameRequired": "Please enter name",
+      "idCardRequired": "Please enter ID card number",
+      "idCardInvalid": "Invalid ID card number format",
+      "paymentError": "Payment failed",
+      "networkError": "Network error, please try again later"
     }
   }
 }

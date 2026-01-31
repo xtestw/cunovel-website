@@ -21,6 +21,7 @@ import AgentSkill from './pages/AgentSkill/AgentSkill';
 import VehicleVerify from './pages/VehicleVerify/VehicleVerify';
 import VehicleVerifyOrders from './pages/VehicleVerify/VehicleVerifyOrders';
 import PhoneVerify from './pages/PhoneVerify/PhoneVerify';
+import BankCardVerify from './pages/BankCardVerify/BankCardVerify';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -232,9 +233,9 @@ function AppContent() {
                 <div className="nav-item nav-item-dropdown">
                   <NavLink
                     to="/phone-verify"
-                    className={`nav-item-link ${location.pathname.startsWith('/vehicle-verify') || location.pathname.startsWith('/phone-verify') ? 'active' : ''}`}
+                    className={`nav-item-link ${location.pathname.startsWith('/vehicle-verify') || location.pathname.startsWith('/phone-verify') || location.pathname.startsWith('/bank-card-verify') ? 'active' : ''}`}
                     style={{
-                      color: location.pathname.startsWith('/vehicle-verify') || location.pathname.startsWith('/phone-verify') ? '#1890ff' : '#595959'
+                      color: location.pathname.startsWith('/vehicle-verify') || location.pathname.startsWith('/phone-verify') || location.pathname.startsWith('/bank-card-verify') ? '#1890ff' : '#595959'
                     }}
                   >
                     {t('common.vehicleVerify')}
@@ -257,6 +258,15 @@ function AppContent() {
                       }}
                     >
                       {t('common.vehicleInfoVerify')}
+                    </NavLink>
+                    <NavLink
+                      to="/bank-card-verify"
+                      className={({ isActive }) => {
+                        const isActivePath = location.pathname === '/bank-card-verify';
+                        return `nav-dropdown-item ${isActivePath ? 'active' : ''}`;
+                      }}
+                    >
+                      {t('common.bankCardVerify')}
                     </NavLink>
                     <NavLink
                       to="/vehicle-verify/orders"
@@ -343,6 +353,7 @@ function AppContent() {
             <Route path="/vehicle-verify/orders" element={<VehicleVerifyOrders />} />
             <Route path="/phone-verify" element={<PhoneVerify />} />
             <Route path="/phone-verify/online-time" element={<PhoneVerify />} />
+            <Route path="/bank-card-verify" element={<BankCardVerify />} />
             <Route path="*" element={<Navigate to="/ai-daily" replace />} />
           </Routes>
         </Content>

@@ -21,6 +21,7 @@
       "phoneConsistency2": "人机一致性检验（手机号+姓名）",
       "phoneConsistency3": "人机一致性检验（手机号+身份证+姓名）",
       "phoneOnlineTime": "手机号在网状态核验",
+      "bankCardVerify": "银行卡核验",
       "orderHistory": "历史订单"
     },
     "nav": {
@@ -933,6 +934,47 @@
       "errors": {
         "mobileRequired": "请输入手机号",
         "mobileInvalid": "手机号格式不正确",
+        "nameRequired": "请输入姓名",
+        "idCardRequired": "请输入身份证号",
+        "idCardInvalid": "身份证号格式不正确",
+        "paymentError": "支付失败",
+        "networkError": "网络错误，请稍后重试"
+      }
+    },
+    "bankCardVerify": {
+      "title": "银行卡核验",
+      "description": "核验银行卡号、姓名和身份证号是否一致，费用19.9元/次",
+      "form": {
+        "bankCardNo": "银行卡号",
+        "bankCardNoPlaceholder": "请输入银行卡号",
+        "bankCardNoHint": "请输入16-19位银行卡号",
+        "name": "姓名",
+        "namePlaceholder": "请输入姓名",
+        "nameHint": "请输入真实姓名（2-20个字符）",
+        "idCard": "身份证号",
+        "idCardPlaceholder": "请输入18位身份证号码",
+        "idCardHint": "请输入18位身份证号码",
+        "verifyButton": "核验",
+        "verifying": "核验中...",
+        "resetButton": "重置"
+      },
+      "result": {
+        "title": "核验结果",
+        "consistent": "校验一致",
+        "inconsistent": "校验不一致",
+        "noRecord": "查无记录",
+        "detail": "详细信息"
+      },
+      "payment": {
+        "waiting": "等待支付..."
+      },
+      "price": {
+        "label": "核验费用",
+        "loading": "加载中..."
+      },
+      "errors": {
+        "bankCardNoRequired": "请输入银行卡号",
+        "bankCardNoInvalid": "银行卡号格式不正确，应为16-19位数字",
         "nameRequired": "请输入姓名",
         "idCardRequired": "请输入身份证号",
         "idCardInvalid": "身份证号格式不正确",
