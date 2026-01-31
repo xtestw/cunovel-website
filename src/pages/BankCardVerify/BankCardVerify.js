@@ -343,10 +343,44 @@ const BankCardVerify = () => {
     }
   };
 
+  const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}/bank-card-verify` : '';
+
   return (
     <>
       <Helmet>
-        <title>{t('bankCardVerify.title')} - CUTool</title>
+        <title>{t('bankCardVerify.seo.title')}</title>
+        <meta name="description" content={t('bankCardVerify.seo.description')} />
+        <meta name="keywords" content={t('bankCardVerify.seo.keywords')} />
+        <meta property="og:title" content={t('bankCardVerify.seo.title')} />
+        <meta property="og:description" content={t('bankCardVerify.seo.description')} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:site_name" content="CUTool" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={t('bankCardVerify.seo.title')} />
+        <meta name="twitter:description" content={t('bankCardVerify.seo.description')} />
+        <link rel="canonical" href={currentUrl} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": t('bankCardVerify.title'),
+            "description": t('bankCardVerify.seo.description'),
+            "url": currentUrl,
+            "provider": {
+              "@type": "Organization",
+              "name": "CUTool",
+              "url": typeof window !== 'undefined' ? window.location.origin : ''
+            },
+            "serviceType": "Bank Card Verification",
+            "areaServed": "CN",
+            "offers": {
+              "@type": "Offer",
+              "price": "19.9",
+              "priceCurrency": "CNY"
+            }
+          })}
+        </script>
       </Helmet>
       <div className="bank-card-verify-container">
         {/* 内容区 */}

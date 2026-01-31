@@ -811,9 +811,30 @@
       }
     }
   },
+  "vehicleVerify": {
+    "title": "Vehicle Information Verification",
+    "seo": {
+      "title": "Vehicle Information Verification - License Plate Verification, Vehicle Info Query | CUTool",
+      "description": "Professional vehicle information verification service, supporting license plate consistency verification, basic vehicle information query, and insurance log query. Fast, accurate, secure, 19.9-29.9 yuan per verification.",
+      "keywords": "vehicle verification,license plate verification,vehicle information query,vehicle consistency verification,vehicle insurance query,vehicle information verification,license plate verification"
+    }
+  },
+  "phoneVerify": {
+    "title": "Phone Verification",
+    "seo": {
+      "title": "Phone Verification - Phone Number Verification, Online Status Query | CUTool",
+      "description": "Professional phone number verification service, supporting two-factor verification (phone + name), three-factor verification (phone + ID + name), and online status query. Fast, accurate, secure, 6.9-9.9 yuan per verification.",
+      "keywords": "phone verification,phone number verification,phone online status,phone consistency verification,phone number query,phone verification service"
+    }
+  },
   "bankCardVerify": {
     "title": "Bank Card Verification",
     "description": "Verify if bank card number, name and ID card number are consistent, 19.9 yuan per verification",
+    "seo": {
+      "title": "Bank Card Verification - Bank Card Number Verification, Bank Card Info Verification | CUTool",
+      "description": "Professional bank card verification service, supporting three-factor consistency verification (bank card number, name, ID card number). Fast, accurate, secure, 19.9 yuan per verification.",
+      "keywords": "bank card verification,bank card number verification,bank card info verification,bank card consistency verification,bank card verification service,bank card number query"
+    },
     "form": {
       "bankCardNo": "Bank Card Number",
       "bankCardNoPlaceholder": "Enter bank card number",

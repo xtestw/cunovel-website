@@ -384,10 +384,59 @@ const PhoneVerify = () => {
     }));
   };
 
+  const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}${location.pathname}` : '';
+
   return (
     <>
       <Helmet>
-        <title>{t('phoneVerify.title')} - CUTool</title>
+        <title>{t('phoneVerify.seo.title')}</title>
+        <meta name="description" content={t('phoneVerify.seo.description')} />
+        <meta name="keywords" content={t('phoneVerify.seo.keywords')} />
+        <meta property="og:title" content={t('phoneVerify.seo.title')} />
+        <meta property="og:description" content={t('phoneVerify.seo.description')} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:site_name" content="CUTool" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={t('phoneVerify.seo.title')} />
+        <meta name="twitter:description" content={t('phoneVerify.seo.description')} />
+        <link rel="canonical" href={currentUrl} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": t('phoneVerify.title'),
+            "description": t('phoneVerify.seo.description'),
+            "url": currentUrl,
+            "provider": {
+              "@type": "Organization",
+              "name": "CUTool",
+              "url": typeof window !== 'undefined' ? window.location.origin : ''
+            },
+            "serviceType": "Phone Number Verification",
+            "areaServed": "CN",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "手机号二要素核验",
+                "price": "9.9",
+                "priceCurrency": "CNY"
+              },
+              {
+                "@type": "Offer",
+                "name": "手机号三要素核验",
+                "price": "9.9",
+                "priceCurrency": "CNY"
+              },
+              {
+                "@type": "Offer",
+                "name": "手机号在网状态查询",
+                "price": "6.9",
+                "priceCurrency": "CNY"
+              }
+            ]
+          })}
+        </script>
       </Helmet>
       <div className="phone-verify-container">
         {/* 核验类型导航栏 */}

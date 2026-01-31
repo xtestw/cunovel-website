@@ -522,10 +522,59 @@ const VehicleVerify = () => {
     return descriptions[fieldName] || '';
   };
 
+  const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}/vehicle-verify` : '';
+
   return (
     <>
       <Helmet>
-        <title>{t('vehicleVerify.title')} - CUTool</title>
+        <title>{t('vehicleVerify.seo.title')}</title>
+        <meta name="description" content={t('vehicleVerify.seo.description')} />
+        <meta name="keywords" content={t('vehicleVerify.seo.keywords')} />
+        <meta property="og:title" content={t('vehicleVerify.seo.title')} />
+        <meta property="og:description" content={t('vehicleVerify.seo.description')} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:site_name" content="CUTool" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={t('vehicleVerify.seo.title')} />
+        <meta name="twitter:description" content={t('vehicleVerify.seo.description')} />
+        <link rel="canonical" href={currentUrl} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": t('vehicleVerify.title'),
+            "description": t('vehicleVerify.seo.description'),
+            "url": currentUrl,
+            "provider": {
+              "@type": "Organization",
+              "name": "CUTool",
+              "url": typeof window !== 'undefined' ? window.location.origin : ''
+            },
+            "serviceType": "Vehicle Information Verification",
+            "areaServed": "CN",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "一致性核验",
+                "price": "19.9",
+                "priceCurrency": "CNY"
+              },
+              {
+                "@type": "Offer",
+                "name": "基本信息查询",
+                "price": "29.9",
+                "priceCurrency": "CNY"
+              },
+              {
+                "@type": "Offer",
+                "name": "投保日志查询",
+                "price": "29.9",
+                "priceCurrency": "CNY"
+              }
+            ]
+          })}
+        </script>
       </Helmet>
       <div className="vehicle-verify-container">
         {/* 核验类型导航栏 */}
