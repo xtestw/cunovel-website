@@ -37,12 +37,23 @@ echo ""
 # 进入 build 目录
 cd build
 
-# 上传所有文件到根目录
+# 上传所有文件到根目录，并设置正确的 Content-Type
 # -r: 递归上传
 # -s: 同步上传（跳过已存在的相同文件）
+# --header: 设置 HTTP 头，确保 HTML 文件正确显示
 # ./ : 当前目录
 # / : COS 根目录
-coscmd upload -rs ./ /
+
+# 先上传 HTML 文件，设置正确的 Content-Type
+echo "📤 上传 HTML 文件..."
+find . -name "*.html" -type f | while read file; do
+    rel_path="${file#./}"
+    coscmd upload "$file" "/$rel_path" --header "Content-Type:text/html; charset=utf-8"
+done
+
+# 上传其他文件（保持原有的 Content-Type 自动识别）
+echo "📤 上传其他文件..."
+coscmd upload -rs ./ / --skipmd5
 
 echo ""
 echo "✅ 部署完成！"

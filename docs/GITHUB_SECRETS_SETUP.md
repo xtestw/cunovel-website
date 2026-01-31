@@ -37,7 +37,7 @@
 
 **存储桶名称示例：**
 ```
-cutool-web-1234567890
+cutool-1254002056
 ```
 ⚠️ 注意：只要名称本身，不要包含 `cos.` 或 `.myqcloud.com`
 
@@ -45,9 +45,9 @@ cutool-web-1234567890
 
 | 地域名称 | 地域代码 |
 |---------|---------|
+| 广州 | `ap-guangzhou`（当前使用） |
 | 北京 | `ap-beijing` |
 | 上海 | `ap-shanghai` |
-| 广州 | `ap-guangzhou` |
 | 成都 | `ap-chengdu` |
 | 重庆 | `ap-chongqing` |
 | 南京 | `ap-nanjing` |
@@ -96,19 +96,19 @@ Value: YOUR_ACTUAL_SECRET_KEY_HERE
 
 ```
 Name: COS_BUCKET_NAME
-Value: cutool-web-1234567890
+Value: cutool-1254002056
 ```
 
 ⚠️ **重要**：只要存储桶名称，不要包含：
-- ❌ `cos.cutool-web-1234567890`
-- ❌ `cutool-web-1234567890.cos.ap-beijing.myqcloud.com`
-- ✅ `cutool-web-1234567890`
+- ❌ `cos.cutool-1254002056`
+- ❌ `cutool-1254002056.cos.ap-guangzhou.myqcloud.com`
+- ✅ `cutool-1254002056`
 
 #### Secret 4: COS_REGION
 
 ```
 Name: COS_REGION
-Value: ap-beijing
+Value: ap-guangzhou
 ```
 
 ---
@@ -157,14 +157,14 @@ git push origin main
 **A:** 
 1. 在 COS 控制台的存储桶列表中查看
 2. 存储桶名称格式通常是：`名称-数字`
-3. 例如：`cutool-web-1234567890`
+3. 例如：`cutool-1254002056`
 4. 不要包含任何前缀或后缀
 
 ### Q: 地域代码在哪里找？
 
 **A:**
 1. 在 COS 控制台的存储桶列表中，可以看到地域列
-2. 例如显示「北京」，对应代码是 `ap-beijing`
+2. 例如显示「广州」，对应代码是 `ap-guangzhou`
 3. 参考上面的对照表
 
 ### Q: 工作流执行失败，提示认证失败？
@@ -199,16 +199,16 @@ git push origin main
 
 - **SecretId**: `YOUR_ACTUAL_SECRET_ID`（从腾讯云控制台获取）
 - **SecretKey**: `YOUR_ACTUAL_SECRET_KEY`（从腾讯云控制台获取）
-- **存储桶名称**: `cutool-web-1234567890`
-- **地域**: `北京`
+- **存储桶名称**: `cutool-1254002056`
+- **地域**: `广州`
 
 那么在 GitHub Secrets 中应该配置：
 
 ```
 TENCENT_SECRET_ID = YOUR_ACTUAL_SECRET_ID
 TENCENT_SECRET_KEY = YOUR_ACTUAL_SECRET_KEY
-COS_BUCKET_NAME = cutool-web-1234567890
-COS_REGION = ap-beijing
+COS_BUCKET_NAME = cutool-1254002056
+COS_REGION = ap-guangzhou
 ```
 
 ⚠️ **重要**：请将 `YOUR_ACTUAL_SECRET_ID` 和 `YOUR_ACTUAL_SECRET_KEY` 替换为你从腾讯云控制台获取的真实密钥值。

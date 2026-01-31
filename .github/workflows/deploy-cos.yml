@@ -38,8 +38,15 @@ jobs:
     - name: Upload to COS
       run: |
         cd build
-        # 上传所有文件到根目录，保持目录结构
-        coscmd upload -rs ./ /
+        # 先上传 HTML 文件，设置正确的 Content-Type
+        echo "📤 上传 HTML 文件..."
+        find . -name "*.html" -type f | while read file; do
+          rel_path="${file#./}"
+          coscmd upload "$file" "/$rel_path" --header "Content-Type:text/html; charset=utf-8"
+        done
+        # 上传其他文件（保持原有的 Content-Type 自动识别）
+        echo "📤 上传其他文件..."
+        coscmd upload -rs ./ / --skipmd5
         
     - name: Deployment Summary
       run: |

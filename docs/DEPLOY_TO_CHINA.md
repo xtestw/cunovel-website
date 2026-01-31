@@ -51,7 +51,7 @@
    - **加速区域**：仅中国境内
    - **业务类型**：静态网站
    - **源站类型**：COS 源
-   - **源站地址**：选择刚创建的存储桶（如 `cutool-web-1234567890.cos.ap-beijing.myqcloud.com`）
+   - **源站地址**：选择刚创建的存储桶（如 `cutool-1254002056.cos.ap-guangzhou.myqcloud.com`）
    - **回源协议**：HTTPS
 3. 配置 HTTPS 证书
 4. 配置缓存规则（参考下面的缓存配置）
@@ -201,13 +201,13 @@ jobs:
 1. 登录 [腾讯云 COS 控制台](https://console.cloud.tencent.com/cos)
 2. 找到你创建的存储桶
 3. 查看存储桶信息：
-   - **存储桶名称**：例如 `cutool-web-1234567890`（完整名称，包含数字后缀）
-   - **所属地域**：例如 `北京`、`上海` 等
+   - **存储桶名称**：例如 `cutool-1254002056`（完整名称，包含数字后缀）
+   - **所属地域**：例如 `广州`、`北京`、`上海` 等
 
 4. 将地域转换为代码格式：
+   - `广州` → `ap-guangzhou`（当前使用）
    - `北京` → `ap-beijing`
    - `上海` → `ap-shanghai`
-   - `广州` → `ap-guangzhou`
    - `成都` → `ap-chengdu`
    - `重庆` → `ap-chongqing`
    - 更多地域代码：[查看文档](https://cloud.tencent.com/document/product/436/6224)
@@ -243,13 +243,13 @@ jobs:
 
    **Secret 3: COS_BUCKET_NAME**
    - Name: `COS_BUCKET_NAME`
-   - Secret: 粘贴你的 COS 存储桶完整名称（例如：`cutool-web-1234567890`）
+   - Secret: 粘贴你的 COS 存储桶完整名称（例如：`cutool-1254002056`）
    - ⚠️ 注意：不要包含 `cos.` 前缀或 `.myqcloud.com` 后缀，只要存储桶名称本身
    - 点击「Add secret」
 
    **Secret 4: COS_REGION**
    - Name: `COS_REGION`
-   - Secret: 粘贴地域代码（例如：`ap-beijing`）
+   - Secret: 粘贴地域代码（例如：`ap-guangzhou`）
    - 点击「Add secret」
 
 5. **验证配置**
@@ -261,15 +261,15 @@ jobs:
 假设你的信息如下：
 - SecretId: `YOUR_ACTUAL_SECRET_ID`（从腾讯云控制台获取，AKID 开头）
 - SecretKey: `YOUR_ACTUAL_SECRET_KEY`（从腾讯云控制台获取，32 位字符）
-- 存储桶名称: `cutool-web-1234567890`
-- 地域: `北京`
+- 存储桶名称: `cutool-1254002056`
+- 地域: `广州`
 
 那么配置应该是：
 ```
 TENCENT_SECRET_ID = YOUR_ACTUAL_SECRET_ID
 TENCENT_SECRET_KEY = YOUR_ACTUAL_SECRET_KEY
-COS_BUCKET_NAME = cutool-web-1234567890
-COS_REGION = ap-beijing
+COS_BUCKET_NAME = cutool-1254002056
+COS_REGION = ap-guangzhou
 ```
 
 ⚠️ **注意**：请将 `YOUR_ACTUAL_SECRET_ID` 和 `YOUR_ACTUAL_SECRET_KEY` 替换为你从腾讯云控制台获取的真实密钥。
@@ -306,7 +306,7 @@ A: 在腾讯云控制台的「API密钥管理」中，可以禁用旧密钥并�
 A: 运行 GitHub Actions 工作流，查看日志。如果配置错误，会在「Configure COS CLI」步骤报错。
 
 **Q: 存储桶名称格式是什么？**
-A: 存储桶名称通常是 `名称-数字` 的格式，例如 `cutool-web-1234567890`。在 COS 控制台的存储桶列表中可以看到完整名称。
+A: 存储桶名称通常是 `名称-数字` 的格式，例如 `cutool-1254002056`。在 COS 控制台的存储桶列表中可以看到完整名称。
 
 **Q: 地域代码在哪里找？**
 A: 在 COS 控制台的存储桶列表中，可以看到地域名称。然后参考[腾讯云地域列表](https://cloud.tencent.com/document/product/436/6224)转换为代码格式。
@@ -514,6 +514,24 @@ server {
 ---
 
 ## 常见问题
+
+### Q: 访问网站出现 AccessDenied 或 403 错误？
+
+A: 
+这是最常见的配置问题，通常是因为存储桶权限配置不正确或 CDN 访问控制配置问题。
+
+**快速修复**：
+1. **检查 COS 权限**：
+   - 进入 COS 控制台 > 存储桶 > 「权限管理」
+   - 将「存储桶访问权限」修改为「公有读私有写」
+   - 确保「静态网站托管」已开启
+
+2. **检查 CDN 配置**：
+   - 进入 CDN 控制台 > 「访问控制」
+   - 检查 IP 黑白名单、Referer 防盗链等是否阻止了访问
+   - 确保 CDN 域名状态为「已启动」
+
+**详细排查步骤请参考**：[COS AccessDenied 错误修复指南](./COS_ACCESS_DENIED_FIX.md)
 
 ### Q: 部署后页面空白？
 
