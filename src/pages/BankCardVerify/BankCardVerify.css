@@ -1,0 +1,255 @@
+.bank-card-verify-container {
+  padding: 20px;
+  margin: 0 auto;
+  min-height: calc(100vh - 100px);
+  background-color: #f5f5f5;
+}
+
+/* 内容区 */
+.bank-card-verify-content {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  min-height: calc(100vh - 180px);
+}
+
+/* 类型说明框 */
+.type-description-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 4px;
+}
+
+.type-description-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.type-description-text {
+  font-size: 14px;
+  color: #595959;
+  line-height: 1.6;
+}
+
+.verify-form {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.required-mark {
+  color: #ff4d4f;
+  margin-left: 4px;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24,144,255,0.2);
+}
+
+.form-group input.required-field {
+  border-color: #ffccc7;
+}
+
+.form-group input.required-field:focus {
+  border-color: #ff4d4f;
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1);
+}
+
+.field-description {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #999;
+  line-height: 1.4;
+}
+
+/* 价格显示 */
+.price-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+.price-label {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.price-value {
+  font-size: 20px;
+  color: #1890ff;
+  font-weight: bold;
+}
+
+.price-loading {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  min-width: 120px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: #1890ff;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #40a9ff;
+}
+
+.btn-primary:disabled {
+  background: #d9d9d9;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #333;
+  border: 1px solid #d9d9d9;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: #1890ff;
+  color: #1890ff;
+  background: #f0f7ff;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #ff4d4f;
+  margin: 12px 0;
+  padding: 8px;
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+}
+
+.payment-status {
+  padding: 15px;
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.verify-result {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.verify-result h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.result-status {
+  margin-bottom: 20px;
+}
+
+.status-success {
+  padding: 10px;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 4px;
+  color: #52c41a;
+}
+
+.status-error {
+  padding: 10px;
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 4px;
+  color: #ff4d4f;
+}
+
+.status-warning {
+  padding: 10px;
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 4px;
+  color: #faad14;
+}
+
+.bank-card-info {
+  margin-top: 20px;
+}
+
+.bank-card-info h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.bank-card-info pre {
+  background: #fff;
+  padding: 15px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
