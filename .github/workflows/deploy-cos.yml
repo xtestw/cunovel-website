@@ -1,0 +1,51 @@
+name: Deploy to Tencent Cloud COS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      env:
+        CI: false
+        DISABLE_ESLINT_PLUGIN: true
+        GENERATE_SOURCEMAP: false
+        
+    - name: Configure COS CLI
+      run: |
+        pip install coscmd
+        coscmd config -a ${{ secrets.TENCENT_SECRET_ID }} -s ${{ secrets.TENCENT_SECRET_KEY }} -b ${{ secrets.COS_BUCKET_NAME }} -r ${{ secrets.COS_REGION }}
+        
+    - name: Upload to COS
+      run: |
+        cd build
+        # 上传所有文件到根目录，保持目录结构
+        coscmd upload -rs ./ /
+        
+    - name: Deployment Summary
+      run: |
+        echo "✅ 部署完成！"
+        echo "📦 存储桶: ${{ secrets.COS_BUCKET_NAME }}"
+        echo "🌍 地域: ${{ secrets.COS_REGION }}"
+        echo ""
+        echo "⚠️  请记得在腾讯云 CDN 控制台刷新缓存"
+
