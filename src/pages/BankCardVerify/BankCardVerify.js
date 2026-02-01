@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../config/api';
 import './BankCardVerify.css';
 
 const BankCardVerify = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     bankCardNo: '',
     name: '',
@@ -267,17 +269,10 @@ const BankCardVerify = () => {
           if (paymentResult.status === 'paid') {
             clearInterval(checkInterval);
             setPaymentStatus('paid');
+            setLoading(false);
 
-            // 5. 支付成功后调用阿里云API
-            try {
-              const apiResult = await callAliyunAPI('bankCardVerify', submitData);
-              setResult(apiResult);
-              setLoading(false);
-            } catch (apiErr) {
-              console.error('调用阿里云API错误:', apiErr);
-              setError(apiErr.message || '查询失败');
-              setLoading(false);
-            }
+            // 5. 支付成功后跳转到查询结果页面（后端会自动查询阿里云接口）
+            navigate(`/verify-result?orderId=${orderResult.orderId}`);
           } else if (paymentResult.status === 'failed') {
             clearInterval(checkInterval);
             setPaymentStatus('failed');

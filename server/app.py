@@ -1549,32 +1549,41 @@ def alipay_return():
                 app.logger.info(f'订单 {out_trade_no} 已支付但未查询，尝试执行查询')
                 # 只有当订单有表单数据时才执行查询
                 if order.form_data and order.form_data != {}:
-                    execute_vehicle_verify_and_save(order, db)
-                    # 重新加载订单以获取最新结果
-                    db.refresh(order)
+                    try:
+                        execute_vehicle_verify_and_save(order, db)
+                        # 重新加载订单以获取最新结果
+                        db.refresh(order)
+                        app.logger.info(f'订单 {out_trade_no} 查询完成，结果已保存')
+                    except Exception as query_error:
+                        app.logger.error(f'订单 {out_trade_no} 查询失败: {str(query_error)}', exc_info=True)
+                        # 查询失败不影响跳转，前端会显示查询中状态
                 else:
                     app.logger.warning(f'订单 {out_trade_no} 缺少表单数据，无法执行查询')
             
-            # 跳转到前端查询结果页面，带上订单ID
+            # 根据订单类型跳转到查询结果页面
             frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-            redirect_url = f'{frontend_url}/vehicle-verify?orderId={out_trade_no}'
             
-            # 如果用户未登录，订单ID已经在URL参数中，前端可以从URL获取
-            # 如果用户已登录，前端可以从API获取订单详情
+            # 跳转到查询结果页面，带上订单ID
+            redirect_url = f'{frontend_url}/verify-result?orderId={out_trade_no}'
             
             return redirect(redirect_url)
             
         except Exception as e:
             app.logger.error(f'处理支付宝返回错误: {str(e)}', exc_info=True)
             frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-            return redirect(f'{frontend_url}/vehicle-verify?error=server_error&orderId={out_trade_no}')
+            # 跳转到查询结果页面
+            if out_trade_no:
+                redirect_url = f'{frontend_url}/verify-result?orderId={out_trade_no}&error=server_error'
+            else:
+                redirect_url = f'{frontend_url}/verify-result?error=server_error'
+            return redirect(redirect_url)
         finally:
             db.close()
             
     except Exception as e:
         app.logger.error(f'支付宝返回接口错误: {str(e)}', exc_info=True)
         frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-        return redirect(f'{frontend_url}/vehicle-verify?error=unknown_error')
+        return redirect(f'{frontend_url}/verify-result?error=unknown_error')
 
 # 获取订单详情
 @app.route('/api/vehicle-verify/order/<order_id>', methods=['GET'])
@@ -1587,21 +1596,34 @@ def get_order_detail(order_id):
         if not order:
             return jsonify({'error': '订单不存在'}), 404
         
-        # 如果用户已登录，检查订单是否属于该用户
+        # 检查订单访问权限
         try:
             user = get_current_user(db)
-            if user and order.user_id and order.user_id != user.id:
-                return jsonify({'error': '无权访问此订单'}), 403
+            if user:
+                # 用户已登录，只能访问自己的订单或未关联用户的订单
+                if order.user_id is not None and order.user_id != user.id:
+                    return jsonify({'error': '无权访问此订单'}), 403
+            else:
+                # 用户未登录，只能访问未关联用户的订单（user_id为NULL）
+                if order.user_id is not None:
+                    return jsonify({'error': '无权访问此订单'}), 403
         except Exception:
-            # 用户未登录，允许访问（用于浏览器缓存中的订单）
-            pass
+            # 获取用户信息失败，按未登录处理
+            if order.user_id is not None:
+                return jsonify({'error': '无权访问此订单'}), 403
         
         # 如果订单已支付但还没有查询结果，尝试执行查询
         if order.status == 'paid' and not order.result_data:
             app.logger.info(f'订单 {order_id} 已支付但未查询，尝试执行查询')
-            execute_vehicle_verify_and_save(order, db)
-            # 重新加载订单以获取最新结果
-            db.refresh(order)
+            # 只有当订单有表单数据时才执行查询
+            if order.form_data and order.form_data != {}:
+                try:
+                    execute_vehicle_verify_and_save(order, db)
+                    # 重新加载订单以获取最新结果
+                    db.refresh(order)
+                except Exception as query_error:
+                    app.logger.error(f'订单 {order_id} 查询失败: {str(query_error)}', exc_info=True)
+                    # 查询失败不影响返回订单信息，前端会显示查询中状态
         
         return jsonify({
             'id': order.id,
@@ -1666,19 +1688,18 @@ def get_orders():
         
         # 构建查询
         if user:
-            # 用户已登录，查询该用户的所有订单，同时也要包含本地缓存的订单号（用于合并）
+            # 用户已登录，只能查询该用户的所有订单
+            # 同时也要包含本地缓存的订单号（用于合并），但只能查询未关联用户的订单（user_id为NULL）
+            # 这样可以合并未登录时创建的订单，但不能看到其他用户的订单
             if order_ids:
-                # 合并查询：用户订单 OR (本地订单号列表 AND (订单未关联用户 OR 订单属于当前用户))
+                # 合并查询：用户订单 OR (本地订单号列表 AND 订单未关联用户)
                 # 这样确保只能查询到自己的订单或未关联用户的订单（创建时未登录）
                 query = db.query(Order).filter(
                     or_(
                         Order.user_id == user.id,
                         and_(
                             Order.order_id.in_(order_ids),
-                            or_(
-                                Order.user_id.is_(None),
-                                Order.user_id == user.id
-                            )
+                            Order.user_id.is_(None)  # 只能查询未关联用户的订单
                         )
                     )
                 )
@@ -1686,8 +1707,14 @@ def get_orders():
                 # 只查询用户订单
                 query = db.query(Order).filter(Order.user_id == user.id)
         elif order_ids:
-            # 用户未登录，查询指定订单ID列表的订单
-            query = db.query(Order).filter(Order.order_id.in_(order_ids))
+            # 用户未登录，只能查询指定订单ID列表的订单，且这些订单必须未关联用户（user_id为NULL）
+            # 这样可以防止未登录用户查询到登录用户的订单
+            query = db.query(Order).filter(
+                and_(
+                    Order.order_id.in_(order_ids),
+                    Order.user_id.is_(None)  # 只能查询未关联用户的订单
+                )
+            )
         else:
             # 既没有登录也没有提供订单ID列表，返回空列表
             return jsonify({

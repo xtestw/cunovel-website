@@ -22,6 +22,7 @@ import VehicleVerify from './pages/VehicleVerify/VehicleVerify';
 import VehicleVerifyOrders from './pages/VehicleVerify/VehicleVerifyOrders';
 import PhoneVerify from './pages/PhoneVerify/PhoneVerify';
 import BankCardVerify from './pages/BankCardVerify/BankCardVerify';
+import VerifyResult from './pages/VerifyResult/VerifyResult';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -353,7 +354,10 @@ function AppContent() {
             <Route path="/vehicle-verify/orders" element={<VehicleVerifyOrders />} />
             <Route path="/phone-verify" element={<PhoneVerify />} />
             <Route path="/phone-verify/online-time" element={<PhoneVerify />} />
+            <Route path="/phone-verify/orders" element={<VehicleVerifyOrders />} />
             <Route path="/bank-card-verify" element={<BankCardVerify />} />
+            <Route path="/bank-card-verify/orders" element={<VehicleVerifyOrders />} />
+            <Route path="/verify-result" element={<VerifyResult />} />
             <Route path="*" element={<Navigate to="/ai-daily" replace />} />
           </Routes>
         </Content>
