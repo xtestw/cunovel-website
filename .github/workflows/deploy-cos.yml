@@ -32,21 +32,26 @@ jobs:
         
     - name: Configure COS CLI
       run: |
-        pip install coscmd
+        pip install coscmd cos-python-sdk-v5
         coscmd config -a ${{ secrets.TENCENT_SECRET_ID }} -s ${{ secrets.TENCENT_SECRET_KEY }} -b ${{ secrets.COS_BUCKET_NAME }} -r ${{ secrets.COS_REGION }}
         
     - name: Upload to COS
       run: |
+        # 先上传所有文件
+        echo "📤 上传所有文件..."
         cd build
-        # 先上传 HTML 文件，设置正确的 Content-Type
-        echo "📤 上传 HTML 文件..."
-        find . -name "*.html" -type f | while read file; do
-          rel_path="${file#./}"
-          coscmd upload "$file" "/$rel_path" --header "Content-Type:text/html; charset=utf-8"
-        done
-        # 上传其他文件（保持原有的 Content-Type 自动识别）
-        echo "📤 上传其他文件..."
         coscmd upload -rs ./ / --skipmd5
+        
+    - name: Set HTML Content-Type
+      run: |
+        # 使用 Python 脚本更新 HTML 文件的 Content-Type
+        echo "📤 更新 HTML 文件 Content-Type..."
+        python3 scripts/set_html_content_type.py
+      env:
+        TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
+        TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
+        COS_BUCKET_NAME: ${{ secrets.COS_BUCKET_NAME }}
+        COS_REGION: ${{ secrets.COS_REGION }}
         
     - name: Deployment Summary
       run: |
