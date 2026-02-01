@@ -1143,8 +1143,44 @@ def check_payment_status(order_id):
         }
         query_request.biz_content = biz_content
         
-        # 调用API
-        response = alipay_client.execute(query_request)
+        # 调用API（添加超时处理）
+        try:
+            response = alipay_client.execute(query_request)
+        except TimeoutError as e:
+            app.logger.warning(f'查询支付状态超时: order_id={order_id}, 错误: {str(e)}')
+            # 超时时返回数据库中的状态（如果有）
+            if order:
+                app.logger.info(f'返回数据库中的订单状态: order_id={order_id}, status={order.status}')
+                return jsonify({
+                    'status': order.status,
+                    'orderId': order_id,
+                    'message': '查询支付宝API超时，返回数据库中的订单状态',
+                    'tradeNo': order.trade_no if order.trade_no else None
+                })
+            else:
+                # 订单不存在且查询超时，返回pending状态
+                return jsonify({
+                    'status': 'pending',
+                    'orderId': order_id,
+                    'message': '查询支付宝API超时，订单可能不存在或仍在处理中'
+                })
+        except Exception as e:
+            app.logger.error(f'查询支付状态错误: {str(e)}', exc_info=True)
+            # 其他错误也返回数据库中的状态（如果有）
+            if order:
+                app.logger.info(f'返回数据库中的订单状态: order_id={order_id}, status={order.status}')
+                return jsonify({
+                    'status': order.status,
+                    'orderId': order_id,
+                    'message': f'查询支付宝API失败: {str(e)}',
+                    'tradeNo': order.trade_no if order.trade_no else None
+                })
+            else:
+                return jsonify({
+                    'status': 'pending',
+                    'orderId': order_id,
+                    'message': f'查询支付宝API失败: {str(e)}'
+                }), 500
         
         # 解析响应并更新数据库
         if response and hasattr(response, 'code') and response.code == '10000':
@@ -1465,6 +1501,9 @@ def alipay_return():
                                     db.add(order)
                                     db.commit()
                                     app.logger.info(f'已创建订单记录: {out_trade_no}')
+                        except TimeoutError as timeout_error:
+                            app.logger.warning(f'查询支付宝API超时: order_id={out_trade_no}, 错误: {str(timeout_error)}')
+                            # 超时时无法创建订单，继续后续流程
                         except Exception as api_error:
                             app.logger.error(f'查询支付宝API失败: {str(api_error)}', exc_info=True)
                 
@@ -1498,8 +1537,12 @@ def alipay_return():
                                         order.paid_at = datetime.now()
                                     db.commit()
                                     app.logger.info(f'订单 {out_trade_no} 状态已更新为paid')
+                        except TimeoutError as timeout_error:
+                            app.logger.warning(f'查询支付宝API超时: order_id={out_trade_no}, 错误: {str(timeout_error)}')
+                            # 超时时继续使用数据库中的状态，不阻塞流程
                         except Exception as api_error:
                             app.logger.error(f'查询支付宝API失败: {str(api_error)}', exc_info=True)
+                            # 其他错误也继续使用数据库中的状态，不阻塞流程
             
             # 如果订单已支付但还没有查询结果，尝试执行查询
             if order and order.status == 'paid' and not order.result_data:
@@ -2027,6 +2070,75 @@ def logout():
     """登出"""
     # JWT是无状态的，前端删除token即可
     return jsonify({'success': True, 'message': '登出成功'})
+
+# ========== 测试接口（仅用于开发测试） ==========
+
+@app.route('/api/test/simulate-payment', methods=['POST'])
+def simulate_payment():
+    """模拟支付回调（仅用于测试，不进行签名验证）"""
+    try:
+        data = request.json
+        order_id = data.get('order_id')
+        trade_no = data.get('trade_no', f'TEST{datetime.now().strftime("%Y%m%d%H%M%S")}{uuid.uuid4().hex[:6].upper()}')
+        trade_status = data.get('trade_status', 'TRADE_SUCCESS')
+        total_amount = data.get('total_amount')
+        subject = data.get('subject', '信息核验')
+        
+        if not order_id:
+            return jsonify({'error': '缺少订单号'}), 400
+        
+        app.logger.info(f'[测试] 模拟支付回调: order_id={order_id}, trade_no={trade_no}, trade_status={trade_status}')
+        
+        # 直接调用回调处理逻辑（跳过签名验证）
+        db = get_db()
+        try:
+            order = db.query(Order).filter(Order.order_id == order_id).first()
+            
+            if not order:
+                app.logger.warning(f'[测试] 订单 {order_id} 不存在')
+                return jsonify({'error': '订单不存在'}), 404
+            
+            # 更新订单状态
+            order.trade_status = trade_status
+            order.trade_no = trade_no
+            
+            if trade_status == 'TRADE_SUCCESS' or trade_status == 'TRADE_FINISHED':
+                order.status = 'paid'
+                if not order.paid_at:
+                    order.paid_at = datetime.now()
+                app.logger.info(f'[测试] 订单 {order_id} 支付成功，交易号: {trade_no}')
+                
+                # 执行查询
+                if order.form_data and order.form_data != {}:
+                    app.logger.info(f'[测试] 开始执行查询: order_id={order_id}, verify_type={order.verify_type}')
+                    execute_vehicle_verify_and_save(order, db)
+                    db.refresh(order)
+                    app.logger.info(f'[测试] 查询完成: order_id={order_id}, has_result={order.result_data is not None}')
+                else:
+                    app.logger.warning(f'[测试] 订单 {order_id} 缺少表单数据，无法执行查询')
+            
+            db.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': '支付回调模拟成功',
+                'order_id': order_id,
+                'trade_no': trade_no,
+                'status': order.status,
+                'trade_status': order.trade_status,
+                'has_result': order.result_data is not None,
+                'result_data': order.result_data if order.result_data else None
+            })
+        except Exception as e:
+            db.rollback()
+            app.logger.error(f'[测试] 模拟支付回调失败: {str(e)}', exc_info=True)
+            return jsonify({'error': str(e)}), 500
+        finally:
+            db.close()
+            
+    except Exception as e:
+        app.logger.error(f'[测试] 模拟支付回调错误: {str(e)}', exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     port = app.config['PORT']
