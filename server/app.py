@@ -1062,6 +1062,7 @@ def create_vehicle_verify_order():
         client_ip = get_client_ip()
         
         # 保存订单信息到数据库
+        order_created = False
         try:
             order = Order(
                 order_id=order_id,
@@ -1075,13 +1076,19 @@ def create_vehicle_verify_order():
             )
             db.add(order)
             db.commit()
-            app.logger.info(f'订单创建成功: {order_id}, IP: {client_ip}, 用户: {user_id}')
+            order_created = True
+            app.logger.info(f'订单创建成功: {order_id}, IP: {client_ip}, 用户: {user_id}, 类型: {verify_type}')
         except Exception as e:
             db.rollback()
             app.logger.error(f'保存订单到数据库失败: {str(e)}', exc_info=True)
-            # 即使保存失败，也返回支付URL，避免影响用户体验
+            app.logger.error(f'订单信息: order_id={order_id}, verify_type={verify_type}, amount={amount}')
+            # 订单创建失败，但仍然返回支付URL，支付回调时会尝试创建订单
         finally:
             db.close()
+        
+        # 如果订单创建失败，记录警告但继续处理（支付回调时会尝试恢复）
+        if not order_created:
+            app.logger.warning(f'订单 {order_id} 创建失败，但继续返回支付URL，支付回调时会尝试恢复订单')
         
         return jsonify({
             'orderId': order_id,
@@ -1147,27 +1154,36 @@ def check_payment_status(order_id):
             # 更新数据库中的订单状态
             if order:
                 order.trade_status = trade_status
-                order.trade_no = trade_no
+                if trade_no:
+                    order.trade_no = trade_no
                 
                 if trade_status == 'TRADE_SUCCESS' or trade_status == 'TRADE_FINISHED':
                     order.status = 'paid'
                     if not order.paid_at:
                         order.paid_at = datetime.now()
+                    app.logger.info(f'订单 {order_id} 支付成功，交易号: {trade_no}')
                     
                     # 如果订单已支付但还没有查询结果，尝试执行查询
                     if not order.result_data:
                         app.logger.info(f'订单 {order_id} 已支付但未查询，尝试执行查询')
-                        execute_vehicle_verify_and_save(order, db)
-                        # 重新加载订单以获取最新结果
-                        db.refresh(order)
+                        # 只有当订单有表单数据时才执行查询
+                        if order.form_data and order.form_data != {}:
+                            execute_vehicle_verify_and_save(order, db)
+                            # 重新加载订单以获取最新结果
+                            db.refresh(order)
+                        else:
+                            app.logger.warning(f'订单 {order_id} 缺少表单数据，无法执行查询')
                 elif trade_status == 'TRADE_CLOSED':
                     order.status = 'cancelled'
+                    app.logger.info(f'订单 {order_id} 已关闭')
                 elif trade_status == 'WAIT_BUYER_PAY':
                     order.status = 'pending'
                 else:
                     order.status = 'failed'
+                    app.logger.warning(f'订单 {order_id} 状态异常: {trade_status}')
                 
                 db.commit()
+                app.logger.info(f'订单 {order_id} 状态已更新: status={order.status}, trade_status={trade_status}')
             
             # 返回状态
             if trade_status == 'TRADE_SUCCESS' or trade_status == 'TRADE_FINISHED':
@@ -1294,22 +1310,79 @@ def alipay_notify():
         trade_status = data.get('trade_status')
         out_trade_no = data.get('out_trade_no')
         trade_no = data.get('trade_no')  # 支付宝交易号
+        total_amount = data.get('total_amount')  # 订单金额
+        subject = data.get('subject', '信息核验')  # 订单标题
+        
+        app.logger.info(f'收到支付回调: order_id={out_trade_no}, trade_no={trade_no}, trade_status={trade_status}, amount={total_amount}')
         
         # 更新数据库中的订单状态
         db = get_db()
         try:
             order = db.query(Order).filter(Order.order_id == out_trade_no).first()
+            
+            if not order:
+                # 订单不存在，尝试根据支付信息创建订单（恢复丢失的订单）
+                app.logger.warning(f'订单 {out_trade_no} 在数据库中不存在，尝试根据支付信息创建订单')
+                
+                # 从订单号推断核验类型（订单号格式：VH + 时间戳 + UUID）
+                # 如果无法推断，使用默认值
+                verify_type = 'unknown'
+                if out_trade_no.startswith('VH'):
+                    # 尝试从subject推断类型
+                    if '车辆' in subject or '一致性' in subject:
+                        verify_type = 'consistency'
+                    elif '基本信息' in subject:
+                        verify_type = 'basicInfo'
+                    elif '投保日志' in subject:
+                        verify_type = 'insuranceLog'
+                    elif '手机号二要素' in subject:
+                        verify_type = 'mobile2Meta'
+                    elif '手机号三要素' in subject:
+                        verify_type = 'mobile3Meta'
+                    elif '在网状态' in subject:
+                        verify_type = 'mobileOnlineTime'
+                    elif '银行卡' in subject:
+                        verify_type = 'bankCardVerify'
+                
+                # 创建订单记录（使用支付信息）
+                try:
+                    order = Order(
+                        order_id=out_trade_no,
+                        verify_type=verify_type,
+                        form_data={},  # 无法恢复表单数据，留空
+                        user_id=None,  # 无法恢复用户ID
+                        client_ip=None,  # 无法恢复IP
+                        amount=float(total_amount) if total_amount else 0.0,
+                        status='pending',
+                        subject=subject,
+                        trade_no=trade_no,
+                        trade_status=trade_status
+                    )
+                    db.add(order)
+                    app.logger.info(f'已根据支付信息创建订单记录: {out_trade_no}, verify_type={verify_type}')
+                except Exception as create_error:
+                    app.logger.error(f'创建订单记录失败: {str(create_error)}', exc_info=True)
+                    db.rollback()
+                    return 'fail'
+            
+            # 更新订单状态
             if order:
                 order.trade_status = trade_status
-                order.trade_no = trade_no
+                if trade_no:
+                    order.trade_no = trade_no
                 
                 if trade_status == 'TRADE_SUCCESS' or trade_status == 'TRADE_FINISHED':
                     order.status = 'paid'
-                    order.paid_at = datetime.now()
+                    if not order.paid_at:
+                        order.paid_at = datetime.now()
                     app.logger.info(f'订单 {out_trade_no} 支付成功，交易号: {trade_no}')
                     
                     # 支付成功后自动执行查询并保存结果
-                    execute_vehicle_verify_and_save(order, db)
+                    # 只有当订单有表单数据时才执行查询
+                    if order.form_data and order.form_data != {}:
+                        execute_vehicle_verify_and_save(order, db)
+                    else:
+                        app.logger.warning(f'订单 {out_trade_no} 缺少表单数据，无法执行查询')
                 elif trade_status == 'TRADE_CLOSED':
                     order.status = 'cancelled'
                     app.logger.info(f'订单 {out_trade_no} 已关闭')
@@ -1318,11 +1391,12 @@ def alipay_notify():
                     app.logger.info(f'订单 {out_trade_no} 状态更新: {trade_status}')
                 
                 db.commit()
-            else:
-                app.logger.warning(f'订单 {out_trade_no} 在数据库中不存在')
+                app.logger.info(f'订单 {out_trade_no} 状态更新成功: status={order.status}, trade_status={trade_status}')
         except Exception as e:
             db.rollback()
             app.logger.error(f'更新订单状态失败: {str(e)}', exc_info=True)
+            app.logger.error(f'订单信息: order_id={out_trade_no}, trade_no={trade_no}, trade_status={trade_status}')
+            return 'fail'
         finally:
             db.close()
         
@@ -1353,16 +1427,90 @@ def alipay_return():
             order = db.query(Order).filter(Order.order_id == out_trade_no).first()
             
             if not order:
-                app.logger.warning(f'订单 {out_trade_no} 不存在')
-                frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-                return redirect(f'{frontend_url}/vehicle-verify?error=order_not_found&orderId={out_trade_no}')
+                app.logger.warning(f'订单 {out_trade_no} 不存在，尝试查询支付宝API获取订单状态')
+                # 如果订单不存在，尝试查询支付宝API
+                if ALIPAY_SDK_AVAILABLE:
+                    alipay_client = init_alipay_client()
+                    if alipay_client:
+                        try:
+                            query_request = AlipayTradeQueryRequest()
+                            query_request.biz_content = {'out_trade_no': out_trade_no}
+                            response = alipay_client.execute(query_request)
+                            
+                            if response and hasattr(response, 'code') and response.code == '10000':
+                                trade_status = getattr(response, 'trade_status', None)
+                                trade_no = getattr(response, 'trade_no', None)
+                                total_amount = getattr(response, 'total_amount', None)
+                                
+                                # 如果支付成功，创建订单记录
+                                if trade_status in ['TRADE_SUCCESS', 'TRADE_FINISHED']:
+                                    app.logger.info(f'从支付宝API查询到订单 {out_trade_no} 已支付，创建订单记录')
+                                    # 尝试从订单号推断类型
+                                    verify_type = 'unknown'
+                                    subject = '信息核验'
+                                    
+                                    order = Order(
+                                        order_id=out_trade_no,
+                                        verify_type=verify_type,
+                                        form_data={},
+                                        user_id=None,
+                                        client_ip=None,
+                                        amount=float(total_amount) if total_amount else 0.0,
+                                        status='paid',
+                                        subject=subject,
+                                        trade_no=trade_no,
+                                        trade_status=trade_status,
+                                        paid_at=datetime.now()
+                                    )
+                                    db.add(order)
+                                    db.commit()
+                                    app.logger.info(f'已创建订单记录: {out_trade_no}')
+                        except Exception as api_error:
+                            app.logger.error(f'查询支付宝API失败: {str(api_error)}', exc_info=True)
+                
+                if not order:
+                    app.logger.warning(f'订单 {out_trade_no} 不存在且无法从支付宝恢复')
+                    frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+                    return redirect(f'{frontend_url}/vehicle-verify?error=order_not_found&orderId={out_trade_no}')
+            
+            # 如果订单状态不是paid，尝试查询支付宝API更新状态
+            if order and order.status != 'paid':
+                app.logger.info(f'订单 {out_trade_no} 状态为 {order.status}，尝试查询支付宝API更新状态')
+                if ALIPAY_SDK_AVAILABLE:
+                    alipay_client = init_alipay_client()
+                    if alipay_client:
+                        try:
+                            query_request = AlipayTradeQueryRequest()
+                            query_request.biz_content = {'out_trade_no': out_trade_no}
+                            response = alipay_client.execute(query_request)
+                            
+                            if response and hasattr(response, 'code') and response.code == '10000':
+                                trade_status = getattr(response, 'trade_status', None)
+                                trade_no = getattr(response, 'trade_no', None)
+                                
+                                order.trade_status = trade_status
+                                if trade_no:
+                                    order.trade_no = trade_no
+                                
+                                if trade_status in ['TRADE_SUCCESS', 'TRADE_FINISHED']:
+                                    order.status = 'paid'
+                                    if not order.paid_at:
+                                        order.paid_at = datetime.now()
+                                    db.commit()
+                                    app.logger.info(f'订单 {out_trade_no} 状态已更新为paid')
+                        except Exception as api_error:
+                            app.logger.error(f'查询支付宝API失败: {str(api_error)}', exc_info=True)
             
             # 如果订单已支付但还没有查询结果，尝试执行查询
-            if order.status == 'paid' and not order.result_data:
+            if order and order.status == 'paid' and not order.result_data:
                 app.logger.info(f'订单 {out_trade_no} 已支付但未查询，尝试执行查询')
-                execute_vehicle_verify_and_save(order, db)
-                # 重新加载订单以获取最新结果
-                db.refresh(order)
+                # 只有当订单有表单数据时才执行查询
+                if order.form_data and order.form_data != {}:
+                    execute_vehicle_verify_and_save(order, db)
+                    # 重新加载订单以获取最新结果
+                    db.refresh(order)
+                else:
+                    app.logger.warning(f'订单 {out_trade_no} 缺少表单数据，无法执行查询')
             
             # 跳转到前端查询结果页面，带上订单ID
             frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
