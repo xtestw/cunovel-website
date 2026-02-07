@@ -35,6 +35,77 @@ const VerifyResult = () => {
     }
   }, [location.search]);
 
+  // 轮询订单结果（当订单已支付但还没有查询结果时）
+  useEffect(() => {
+    // 如果订单不存在、未支付、或已有结果，不需要轮询
+    if (!order || order.status !== 'paid' || order.resultData) {
+      return;
+    }
+    
+    // 检查是否有表单数据（如果有表单数据，说明应该会查询）
+    if (!order.formData || Object.keys(order.formData).length === 0) {
+      return;
+    }
+    
+    const orderId = order.orderId;
+    if (!orderId) {
+      return;
+    }
+    
+    // 在useEffect内部定义getAuthHeaders，避免依赖项问题
+    const getAuthHeadersForPolling = () => {
+      const token = localStorage.getItem('auth_token');
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      return headers;
+    };
+    
+    let pollingCount = 0;
+    const maxPollingCount = 60; // 最多轮询60次（2分钟）
+    const pollingInterval = 2000; // 2秒
+    
+    const pollingTimer = setInterval(async () => {
+      pollingCount++;
+      try {
+        const response = await fetch(`${API_BASE_URL}/vehicle-verify/order/${orderId}`, {
+          headers: getAuthHeadersForPolling()
+        });
+        
+        if (response.ok) {
+          const orderData = await response.json();
+          // 如果查询结果已生成，更新订单并停止轮询
+          if (orderData.resultData) {
+            setOrder(orderData);
+            clearInterval(pollingTimer);
+          } else if (pollingCount >= maxPollingCount) {
+            // 超过最大轮询次数，停止轮询
+            clearInterval(pollingTimer);
+          }
+        } else {
+          // 如果请求失败，继续尝试直到达到最大次数
+          if (pollingCount >= maxPollingCount) {
+            clearInterval(pollingTimer);
+          }
+        }
+      } catch (err) {
+        console.error('轮询订单详情失败:', err);
+        // 轮询失败不影响，继续尝试
+        if (pollingCount >= maxPollingCount) {
+          clearInterval(pollingTimer);
+        }
+      }
+    }, pollingInterval);
+    
+    // 清理函数
+    return () => {
+      clearInterval(pollingTimer);
+    };
+  }, [order?.orderId, order?.status, order?.resultData]);
+
   // 检查用户是否已登录
   const isUserLoggedIn = () => {
     return !!localStorage.getItem('auth_token');
@@ -52,8 +123,8 @@ const VerifyResult = () => {
     return headers;
   };
 
-  // 加载订单详情
-  const loadOrderDetail = async (orderId, retryCount = 0) => {
+  // 加载订单详情（只加载一次，轮询由useEffect处理）
+  const loadOrderDetail = async (orderId) => {
     setLoading(true);
     setError(null);
     
@@ -74,21 +145,9 @@ const VerifyResult = () => {
       
       const orderData = await response.json();
       setOrder(orderData);
+      setLoading(false);
       
-      // 如果订单已支付但还没有查询结果，且订单有表单数据，等待查询完成
-      if (orderData.status === 'paid' && !orderData.resultData && orderData.formData && Object.keys(orderData.formData).length > 0) {
-        // 最多等待30秒（15次，每次2秒）
-        if (retryCount < 15) {
-          setTimeout(() => {
-            loadOrderDetail(orderId, retryCount + 1);
-          }, 2000);
-        } else {
-          // 超过最大重试次数，显示等待提示
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
+      // 注意：轮询逻辑由useEffect处理，这里不需要递归调用
     } catch (err) {
       console.error('加载订单详情失败:', err);
       setError(err.message || '加载订单详情失败');
@@ -116,6 +175,26 @@ const VerifyResult = () => {
       default:
         return type || '-';
     }
+  };
+
+  // 获取参数标签（中文显示）
+  const getParamLabel = (key) => {
+    const labelMap = {
+      'mobile': '手机号',
+      'phone': '手机号',
+      'name': '姓名',
+      'idCard': '身份证号',
+      'id_card': '身份证号',
+      'bankCardNo': '银行卡号',
+      'bank_card_no': '银行卡号',
+      'plateNumber': '车牌号',
+      'plate_number': '车牌号',
+      'vehicleType': '车辆类型',
+      'vehicle_type': '车辆类型',
+      'vin': 'VIN码',
+      'VIN': 'VIN码'
+    };
+    return labelMap[key] || key;
   };
 
   // 格式化日期
@@ -361,7 +440,7 @@ const VerifyResult = () => {
 
   // 根据核验类型渲染结果
   const renderResult = () => {
-    // 如果订单已支付但还没有查询结果，显示查询中状态
+    // 如果订单已支付但还没有查询结果，显示查询中状态（轮询由useEffect处理）
     if (order && order.status === 'paid' && !order.resultData) {
       // 检查是否有表单数据（如果有表单数据，说明应该会查询）
       if (order.formData && Object.keys(order.formData).length > 0) {
@@ -369,7 +448,7 @@ const VerifyResult = () => {
           <div className="no-result">
             <div className="loading-spinner-small"></div>
             <p>查询结果生成中，请稍候...</p>
-            <p className="hint-text">如果长时间未显示结果，请点击刷新按钮</p>
+            <p className="hint-text">系统正在自动查询，请耐心等待</p>
             <button className="btn-refresh" onClick={() => {
               const urlParams = new URLSearchParams(location.search);
               const orderId = urlParams.get('orderId');
@@ -377,7 +456,7 @@ const VerifyResult = () => {
                 loadOrderDetail(orderId);
               }
             }}>
-              刷新页面
+              手动刷新
             </button>
           </div>
         );
@@ -516,6 +595,53 @@ const VerifyResult = () => {
               )}
             </div>
           </div>
+
+          {/* 查询参数 */}
+          {order.formData && Object.keys(order.formData).length > 0 && (
+            <div className="query-params-card">
+              <h2>查询参数</h2>
+              <div className="query-params-content">
+                {Object.entries(order.formData).map(([key, value]) => {
+                  // 对敏感信息进行部分隐藏
+                  let displayValue = value;
+                  
+                  // 处理null或undefined
+                  if (value == null) {
+                    displayValue = '-';
+                  } else if (typeof value === 'string' && value.trim() === '') {
+                    displayValue = '-';
+                  } else if (typeof value === 'string' && value.length > 0) {
+                    const lowerKey = key.toLowerCase();
+                    if (lowerKey.includes('card') || lowerKey.includes('bank')) {
+                      // 银行卡号：只显示后4位
+                      const cleanedValue = value.replace(/\s/g, ''); // 移除空格
+                      if (cleanedValue.length > 4) {
+                        displayValue = '****' + cleanedValue.slice(-4);
+                      }
+                    } else if (lowerKey.includes('idcard') || lowerKey.includes('id_card')) {
+                      // 身份证号：只显示前3位和后4位
+                      if (value.length > 7) {
+                        displayValue = value.slice(0, 3) + '****' + value.slice(-4);
+                      }
+                    } else if (lowerKey.includes('mobile') || lowerKey.includes('phone')) {
+                      // 手机号：只显示前3位和后4位
+                      const cleanedValue = value.replace(/\s/g, ''); // 移除空格
+                      if (cleanedValue.length > 7) {
+                        displayValue = cleanedValue.slice(0, 3) + '****' + cleanedValue.slice(-4);
+                      }
+                    }
+                  }
+                  
+                  return (
+                    <div key={key} className="param-row">
+                      <span className="param-label">{getParamLabel(key)}:</span>
+                      <span className="param-value">{String(displayValue)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* 查询结果 */}
           <div className="result-container">

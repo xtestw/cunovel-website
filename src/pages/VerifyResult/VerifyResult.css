@@ -145,6 +145,56 @@
   border: 1px solid #ffccc7;
 }
 
+/* 查询参数卡片 */
+.query-params-card {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.query-params-card h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 20px;
+  font-weight: 600;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.query-params-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.param-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.param-row:last-child {
+  border-bottom: none;
+}
+
+.param-label {
+  color: #666;
+  font-weight: 500;
+  min-width: 120px;
+  margin-right: 15px;
+}
+
+.param-value {
+  color: #333;
+  font-weight: 500;
+  flex: 1;
+  word-break: break-word;
+  font-family: 'Courier New', monospace;
+}
+
 /* 结果容器 */
 .result-container {
   background: white;
