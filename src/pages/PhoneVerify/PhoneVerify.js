@@ -39,6 +39,59 @@ const PhoneVerify = () => {
   const [price, setPrice] = useState(null);
   const [priceLoading, setPriceLoading] = useState(false);
 
+  // 使用ref保存轮询interval，以便在组件卸载时清理
+  const paymentCheckIntervalRef = React.useRef(null);
+
+  // 组件卸载时清理轮询
+  useEffect(() => {
+    return () => {
+      if (paymentCheckIntervalRef.current) {
+        clearInterval(paymentCheckIntervalRef.current);
+        paymentCheckIntervalRef.current = null;
+      }
+    };
+  }, []);
+
+  // 页面加载时检查是否有待支付的订单（只检查一次）
+  useEffect(() => {
+    let isMounted = true;
+    const checkPendingOrder = async () => {
+      try {
+        const orderIds = JSON.parse(localStorage.getItem('vehicleVerifyOrderIds') || '[]');
+        if (orderIds.length > 0 && isMounted) {
+          // 检查最新的订单状态
+          const latestOrderId = orderIds[0];
+          try {
+            const paymentResult = await checkPaymentStatus(latestOrderId);
+            if (!isMounted) return; // 组件已卸载，不执行后续操作
+            
+            if (paymentResult.status === 'paid') {
+              // 如果已支付，跳转到订单详情页面
+              navigate(`/verify-result?orderId=${latestOrderId}`);
+            } else if (paymentResult.status === 'pending') {
+              // 如果还在待支付，恢复订单ID和状态
+              setOrderId(latestOrderId);
+              setPaymentStatus('pending');
+            } else if (paymentResult.status === 'cancelled' || paymentResult.status === 'failed') {
+              // 如果订单已取消或失败，恢复订单ID和状态
+              setOrderId(latestOrderId);
+              setPaymentStatus(paymentResult.status);
+            }
+          } catch (err) {
+            console.error('检查订单状态失败:', err);
+          }
+        }
+      } catch (err) {
+        console.error('恢复订单状态失败:', err);
+      }
+    };
+    checkPendingOrder();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // 验证手机号格式
   const validateMobile = (mobile) => {
     const pattern = /^1[3-9]\d{9}$/;
@@ -286,47 +339,81 @@ const PhoneVerify = () => {
 
       // 3. 打开支付宝支付页面
       if (orderResult.paymentUrl) {
-        window.open(orderResult.paymentUrl, '_blank');
+        try {
+          const paymentWindow = window.open(orderResult.paymentUrl, '_blank');
+          // 检查支付窗口是否被阻止（浏览器阻止弹窗时，window.open 返回 null）
+          if (!paymentWindow) {
+            // 支付窗口被阻止，提示用户
+            setError('支付窗口被阻止，请允许弹窗后重试，或手动复制支付链接：' + orderResult.paymentUrl);
+            // 不设置loading为false，因为轮询会继续，用户可能手动打开支付页面
+          }
+        } catch (err) {
+          console.error('打开支付窗口失败:', err);
+          setError('无法打开支付窗口，请手动复制支付链接：' + orderResult.paymentUrl);
+          // 仍然继续轮询
+        }
       }
 
       // 4. 轮询检查支付状态
+      // 先清理之前的轮询（如果存在）
+      if (paymentCheckIntervalRef.current) {
+        clearInterval(paymentCheckIntervalRef.current);
+      }
+
       let checkCount = 0;
       const maxChecks = 30;
+      const orderIdToCheck = orderResult.orderId; // 保存订单ID，避免闭包问题
       
-      const checkInterval = setInterval(async () => {
+      paymentCheckIntervalRef.current = setInterval(async () => {
         try {
           checkCount++;
-          const paymentResult = await checkPaymentStatus(orderResult.orderId);
+          const paymentResult = await checkPaymentStatus(orderIdToCheck);
+          
+          // 检查interval是否仍然有效（可能已被清理）
+          if (!paymentCheckIntervalRef.current) {
+            return;
+          }
           
           if (paymentResult.status === 'paid') {
-            clearInterval(checkInterval);
+            clearInterval(paymentCheckIntervalRef.current);
+            paymentCheckIntervalRef.current = null;
             setPaymentStatus('paid');
             setLoading(false);
 
             // 5. 支付成功后跳转到查询结果页面（后端会自动查询阿里云接口）
-            navigate(`/verify-result?orderId=${orderResult.orderId}`);
-          } else if (paymentResult.status === 'failed') {
-            clearInterval(checkInterval);
-            setPaymentStatus('failed');
-            setError(t('phoneVerify.errors.paymentError'));
+            navigate(`/verify-result?orderId=${orderIdToCheck}`);
+          } else if (paymentResult.status === 'failed' || paymentResult.status === 'cancelled') {
+            clearInterval(paymentCheckIntervalRef.current);
+            paymentCheckIntervalRef.current = null;
+            setPaymentStatus(paymentResult.status);
+            setError(paymentResult.status === 'cancelled' ? '订单已取消' : t('phoneVerify.errors.paymentError'));
             setLoading(false);
           } else if (checkCount >= maxChecks) {
-            clearInterval(checkInterval);
-            setPaymentStatus('failed');
-            setError(t('phoneVerify.errors.paymentError'));
+            clearInterval(paymentCheckIntervalRef.current);
+            paymentCheckIntervalRef.current = null;
+            setPaymentStatus('pending'); // 保持pending状态，提示用户可能已支付
+            setError('支付状态检查超时，如果已支付，请前往订单列表查看结果');
             setLoading(false);
           }
         } catch (err) {
           console.error('检查支付状态错误:', err);
           if (checkCount >= maxChecks) {
-            clearInterval(checkInterval);
-            setPaymentStatus('failed');
-            setError(t('phoneVerify.errors.paymentError'));
+            if (paymentCheckIntervalRef.current) {
+              clearInterval(paymentCheckIntervalRef.current);
+              paymentCheckIntervalRef.current = null;
+            }
+            setPaymentStatus('pending');
+            setError('支付状态检查超时，如果已支付，请前往订单列表查看结果');
             setLoading(false);
           }
         }
       }, 2000);
     } catch (err) {
+      // 创建订单失败，清理轮询（如果存在）
+      if (paymentCheckIntervalRef.current) {
+        clearInterval(paymentCheckIntervalRef.current);
+        paymentCheckIntervalRef.current = null;
+      }
       setError(err.message || t('phoneVerify.errors.networkError'));
       setLoading(false);
       setPaymentStatus('failed');

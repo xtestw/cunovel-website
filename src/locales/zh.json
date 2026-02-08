@@ -22,7 +22,11 @@
       "phoneConsistency3": "人机一致性检验（手机号+身份证+姓名）",
       "phoneOnlineTime": "手机号在网状态核验",
       "bankCardVerify": "银行卡核验",
-      "orderHistory": "历史订单"
+      "orderHistory": "历史订单",
+      "aboutUs": "关于我们",
+      "contactUs": "联系我们",
+      "privacyPolicy": "隐私政策",
+      "termsOfService": "使用条款"
     },
     "nav": {
       "categories": {

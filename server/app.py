@@ -73,6 +73,16 @@ def execute_vehicle_verify_and_save(order, db):
         app.logger.info(f'订单 {order.order_id} 已有查询结果，跳过重复查询')
         return
     
+    # 检查订单状态，只有已支付的订单才执行查询
+    if order.status != 'paid':
+        app.logger.warning(f'订单 {order.order_id} 状态为 {order.status}，不是已支付状态，跳过查询')
+        return
+    
+    # 检查是否有表单数据（且为 dict，防止历史异常数据导致核验报错）
+    if not order.form_data or not isinstance(order.form_data, dict) or order.form_data == {}:
+        app.logger.warning(f'订单 {order.order_id} 缺少有效表单数据，无法执行查询')
+        return
+    
     try:
         # 判断是车辆核验、手机号核验还是银行卡核验
         verify_type = order.verify_type
@@ -95,6 +105,7 @@ def execute_vehicle_verify_and_save(order, db):
     except Exception as e:
         app.logger.error(f'订单 {order.order_id} 查询失败: {str(e)}', exc_info=True)
         # 查询失败不影响订单状态，只记录错误
+        # 可以在这里添加重试机制或错误通知
 
 # AI日报接口 - 获取今天的日报
 @app.route('/api/ai-daily/today', methods=['GET'])
@@ -962,6 +973,8 @@ def create_vehicle_verify_order():
         
         if not verify_type or not form_data:
             return jsonify({'error': '参数不完整'}), 400
+        if not isinstance(form_data, dict):
+            return jsonify({'error': '表单数据格式错误，应为对象'}), 400
         
         # 检查支付宝SDK是否可用
         if not ALIPAY_SDK_AVAILABLE:
@@ -1186,6 +1199,39 @@ def check_payment_status(order_id):
         if response and hasattr(response, 'code') and response.code == '10000':
             trade_status = getattr(response, 'trade_status', None)
             trade_no = getattr(response, 'trade_no', None)
+            total_amount = getattr(response, 'total_amount', None)
+            
+            # 若本地无订单但支付宝已支付，先补建订单（与 alipay_notify 恢复逻辑一致，避免结果页 404）
+            if order is None and trade_status in ('TRADE_SUCCESS', 'TRADE_FINISHED'):
+                try:
+                    amount_val = float(total_amount) if total_amount is not None else 0.0
+                    order = Order(
+                        order_id=order_id,
+                        verify_type='unknown',
+                        form_data={},
+                        user_id=None,
+                        client_ip=None,
+                        amount=amount_val,
+                        status='paid',
+                        subject='信息核验',
+                        trade_no=trade_no,
+                        trade_status=trade_status,
+                        paid_at=datetime.now()
+                    )
+                    db.add(order)
+                    db.commit()
+                    db.refresh(order)
+                    app.logger.info(f'订单 {order_id} 本地不存在但支付宝已支付，已补建订单')
+                except Exception as e:
+                    db.rollback()
+                    app.logger.error(f'补建订单失败: order_id={order_id}, error={str(e)}', exc_info=True)
+                    order = None
+                    # 补建失败时不应返回 paid，否则前端跳转结果页会 404
+                    return jsonify({
+                        'error': '订单创建失败',
+                        'message': '支付已成功但订单记录创建失败，请稍后重试或联系客服',
+                        'orderId': order_id
+                    }), 500
             
             # 更新数据库中的订单状态
             if order:
@@ -1282,20 +1328,24 @@ def vehicle_verify():
                 'status': order.status
             }), 400
         
-        # 验证订单的核验类型和表单数据是否匹配
+        # 验证订单的核验类型是否匹配
         if order.verify_type != verify_type:
             return jsonify({'error': '订单核验类型不匹配'}), 400
         
-        # 判断是车辆核验、手机号核验还是银行卡核验
+        # 使用订单中保存的表单数据执行核验，避免客户端篡改查询内容
+        if not order.form_data or not isinstance(order.form_data, dict) or order.form_data == {}:
+            return jsonify({'error': '订单缺少表单数据，无法执行核验'}), 400
+        
+        # 判断是车辆核验、手机号核验还是银行卡核验（使用 order.form_data）
         if verify_type in ['mobile2Meta', 'mobile3Meta', 'mobileOnlineTime']:
             # 手机号核验
-            result = call_aliyun_phone_verify(verify_type, form_data)
+            result = call_aliyun_phone_verify(verify_type, order.form_data)
         elif verify_type == 'bankCardVerify':
             # 银行卡核验
-            result = call_aliyun_bank_card_verify(form_data)
+            result = call_aliyun_bank_card_verify(order.form_data)
         else:
             # 车辆核验
-            result = call_aliyun_vehicle_verify(verify_type, form_data)
+            result = call_aliyun_vehicle_verify(verify_type, order.form_data)
         
         # 保存查询结果到订单
         order.result_data = result

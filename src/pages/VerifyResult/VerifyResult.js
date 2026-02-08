@@ -12,6 +12,9 @@ const VerifyResult = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pollingTimeout, setPollingTimeout] = useState(false); // 轮询超时标志
+  const [queryError, setQueryError] = useState(null); // 查询错误信息
+  const pollingTimerRef = React.useRef(null); // 使用ref保存轮询timer
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -37,19 +40,40 @@ const VerifyResult = () => {
 
   // 轮询订单结果（当订单已支付但还没有查询结果时）
   useEffect(() => {
-    // 如果订单不存在、未支付、或已有结果，不需要轮询
-    if (!order || order.status !== 'paid' || order.resultData) {
+    // 如果订单不存在、未支付、已取消、失败、或已有结果，不需要轮询
+    if (!order || order.status !== 'paid' || order.resultData || order.status === 'cancelled' || order.status === 'failed') {
+      // 清理之前的轮询（如果存在）
+      if (pollingTimerRef.current) {
+        clearInterval(pollingTimerRef.current);
+        pollingTimerRef.current = null;
+      }
       return;
     }
     
     // 检查是否有表单数据（如果有表单数据，说明应该会查询）
     if (!order.formData || Object.keys(order.formData).length === 0) {
+      // 清理之前的轮询（如果存在）
+      if (pollingTimerRef.current) {
+        clearInterval(pollingTimerRef.current);
+        pollingTimerRef.current = null;
+      }
       return;
     }
     
     const orderId = order.orderId;
     if (!orderId) {
+      // 清理之前的轮询（如果存在）
+      if (pollingTimerRef.current) {
+        clearInterval(pollingTimerRef.current);
+        pollingTimerRef.current = null;
+      }
       return;
+    }
+    
+    // 清理之前的轮询（如果存在）
+    if (pollingTimerRef.current) {
+      clearInterval(pollingTimerRef.current);
+      pollingTimerRef.current = null;
     }
     
     // 在useEffect内部定义getAuthHeaders，避免依赖项问题
@@ -68,41 +92,62 @@ const VerifyResult = () => {
     const maxPollingCount = 60; // 最多轮询60次（2分钟）
     const pollingInterval = 2000; // 2秒
     
-    const pollingTimer = setInterval(async () => {
+    pollingTimerRef.current = setInterval(async () => {
       pollingCount++;
       try {
         const response = await fetch(`${API_BASE_URL}/vehicle-verify/order/${orderId}`, {
           headers: getAuthHeadersForPolling()
         });
         
+        // 检查timer是否仍然有效（可能已被清理）
+        if (!pollingTimerRef.current) {
+          return;
+        }
+        
         if (response.ok) {
           const orderData = await response.json();
           // 如果查询结果已生成，更新订单并停止轮询
           if (orderData.resultData) {
             setOrder(orderData);
-            clearInterval(pollingTimer);
+            setPollingTimeout(false);
+            setQueryError(null);
+            clearInterval(pollingTimerRef.current);
+            pollingTimerRef.current = null;
           } else if (pollingCount >= maxPollingCount) {
             // 超过最大轮询次数，停止轮询
-            clearInterval(pollingTimer);
+            setPollingTimeout(true);
+            clearInterval(pollingTimerRef.current);
+            pollingTimerRef.current = null;
           }
         } else {
           // 如果请求失败，继续尝试直到达到最大次数
           if (pollingCount >= maxPollingCount) {
-            clearInterval(pollingTimer);
+            setPollingTimeout(true);
+            setQueryError('查询超时，请稍后刷新页面重试');
+            clearInterval(pollingTimerRef.current);
+            pollingTimerRef.current = null;
           }
         }
       } catch (err) {
         console.error('轮询订单详情失败:', err);
         // 轮询失败不影响，继续尝试
         if (pollingCount >= maxPollingCount) {
-          clearInterval(pollingTimer);
+          setPollingTimeout(true);
+          setQueryError('查询超时，请稍后刷新页面重试');
+          if (pollingTimerRef.current) {
+            clearInterval(pollingTimerRef.current);
+            pollingTimerRef.current = null;
+          }
         }
       }
     }, pollingInterval);
     
     // 清理函数
     return () => {
-      clearInterval(pollingTimer);
+      if (pollingTimerRef.current) {
+        clearInterval(pollingTimerRef.current);
+        pollingTimerRef.current = null;
+      }
     };
   }, [order?.orderId, order?.status, order?.resultData]);
 
@@ -127,6 +172,8 @@ const VerifyResult = () => {
   const loadOrderDetail = async (orderId) => {
     setLoading(true);
     setError(null);
+    setPollingTimeout(false); // 重置轮询超时状态
+    setQueryError(null); // 重置查询错误状态
     
     try {
       const response = await fetch(`${API_BASE_URL}/vehicle-verify/order/${orderId}`, {
@@ -440,10 +487,112 @@ const VerifyResult = () => {
 
   // 根据核验类型渲染结果
   const renderResult = () => {
+    // 处理订单取消状态
+    if (order && order.status === 'cancelled') {
+      return (
+        <div className="no-result">
+          <div className="error-icon">✗</div>
+          <p>订单已取消</p>
+          <p className="hint-text">该订单已被取消，无法查看查询结果</p>
+          <button className="btn-secondary" onClick={() => {
+            const verifyType = order.verifyType;
+            if (verifyType === 'consistency' || verifyType === 'basicInfo' || verifyType === 'insuranceLog') {
+              navigate('/vehicle-verify/orders');
+            } else if (verifyType === 'mobile2Meta' || verifyType === 'mobile3Meta' || verifyType === 'mobileOnlineTime') {
+              navigate('/phone-verify/orders');
+            } else if (verifyType === 'bankCardVerify') {
+              navigate('/bank-card-verify/orders');
+            }
+          }}>
+            查看订单列表
+          </button>
+        </div>
+      );
+    }
+    
+    // 处理订单失败状态
+    if (order && order.status === 'failed') {
+      return (
+        <div className="no-result">
+          <div className="error-icon">✗</div>
+          <p>支付失败</p>
+          <p className="hint-text">该订单支付失败，无法查看查询结果</p>
+          <button className="btn-secondary" onClick={() => {
+            const verifyType = order.verifyType;
+            if (verifyType === 'consistency' || verifyType === 'basicInfo' || verifyType === 'insuranceLog') {
+              navigate('/vehicle-verify');
+            } else if (verifyType === 'mobile2Meta' || verifyType === 'mobile3Meta' || verifyType === 'mobileOnlineTime') {
+              navigate('/phone-verify');
+            } else if (verifyType === 'bankCardVerify') {
+              navigate('/bank-card-verify');
+            }
+          }}>
+            重新下单
+          </button>
+        </div>
+      );
+    }
+    
     // 如果订单已支付但还没有查询结果，显示查询中状态（轮询由useEffect处理）
     if (order && order.status === 'paid' && !order.resultData) {
       // 检查是否有表单数据（如果有表单数据，说明应该会查询）
       if (order.formData && Object.keys(order.formData).length > 0) {
+        // 如果轮询超时，显示超时提示
+        if (pollingTimeout) {
+          return (
+            <div className="no-result">
+              <div className="error-icon">⏱</div>
+              <p>查询超时</p>
+              <p className="hint-text">查询结果生成时间较长，请稍后刷新页面查看，或联系客服处理</p>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
+                <button className="btn-refresh" onClick={() => {
+                  const urlParams = new URLSearchParams(location.search);
+                  const orderId = urlParams.get('orderId');
+                  if (orderId) {
+                    setPollingTimeout(false);
+                    setQueryError(null);
+                    loadOrderDetail(orderId);
+                  }
+                }}>
+                  刷新页面
+                </button>
+                <button className="btn-secondary" onClick={() => {
+                  const verifyType = order.verifyType;
+                  if (verifyType === 'consistency' || verifyType === 'basicInfo' || verifyType === 'insuranceLog') {
+                    navigate('/vehicle-verify/orders');
+                  } else if (verifyType === 'mobile2Meta' || verifyType === 'mobile3Meta' || verifyType === 'mobileOnlineTime') {
+                    navigate('/phone-verify/orders');
+                  } else if (verifyType === 'bankCardVerify') {
+                    navigate('/bank-card-verify/orders');
+                  }
+                }}>
+                  查看订单列表
+                </button>
+              </div>
+            </div>
+          );
+        }
+        // 如果有查询错误，显示错误提示
+        if (queryError) {
+          return (
+            <div className="no-result">
+              <div className="error-icon">✗</div>
+              <p>查询失败</p>
+              <p className="hint-text">{queryError}</p>
+              <button className="btn-refresh" onClick={() => {
+                const urlParams = new URLSearchParams(location.search);
+                const orderId = urlParams.get('orderId');
+                if (orderId) {
+                  setQueryError(null);
+                  loadOrderDetail(orderId);
+                }
+              }}>
+                重试查询
+              </button>
+            </div>
+          );
+        }
+        // 正常查询中状态
         return (
           <div className="no-result">
             <div className="loading-spinner-small"></div>
@@ -463,7 +612,9 @@ const VerifyResult = () => {
       } else {
         return (
           <div className="no-result">
-            <p>订单已支付，但缺少查询数据，无法生成查询结果。</p>
+            <div className="error-icon">⚠</div>
+            <p>订单已支付，但缺少查询数据</p>
+            <p className="hint-text">无法生成查询结果，请联系客服处理</p>
             <button className="btn-refresh" onClick={() => {
               const urlParams = new URLSearchParams(location.search);
               const orderId = urlParams.get('orderId');
@@ -478,6 +629,30 @@ const VerifyResult = () => {
       }
     }
     
+    // 如果订单状态是pending，提示用户支付
+    if (order && order.status === 'pending') {
+      return (
+        <div className="no-result">
+          <div className="error-icon">⏳</div>
+          <p>订单待支付</p>
+          <p className="hint-text">该订单尚未支付，请完成支付后查看查询结果</p>
+          <button className="btn-secondary" onClick={() => {
+            const verifyType = order.verifyType;
+            if (verifyType === 'consistency' || verifyType === 'basicInfo' || verifyType === 'insuranceLog') {
+              navigate('/vehicle-verify/orders');
+            } else if (verifyType === 'mobile2Meta' || verifyType === 'mobile3Meta' || verifyType === 'mobileOnlineTime') {
+              navigate('/phone-verify/orders');
+            } else if (verifyType === 'bankCardVerify') {
+              navigate('/bank-card-verify/orders');
+            }
+          }}>
+            查看订单列表
+          </button>
+        </div>
+      );
+    }
+    
+    // 如果订单已支付但没有查询结果（且不是查询中状态），显示提示
     if (!order || !order.resultData) {
       return (
         <div className="no-result">
@@ -574,7 +749,11 @@ const VerifyResult = () => {
               <div className="info-row">
                 <span className="info-label">订单状态:</span>
                 <span className={`status-badge status-${order.status}`}>
-                  {order.status === 'paid' ? '已支付' : order.status === 'pending' ? '待支付' : order.status}
+                  {order.status === 'paid' ? '已支付' : 
+                   order.status === 'pending' ? '待支付' : 
+                   order.status === 'cancelled' ? '已取消' : 
+                   order.status === 'failed' ? '支付失败' : 
+                   order.status}
                 </span>
               </div>
               <div className="info-row">

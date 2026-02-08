@@ -23,6 +23,10 @@ import VehicleVerifyOrders from './pages/VehicleVerify/VehicleVerifyOrders';
 import PhoneVerify from './pages/PhoneVerify/PhoneVerify';
 import BankCardVerify from './pages/BankCardVerify/BankCardVerify';
 import VerifyResult from './pages/VerifyResult/VerifyResult';
+import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService/TermsOfService';
+import AboutUs from './pages/AboutUs/AboutUs';
+import ContactUs from './pages/ContactUs/ContactUs';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -358,6 +362,10 @@ function AppContent() {
             <Route path="/bank-card-verify" element={<BankCardVerify />} />
             <Route path="/bank-card-verify/orders" element={<VehicleVerifyOrders />} />
             <Route path="/verify-result" element={<VerifyResult />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/contact-us" element={<ContactUs />} />
             <Route path="*" element={<Navigate to="/ai-daily" replace />} />
           </Routes>
         </Content>
@@ -374,14 +382,22 @@ function AppContent() {
               </ins>
             </div>
           )}
-          <div className="beian-info">
-            <a 
-              href="https://beian.miit.gov.cn/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
-              苏ICP备19065574号-4
-            </a>
+          <div className="footer-links">
+            <div className="footer-nav-links">
+              <NavLink to="/about-us">{t('common.aboutUs')}</NavLink>
+              <NavLink to="/contact-us">{t('common.contactUs')}</NavLink>
+              <NavLink to="/privacy-policy">{t('common.privacyPolicy')}</NavLink>
+              <NavLink to="/terms-of-service">{t('common.termsOfService')}</NavLink>
+            </div>
+            <div className="beian-info">
+              <a 
+                href="https://beian.miit.gov.cn/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                苏ICP备19065574号-4
+              </a>
+            </div>
           </div>
         </footer>
         <SpeedInsights />

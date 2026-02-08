@@ -1,0 +1,136 @@
+.about-us-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: calc(100vh - 200px);
+}
+
+.about-us-content {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-us-content h1 {
+  font-size: 32px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.about-sections {
+  margin-top: 30px;
+}
+
+.about-section {
+  margin-bottom: 35px;
+}
+
+.about-section h2 {
+  font-size: 22px;
+  color: #1890ff;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.about-section p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.feature-list li {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+  padding: 8px 0;
+  padding-left: 25px;
+  position: relative;
+}
+
+.feature-list li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #1890ff;
+  font-weight: bold;
+}
+
+.contact-info {
+  margin-top: 15px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.contact-info p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.contact-info a {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+.legal-links {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.legal-links a {
+  color: #1890ff;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.legal-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .about-us-container {
+    padding: 20px 15px;
+  }
+  
+  .about-us-content {
+    padding: 25px 20px;
+  }
+  
+  .about-us-content h1 {
+    font-size: 24px;
+  }
+  
+  .about-section h2 {
+    font-size: 20px;
+  }
+  
+  .about-section p,
+  .feature-list li {
+    font-size: 14px;
+  }
+}
+

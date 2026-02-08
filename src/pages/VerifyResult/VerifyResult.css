@@ -145,6 +145,12 @@
   border: 1px solid #ffccc7;
 }
 
+.status-badge.status-cancelled {
+  background: #f5f5f5;
+  color: #8c8c8c;
+  border: 1px solid #d9d9d9;
+}
+
 /* 查询参数卡片 */
 .query-params-card {
   background: white;

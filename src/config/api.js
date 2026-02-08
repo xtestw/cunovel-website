@@ -11,7 +11,7 @@ const getApiBaseUrl = () => {
   const hostname = window.location.hostname;
   
   // 生产环境
-  if (hostname === 'cutool.online' || hostname === 'www.cutool.online') {
+  if (hostname === 'cutool.online' || hostname === 'www.cutool.online' || hostname === 'cutool.cunovel.com') {
     return 'https://api.cutool.online/api';
   }
   
