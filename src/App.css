@@ -131,6 +131,8 @@ html, body {
   align-items: center;
   flex-shrink: 0;
   gap: 12px;
+  text-decoration: none;
+  color: inherit;
 }
 
 .logo-icon {

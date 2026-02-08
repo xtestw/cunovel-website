@@ -1,5 +1,6 @@
 {
     "common": {
+      "home": "首页",
       "toolbox": "工具箱",
       "aiNav": "AI 导航",
       "aiDaily": "AI 日报",
@@ -27,6 +28,48 @@
       "contactUs": "联系我们",
       "privacyPolicy": "隐私政策",
       "termsOfService": "使用条款"
+    },
+    "home": {
+      "pageTitle": "首页",
+      "metaDescription": "CUTool - 人人可用的在线工具与资料站。好用、可靠、全面，随时随地解决问题。涵盖开发工具、通用工具、AI 日报与教程；信息核验对接正规数据源，价格透明、数据安全，可放心使用。",
+      "heroTitle": "CUTool 万能工具箱",
+      "heroSubtitle": "好用 · 可靠 · 全面 · 随时随地，助你解决问题",
+      "introTagline": "人人可用的在线工具与资料，稳定靠谱，随时随地",
+      "introDesc": "CUTool 面向开发者与普通用户，提供开发工具、通用工具、资料与教程，以及专业信息核验等服务。核验类服务对接正规数据源，价格透明、数据安全，可放心使用。我们注重好用、可靠与全面，让你随时随地解决问题。",
+      "introSlides": [
+        { "tab": "产品介绍", "tagline": "人人可用的在线工具与资料，稳定靠谱，随时随地", "desc": "CUTool 面向开发者与普通用户，提供开发工具、通用工具、资料与教程，以及专业信息核验等服务。核验类服务对接正规数据源，价格透明、数据安全，可放心使用。我们注重好用、可靠与全面，让你随时随地解决问题。" },
+        { "tab": "核心能力", "tagline": "好用、可靠、全面，一站式工具与资料服务", "desc": "工具全面：JSON、时间戳、文本、编解码、代码格式化等开发工具，以及通用小工具。资料与教程：AI 日报、Prompt 与 Agent 教程，持续更新。信息核验：对接正规数据源，价格透明、数据安全、合规使用，可放心查询。稳定服务：在线即用、持续维护，随时随地可用。" },
+        { "tab": "使用场景", "tagline": "随时随地，开发、办公、学习与核验一站搞定", "desc": "开发时快速格式化、换算、处理文本；办公与学习中查资料、看教程、跟进行业动态；需要核验时使用站内专业服务——正规渠道、明码标价、数据仅用于本次核验，安全可靠。无需安装、不占本地，打开浏览器即可使用。" },
+        { "tab": "工具箱", "tagline": "开发与通用工具，开箱即用", "desc": "JSON 格式化与对比、时间戳转换、Cron 表达式、文本处理与对比、字数统计、正则匹配、Base64/URL 编解码、代码格式化等，覆盖开发与日常所需。免费使用，无需安装，打开即用。" },
+        { "tab": "AI 日报", "tagline": "每日 AI 行业动态与摘要", "desc": "每日汇总 AI 行业资讯，提供精炼摘要与原文链接，涵盖大模型、产品发布、行业趋势等。支持按日查看与历史回溯，帮你紧跟 AI 前沿，省时高效。" },
+        { "tab": "教程", "tagline": "Prompt 与 Agent 技能，手把手学", "desc": "Prompt 教程从入门到进阶，讲解写作技巧与最佳实践；Agent 技能介绍 AI Agent 使用场景与技巧。内容持续更新，助你用好 AI 工具。" },
+        { "tab": "AI 工具", "tagline": "Token 计算与 AI 导航", "desc": "AI Token 计算器支持文本与图片的 Token 估算，适配主流模型；AI 导航聚合常用 AI 产品与工具，方便查找与对比。开发与选型都能用得上。" },
+        { "tab": "信息核验", "tagline": "专业核验服务，正规透明可查", "desc": "支持手机号二要素/三要素核验、在网状态查询，车辆信息与投保查询，银行卡三要素核验。对接正规数据源，价格透明、数据安全、仅用于本次查询，可放心使用。" },
+        { "tab": "插件", "tagline": "浏览器与 IDE 插件，随处可用", "desc": "Chrome 扩展与 JetBrains IDEA 插件，在浏览器侧边栏或 IDE 内快速使用 CUTool 能力，无需切页，提升日常效率。" }
+      ],
+      "sectionNav": "快速导航",
+      "toolboxDesc": "JSON 格式化、时间戳、文本处理、编解码等常用开发工具",
+      "aiDailyDesc": "每日 AI 资讯与摘要，紧跟 AI 动态",
+      "promptTutorialDesc": "Prompt 写作教程与最佳实践",
+      "agentSkillDesc": "AI Agent 技能与使用指南",
+      "tokenCalculatorDesc": "大模型 Token 用量计算与估算",
+      "aiNavDesc": "AI 产品与工具导航",
+      "pluginsDesc": "Chrome 插件与 IDEA 插件",
+      "vehicleVerifyDesc": "专业信息核验：正规渠道、价格透明、数据安全",
+      "aboutUsDesc": "了解 CUTool 的使命与服务",
+      "todayLabel": "今天",
+      "weather": "天气",
+      "weatherLoading": "获取中…",
+      "weatherError": "暂不可用",
+      "sectionAiNews": "今日 AI 新闻",
+      "viewAllDaily": "查看完整日报 →",
+      "sectionVerify": "信息核验",
+      "sectionToolbox": "工具箱",
+      "sectionTutorial": "教程",
+      "sectionAiTools": "AI 工具",
+      "sectionPlugins": "插件",
+      "newsLoading": "加载中…",
+      "newsEmpty": "今日暂无日报"
     },
     "nav": {
       "categories": {

@@ -1,5 +1,6 @@
 {
   "common": {
+    "home": "Home",
     "toolbox": "Toolbox",
     "aiNav": "AI Navigation",
     "aiDaily": "AI Daily",
@@ -26,6 +27,48 @@
     "contactUs": "Contact Us",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service"
+  },
+  "home": {
+    "pageTitle": "Home",
+    "metaDescription": "CUTool - Online tools and resources for everyone. Easy to use, reliable, comprehensive. Developer tools, everyday tools, AI daily, tutorials; verification uses authorized data sources, transparent pricing, secure—use with confidence.",
+    "heroTitle": "CUTool Universal Toolbox",
+    "heroSubtitle": "Easy to use · Reliable · Comprehensive · Anytime, anywhere—solve problems with confidence",
+    "introTagline": "Tools and resources for everyone, reliable and always there",
+    "introDesc": "CUTool serves both developers and everyday users with tools, resources, tutorials, and professional verification services. Verification uses authorized data sources, with transparent pricing and secure handling of your data—so you can use it with confidence. We focus on ease of use, reliability, and breadth.",
+    "introSlides": [
+      { "tab": "Overview", "tagline": "Tools and resources for everyone, reliable and always there", "desc": "CUTool serves both developers and everyday users with tools, resources, tutorials, and professional verification services. Verification uses authorized data sources, with transparent pricing and secure handling of your data—so you can use it with confidence. We focus on ease of use, reliability, and breadth." },
+      { "tab": "Features", "tagline": "Easy to use, reliable, comprehensive—all in one place", "desc": "Wide range of tools: JSON, timestamps, text, encoding, code formatting for developers, plus everyday utilities. Resources and tutorials: AI Daily, Prompt and Agent tutorials, regularly updated. Verification: authorized data sources, transparent pricing, secure data handling, compliant use—query with confidence. Reliable service: use in the browser, maintained—available whenever you need it." },
+      { "tab": "Use Cases", "tagline": "Anytime, anywhere—development, work, learning, and verification", "desc": "Format, convert, and process text while developing; look up resources and follow tutorials for work and learning; when you need verification, use our professional service—authorized channels, clear pricing, data used only for the query at hand, secure and reliable. No install, no local footprint—just open the browser and go." },
+      { "tab": "Toolbox", "tagline": "Dev and everyday tools, ready to use", "desc": "JSON format and compare, timestamp conversion, Cron expressions, text processing and compare, word count, regex match, Base64/URL encode-decode, code formatting, and more—for development and daily use. Free, no install, use in the browser." },
+      { "tab": "AI Daily", "tagline": "Daily AI industry news and summaries", "desc": "Daily roundup of AI industry news with concise summaries and source links—models, product launches, trends. Browse by date and history so you can stay on top of AI with less time." },
+      { "tab": "Tutorials", "tagline": "Prompt and Agent skills, step by step", "desc": "Prompt tutorials from basics to advanced, with writing tips and best practices; Agent skills cover AI Agent use cases and techniques. Content is updated regularly to help you get more from AI tools." },
+      { "tab": "AI Tools", "tagline": "Token calculator and AI directory", "desc": "AI Token calculator estimates tokens for text and images and supports major models; AI directory lists popular AI products and tools for discovery and comparison. Useful for development and tool selection." },
+      { "tab": "Verification", "tagline": "Professional verification, authorized and transparent", "desc": "Phone two-factor/three-factor verification and online status; vehicle information and insurance queries; bank card three-factor verification. Authorized data sources, transparent pricing, secure data, used only for the current query—use with confidence." },
+      { "tab": "Plugins", "tagline": "Browser and IDE plugins, use anywhere", "desc": "Chrome extension and JetBrains IDEA plugin let you use CUTool from the sidebar or inside the IDE without switching tabs—faster workflow wherever you work." }
+    ],
+    "sectionNav": "Quick Navigation",
+    "toolboxDesc": "JSON formatter, timestamp, text tools, encoding and more",
+    "aiDailyDesc": "Daily AI news and summaries",
+    "promptTutorialDesc": "Prompt writing tutorials and best practices",
+    "agentSkillDesc": "AI Agent skills and usage guide",
+    "tokenCalculatorDesc": "LLM token usage calculator",
+    "aiNavDesc": "AI products and tools directory",
+    "pluginsDesc": "Chrome extension and IDEA plugin",
+    "vehicleVerifyDesc": "Professional verification: authorized sources, transparent pricing, secure data",
+    "aboutUsDesc": "Learn about CUTool mission and services",
+    "todayLabel": "Today",
+    "weather": "Weather",
+    "weatherLoading": "Loading…",
+    "weatherError": "Unavailable",
+    "sectionAiNews": "Today's AI News",
+    "viewAllDaily": "View full daily →",
+    "sectionVerify": "Information Verification",
+    "sectionToolbox": "Toolbox",
+    "sectionTutorial": "Tutorials",
+    "sectionAiTools": "AI Tools",
+    "sectionPlugins": "Plugins",
+    "newsLoading": "Loading…",
+    "newsEmpty": "No daily report today"
   },
   "nav": {
     "categories": {

@@ -31,6 +31,7 @@ import './App.css';
 import styled from 'styled-components';
 import './i18n';
 import ChromePlugin from './pages/ChromePlugin';
+import Home from './pages/Home/Home';
 
 const Content = styled.div`
   margin: 0;
@@ -121,11 +122,21 @@ function AppContent() {
         </Helmet>
         <header className="App-header">
           <div className="tool-container">
-            <div className="logo-area">
+            <NavLink to="/" className="logo-area">
               <img src="/favicon.ico" alt="logo" className="logo-icon" />
               <h1>CUTool</h1>
-            </div>
+            </NavLink>
             <nav className="nav-area">
+              <NavLink
+                to="/"
+                end
+                className="nav-item"
+                style={({ isActive }) => ({
+                  color: isActive ? '#1890ff' : '#595959'
+                })}
+              >
+                {t('common.home')}
+              </NavLink>
               <NavLink
                 to="/tools/json/formatter"
                 className="nav-item"
@@ -350,7 +361,7 @@ function AppContent() {
               <Route path="image" element={<ImageTokens />} />
               <Route index element={<Navigate to="/token-calculator/text" replace />} />
             </Route>
-            <Route path="/" element={<Navigate to="/ai-daily" replace />} />
+            <Route path="/" element={<Home />} />
             <Route path="/chrome-plugin" element={<ChromePlugin />} />
             <Route path="/agent-skill" element={<Navigate to="/agent-skill/intro" replace />} />
             <Route path="/agent-skill/*" element={<AgentSkill />} />
@@ -366,7 +377,7 @@ function AppContent() {
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="*" element={<Navigate to="/ai-daily" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Content>
         <footer className={`App-footer ${!hasAds ? 'no-ads' : ''}`}>
