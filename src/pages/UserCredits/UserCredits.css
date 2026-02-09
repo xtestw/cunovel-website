@@ -1,0 +1,186 @@
+.user-credits-page {
+  max-width: 560px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+.user-credits-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 32px 28px;
+}
+
+.user-credits-page h1 {
+  font-size: 22px;
+  color: #262626;
+  margin: 0 0 8px 0;
+}
+
+.user-credits-rule {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin: 0 0 24px 0;
+}
+
+.user-credits-balance {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 20px;
+  background: #f6f9fc;
+  border-radius: 8px;
+  margin-bottom: 28px;
+}
+
+.user-credits-balance-label {
+  font-size: 14px;
+  color: #595959;
+}
+
+.user-credits-balance-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.user-credits-balance-rmb {
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.user-credits-success {
+  padding: 12px 16px;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 8px;
+  color: #52c41a;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.user-credits-section-title {
+  font-size: 16px;
+  color: #262626;
+  margin: 0 0 8px 0;
+}
+
+.user-credits-section-desc {
+  font-size: 13px;
+  color: #8c8c8c;
+  margin: 0 0 20px 0;
+}
+
+.user-credits-error {
+  padding: 10px 14px;
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 8px;
+  color: #ff4d4f;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.user-credits-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.user-credits-amount-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 14px 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.user-credits-amount-btn:hover:not(:disabled) {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.user-credits-amount-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.user-credits-amount-rmb {
+  font-weight: 600;
+  color: #262626;
+}
+
+.user-credits-amount-credits {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.user-credits-loading,
+.user-credits-loading-inline {
+  text-align: center;
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.user-credits-loading-inline {
+  margin-top: 12px;
+}
+
+.user-credits-login-hint {
+  color: #595959;
+  margin: 16px 0 20px 0;
+  font-size: 14px;
+}
+
+.user-credits-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.user-credits-btn.primary {
+  background: #1890ff;
+  color: #fff;
+}
+
+.user-credits-btn.primary:hover {
+  opacity: 0.9;
+}
+
+.user-credits-actions {
+  margin-top: 24px;
+}
+
+.user-credits-actions .user-credits-btn {
+  display: inline-block;
+}
+
+.user-credits-breadcrumb {
+  margin-bottom: 20px;
+}
+
+.user-credits-back {
+  font-size: 14px;
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.user-credits-back:hover {
+  text-decoration: underline;
+}
+
+.user-credits-card-recharge .user-credits-section-title {
+  margin-top: 8px;
+}

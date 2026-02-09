@@ -915,6 +915,118 @@ def get_verify_price(verify_type, form_data=None):
     else:
         return 1.00  # 默认价格
 
+# ========== 用户积分充值（1 credit = 0.1 元，支付宝） ==========
+
+# 积分充值可选金额（元）
+CREDIT_RECHARGE_AMOUNTS = [10, 50, 100, 200, 500]
+
+@app.route('/api/credits/recharge', methods=['POST'])
+def create_credit_recharge_order():
+    """创建积分充值订单（需登录），通过支付宝支付"""
+    db = get_db()
+    try:
+        user = get_current_user(db)
+        if not user:
+            return jsonify({'error': '请先登录'}), 401
+
+        data = request.json or {}
+        amount_rmb = data.get('amount')
+        if amount_rmb is None:
+            return jsonify({'error': '请选择充值金额'}), 400
+        try:
+            amount_rmb = float(amount_rmb)
+        except (TypeError, ValueError):
+            return jsonify({'error': '金额格式错误'}), 400
+        if amount_rmb < 1 or amount_rmb > 10000:
+            return jsonify({'error': '充值金额需在 1～10000 元之间'}), 400
+        amount_rmb = round(amount_rmb, 2)
+
+        if not ALIPAY_SDK_AVAILABLE:
+            return jsonify({'error': '支付宝未配置，暂不支持充值'}), 500
+        alipay_client = init_alipay_client()
+        if not alipay_client:
+            return jsonify({'error': '支付宝未配置'}), 500
+
+        order_id = f'CR{datetime.now().strftime("%Y%m%d%H%M%S")}{uuid.uuid4().hex[:8].upper()}'
+        subject = f'CUTool 积分充值 {amount_rmb} 元'
+        return_url = os.getenv('ALIPAY_RETURN_URL', '')
+        if not return_url:
+            return_url = url_for('alipay_return', _external=True)
+        notify_url = os.getenv('ALIPAY_NOTIFY_URL', '')
+        if not notify_url:
+            notify_url = url_for('alipay_notify', _external=True)
+
+        try:
+            pay_request = AlipayTradePagePayRequest()
+            pay_request.biz_content = {
+                'out_trade_no': order_id,
+                'total_amount': str(amount_rmb),
+                'subject': subject,
+                'product_code': 'FAST_INSTANT_TRADE_PAY'
+            }
+            pay_request.return_url = return_url
+            pay_request.notify_url = notify_url
+            payment_url = alipay_client.page_execute(pay_request, http_method='GET')
+        except Exception as e:
+            app.logger.error(f'创建充值订单失败: {str(e)}', exc_info=True)
+            return jsonify({'error': '创建支付失败', 'message': str(e)}), 500
+
+        credits_to_add = int(round(amount_rmb * 10))
+        try:
+            order = Order(
+                order_id=order_id,
+                verify_type='credit_recharge',
+                form_data={'amount_rmb': amount_rmb, 'credits': credits_to_add},
+                user_id=user.id,
+                client_ip=get_client_ip(),
+                amount=amount_rmb,
+                status='pending',
+                subject=subject
+            )
+            db.add(order)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            app.logger.error(f'保存充值订单失败: {str(e)}', exc_info=True)
+            return jsonify({'error': '保存订单失败'}), 500
+        finally:
+            db.close()
+
+        return jsonify({
+            'orderId': order_id,
+            'paymentUrl': payment_url,
+            'amount': amount_rmb,
+            'credits': credits_to_add
+        })
+    except Exception as e:
+        app.logger.error(f'积分充值创建订单错误: {str(e)}', exc_info=True)
+        return jsonify({'error': str(e)}), 500
+    finally:
+        try:
+            db.close()
+        except Exception:
+            pass
+
+def apply_credit_recharge(order, db):
+    """支付成功后为用户增加积分（1 元 = 10 credits）"""
+    if order.verify_type != 'credit_recharge' or not order.user_id:
+        return
+    user = db.query(User).filter(User.id == order.user_id).first()
+    if not user:
+        return
+    credits_to_add = 0
+    if order.form_data and isinstance(order.form_data, dict):
+        credits_to_add = order.form_data.get('credits')
+    if credits_to_add is None:
+        credits_to_add = int(round(float(order.amount) * 10))
+    credits_to_add = int(credits_to_add)
+    if credits_to_add <= 0:
+        return
+    current = int(getattr(user, 'credits', 0) or 0)
+    user.credits = current + credits_to_add
+    db.commit()
+    app.logger.info(f'用户 {order.user_id} 充值成功，增加 {credits_to_add} 积分，当前 {user.credits}')
+
 # 获取核验价格接口
 @app.route('/api/vehicle-verify/price', methods=['POST'])
 def get_verify_price_endpoint():
@@ -1245,13 +1357,12 @@ def check_payment_status(order_id):
                         order.paid_at = datetime.now()
                     app.logger.info(f'订单 {order_id} 支付成功，交易号: {trade_no}')
                     
-                    # 如果订单已支付但还没有查询结果，尝试执行查询
-                    if not order.result_data:
+                    if order.verify_type == 'credit_recharge':
+                        apply_credit_recharge(order, db)
+                    elif not order.result_data:
                         app.logger.info(f'订单 {order_id} 已支付但未查询，尝试执行查询')
-                        # 只有当订单有表单数据时才执行查询
                         if order.form_data and order.form_data != {}:
                             execute_vehicle_verify_and_save(order, db)
-                            # 重新加载订单以获取最新结果
                             db.refresh(order)
                         else:
                             app.logger.warning(f'订单 {order_id} 缺少表单数据，无法执行查询')
@@ -1463,12 +1574,14 @@ def alipay_notify():
                         order.paid_at = datetime.now()
                     app.logger.info(f'订单 {out_trade_no} 支付成功，交易号: {trade_no}')
                     
-                    # 支付成功后自动执行查询并保存结果
-                    # 只有当订单有表单数据时才执行查询
-                    if order.form_data and order.form_data != {}:
-                        execute_vehicle_verify_and_save(order, db)
+                    if order.verify_type == 'credit_recharge':
+                        apply_credit_recharge(order, db)
                     else:
-                        app.logger.warning(f'订单 {out_trade_no} 缺少表单数据，无法执行查询')
+                        # 支付成功后自动执行查询并保存结果
+                        if order.form_data and order.form_data != {}:
+                            execute_vehicle_verify_and_save(order, db)
+                        else:
+                            app.logger.warning(f'订单 {out_trade_no} 缺少表单数据，无法执行查询')
                 elif trade_status == 'TRADE_CLOSED':
                     order.status = 'cancelled'
                     app.logger.info(f'订单 {out_trade_no} 已关闭')
@@ -1594,27 +1707,25 @@ def alipay_return():
                             app.logger.error(f'查询支付宝API失败: {str(api_error)}', exc_info=True)
                             # 其他错误也继续使用数据库中的状态，不阻塞流程
             
-            # 如果订单已支付但还没有查询结果，尝试执行查询
-            if order and order.status == 'paid' and not order.result_data:
+            # 如果订单已支付但还没有查询结果，尝试执行查询（积分充值不执行核验）
+            if order and order.status == 'paid' and order.verify_type != 'credit_recharge' and not order.result_data:
                 app.logger.info(f'订单 {out_trade_no} 已支付但未查询，尝试执行查询')
-                # 只有当订单有表单数据时才执行查询
                 if order.form_data and order.form_data != {}:
                     try:
                         execute_vehicle_verify_and_save(order, db)
-                        # 重新加载订单以获取最新结果
                         db.refresh(order)
                         app.logger.info(f'订单 {out_trade_no} 查询完成，结果已保存')
                     except Exception as query_error:
                         app.logger.error(f'订单 {out_trade_no} 查询失败: {str(query_error)}', exc_info=True)
-                        # 查询失败不影响跳转，前端会显示查询中状态
                 else:
                     app.logger.warning(f'订单 {out_trade_no} 缺少表单数据，无法执行查询')
             
-            # 根据订单类型跳转到查询结果页面
             frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-            
-            # 跳转到查询结果页面，带上订单ID
-            redirect_url = f'{frontend_url}/verify-result?orderId={out_trade_no}'
+            # 积分充值订单跳转到积分页，其他跳转到核验结果页
+            if order and getattr(order, 'verify_type', None) == 'credit_recharge':
+                redirect_url = f'{frontend_url}/user/credits?orderId={out_trade_no}&recharged=1'
+            else:
+                redirect_url = f'{frontend_url}/verify-result?orderId={out_trade_no}'
             
             return redirect(redirect_url)
             
@@ -2126,6 +2237,8 @@ def get_current_user_info():
             app.logger.warning(f'获取用户信息失败: Authorization header = {header_preview}...')
             return jsonify({'error': '未登录或token无效'}), 401
         
+        # 积分：1 credit = 0.1 元
+        credits = int(user.credits) if getattr(user, 'credits', None) is not None else 0
         return jsonify({
             'id': user.id,
             'username': user.username,
@@ -2133,6 +2246,7 @@ def get_current_user_info():
             'display_name': user.display_name,
             'avatar_url': user.avatar_url,
             'provider': user.provider,
+            'credits': credits,
             'created_at': user.created_at.isoformat() if user.created_at else None,
             'last_login_at': user.last_login_at.isoformat() if user.last_login_at else None
         })

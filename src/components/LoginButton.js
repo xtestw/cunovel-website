@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NavLink } from 'react-router-dom';
 import './LoginButton.css';
 import { API_BASE_URL } from '../config/api';
 
@@ -66,8 +67,16 @@ const LoginButton = ({ onLoginSuccess }) => {
     };
 
     window.addEventListener('message', handleMessage);
+
+    const handleCreditsUpdated = () => {
+      const token = localStorage.getItem('auth_token');
+      if (token) fetchUserInfo(token);
+    };
+    window.addEventListener('userCreditsUpdated', handleCreditsUpdated);
+
     return () => {
       window.removeEventListener('message', handleMessage);
+      window.removeEventListener('userCreditsUpdated', handleCreditsUpdated);
     };
   }, []);
 
@@ -395,9 +404,31 @@ const LoginButton = ({ onLoginSuccess }) => {
                   {user.provider === 'google' && 'Google'}
                   {user.provider === 'wechat' && '微信'}
                 </div>
+                <div className="user-dropdown-credits">
+                  {t('common.credits')}: <strong>{user.credits != null ? user.credits : 0}</strong>
+                  <span className="user-dropdown-credits-hint">
+                    {i18n.language.startsWith('zh') ? '（1 积分 = 0.1 元）' : '(1 credit = ¥0.1)'}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="user-dropdown-divider"></div>
+            <NavLink
+              to="/user/credits/recharge"
+              className="user-dropdown-item"
+              onClick={() => setShowUserMenu(false)}
+            >
+              <span>{t('common.rechargeCredits')}</span>
+              <span className="external-link-icon">→</span>
+            </NavLink>
+            <NavLink
+              to="/user/credits"
+              className="user-dropdown-item"
+              onClick={() => setShowUserMenu(false)}
+            >
+              <span>{t('credits.pageTitle')}</span>
+              <span className="external-link-icon">→</span>
+            </NavLink>
             <button 
               className="user-dropdown-item logout-item" 
               onClick={handleLogout}

@@ -27,6 +27,8 @@ import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService/TermsOfService';
 import AboutUs from './pages/AboutUs/AboutUs';
 import ContactUs from './pages/ContactUs/ContactUs';
+import UserCredits from './pages/UserCredits/UserCredits';
+import UserCreditsRecharge from './pages/UserCredits/UserCreditsRecharge';
 import './App.css';
 import styled from 'styled-components';
 import './i18n';
@@ -377,6 +379,8 @@ function AppContent() {
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/user/credits" element={<UserCredits />} />
+            <Route path="/user/credits/recharge" element={<UserCreditsRecharge />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Content>

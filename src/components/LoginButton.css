@@ -341,6 +341,22 @@
   border-radius: 4px;
 }
 
+.user-dropdown-credits {
+  font-size: 13px;
+  color: #595959;
+  margin-top: 6px;
+}
+
+.user-dropdown-credits strong {
+  color: #1890ff;
+}
+
+.user-dropdown-credits-hint {
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-left: 4px;
+}
+
 /* 分隔线 */
 .user-dropdown-divider {
   height: 1px;

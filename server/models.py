@@ -70,6 +70,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.now, comment='创建时间')
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment='更新时间')
     last_login_at = Column(DateTime, nullable=True, comment='最后登录时间')
+    credits = Column(Integer, default=0, nullable=False, comment='用户积分，1 credit = 0.1 元')
     
     # 唯一约束：同一提供商下的用户ID唯一
     __table_args__ = (
