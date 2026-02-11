@@ -446,9 +446,9 @@ server {
         add_header X-Cache-Status $upstream_cache_status;
     }
 
-    # API 请求（不缓存，直接转发到后端）
+    # API 请求（不缓存，直接转发到后端；保留完整路径 /api/... 给后端）
     location /api/ {
-        proxy_pass https://api.cutool.online;
+        proxy_pass https://api.cutool.online/api/;
         proxy_set_header Host api.cutool.online;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

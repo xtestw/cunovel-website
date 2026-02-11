@@ -31,7 +31,20 @@ except ImportError:
     ALIPAY_SDK_AVAILABLE = False
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)  # 启用跨域支持，允许携带凭证
+# 明确允许的前端域名，避免 CORS 与 4xx 响应时浏览器报错
+CORS(
+    app,
+    supports_credentials=True,
+    origins=[
+        'https://cutool.online',
+        'https://www.cutool.online',
+        'https://cutool.cunovel.com',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+    ],
+    allow_headers=['Content-Type', 'Authorization'],
+    methods=['GET', 'POST', 'OPTIONS'],
+)
 
 # 配置
 app.config.from_object(Config)
@@ -1006,6 +1019,13 @@ def create_credit_recharge_order():
             db.close()
         except Exception:
             pass
+
+
+@app.route('/credits/recharge', methods=['POST'])
+def create_credit_recharge_order_no_prefix():
+    """兼容反向代理去掉 /api 前缀时仍能访问"""
+    return create_credit_recharge_order()
+
 
 def apply_credit_recharge(order, db):
     """支付成功后为用户增加积分（1 元 = 10 credits）"""
