@@ -124,8 +124,8 @@ function AppContent() {
         </Helmet>
         <header className="App-header">
           <div className="tool-container">
-            <NavLink to="/" className="logo-area">
-              <img src="/favicon.ico" alt="logo" className="logo-icon" />
+            <NavLink to="/" end className="logo-area" title={t('common.home')}>
+              <img src="/favicon.ico" alt="CUTool" className="logo-icon" />
               <h1>CUTool</h1>
             </NavLink>
             <nav className="nav-area">
@@ -346,6 +346,8 @@ function AppContent() {
         </header>
         <Content>
           <Routes>
+            {/* 默认首页：根路径 / 显示 Home */}
+            <Route path="/" element={<Home />} />
             <Route path="/tools" element={<Tools />}>
               <Route path=":category/:tool" element={<Tools />} />
               <Route index element={<Navigate to="/tools/json/formatter" replace />} />
@@ -363,7 +365,6 @@ function AppContent() {
               <Route path="image" element={<ImageTokens />} />
               <Route index element={<Navigate to="/token-calculator/text" replace />} />
             </Route>
-            <Route path="/" element={<Home />} />
             <Route path="/chrome-plugin" element={<ChromePlugin />} />
             <Route path="/agent-skill" element={<Navigate to="/agent-skill/intro" replace />} />
             <Route path="/agent-skill/*" element={<AgentSkill />} />
