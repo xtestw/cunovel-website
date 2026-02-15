@@ -268,84 +268,76 @@ function Home() {
         )}
       </section>
 
-      {/* 信息核验（仅中文） */}
-      {isZh && (
-        <section className="home-nav-section">
-          <h2 className="home-section-title">{t('home.sectionVerify')}</h2>
-          <div className="home-nav-grid">
-            {verifyLinks.map((item) => (
-              <Link key={item.key} to={item.to} className="home-nav-card">
-                <h3 className="home-nav-card-title">{t(`common.${item.key}`)}</h3>
+      {/* 导航区：左边类型，右边链接 */}
+      <section className="home-nav-wrap">
+        <h2 className="home-nav-title">{t('home.sectionNav')}</h2>
+        {isZh && (
+          <div className="home-nav-row">
+            <span className="home-nav-label">{t('home.sectionVerify')}</span>
+            <div className="home-nav-links">
+              {verifyLinks.map((item) => (
+                <Link key={item.key} to={item.to} className="home-nav-link">
+                  {t(`common.${item.key}`)}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="home-nav-row">
+          <span className="home-nav-label">{t('home.sectionToolbox')}</span>
+          <div className="home-nav-links">
+            {toolboxCategories.map((cat) => (
+              <Link
+                key={cat.key}
+                to={`/tools/${cat.key}/${cat.tool}`}
+                className="home-nav-link"
+              >
+                {t(`nav.categories.${cat.key}`)}
               </Link>
             ))}
           </div>
-        </section>
-      )}
-
-      {/* 工具箱 */}
-      <section className="home-nav-section">
-        <h2 className="home-section-title">{t('home.sectionToolbox')}</h2>
-        <div className="home-nav-grid">
-          {toolboxCategories.map((cat) => (
-            <Link
-              key={cat.key}
-              to={`/tools/${cat.key}/${cat.tool}`}
-              className="home-nav-card"
-            >
-              <h3 className="home-nav-card-title">{t(`nav.categories.${cat.key}`)}</h3>
-            </Link>
-          ))}
         </div>
-      </section>
-
-      {/* 教程 */}
-      <section className="home-nav-section">
-        <h2 className="home-section-title">{t('home.sectionTutorial')}</h2>
-        <div className="home-nav-grid">
-          {tutorialLinks.map((item) => (
-            <Link key={item.key} to={item.to} className="home-nav-card">
-              <h3 className="home-nav-card-title">{t(`common.${item.key}`)}</h3>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* AI 工具 */}
-      <section className="home-nav-section">
-        <h2 className="home-section-title">{t('home.sectionAiTools')}</h2>
-        <div className="home-nav-grid">
-          {aiToolLinks.map((item) => (
-            <Link key={item.key} to={item.to} className="home-nav-card">
-              <h3 className="home-nav-card-title">{t(`common.${item.key}`)}</h3>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 插件 */}
-      <section className="home-nav-section">
-        <h2 className="home-section-title">{t('home.sectionPlugins')}</h2>
-        <div className="home-nav-grid">
-          {pluginLinks.map((item) =>
-            item.external ? (
-              <a
-                key={item.key}
-                href={item.to}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="home-nav-card"
-              >
-                <h3 className="home-nav-card-title">
-                  {t(`common.${item.key}`)}
-                  <span className="home-nav-card-external">↗</span>
-                </h3>
-              </a>
-            ) : (
-              <Link key={item.key} to={item.to} className="home-nav-card">
-                <h3 className="home-nav-card-title">{t(`common.${item.key}`)}</h3>
+        <div className="home-nav-row">
+          <span className="home-nav-label">{t('home.sectionTutorial')}</span>
+          <div className="home-nav-links">
+            {tutorialLinks.map((item) => (
+              <Link key={item.key} to={item.to} className="home-nav-link">
+                {t(`common.${item.key}`)}
               </Link>
-            )
-          )}
+            ))}
+          </div>
+        </div>
+        <div className="home-nav-row">
+          <span className="home-nav-label">{t('home.sectionAiTools')}</span>
+          <div className="home-nav-links">
+            {aiToolLinks.map((item) => (
+              <Link key={item.key} to={item.to} className="home-nav-link">
+                {t(`common.${item.key}`)}
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div className="home-nav-row">
+          <span className="home-nav-label">{t('home.sectionPlugins')}</span>
+          <div className="home-nav-links">
+            {pluginLinks.map((item) =>
+              item.external ? (
+                <a
+                  key={item.key}
+                  href={item.to}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="home-nav-link home-nav-link-external"
+                >
+                  {t(`common.${item.key}`)} ↗
+                </a>
+              ) : (
+                <Link key={item.key} to={item.to} className="home-nav-link">
+                  {t(`common.${item.key}`)}
+                </Link>
+              )
+            )}
+          </div>
         </div>
       </section>
     </div>
