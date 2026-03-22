@@ -3,23 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
     "@vercel/speed-insights": "^1.1.0",
     "i18next": "^24.2.0",
     "i18next-browser-languagedetector": "^8.0.2",
     "js-beautify": "^1.14.11",
     "js-tiktoken": "^1.0.21",
+    "next": "^14.2.18",
     "react": "^18.2.0",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^18.2.0",
-    "react-helmet": "^6.1.0",
+    "react-helmet-async": "^2.0.5",
     "react-i18next": "^15.2.0",
     "react-json-view": "^1.21.3",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.1.1",
-    "react-scripts": "5.0.1",
     "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",
@@ -30,11 +26,14 @@
     "web-vitals": "^2.1.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "gh-pages": "^6.1.1"
-  },
-  "resolutions": {
-    "strip-ansi": "6.0.1"
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.18",
+    "gh-pages": "^6.1.1",
+    "rehype-stringify": "^10.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0"
   },
   "overrides": {
     "react-diff-viewer": {
@@ -47,27 +46,16 @@
     },
     "flux": {
       "react": "^18.2.0"
-    },
-    "react-scripts": {
-      "typescript": "^5.0.0"
     }
   },
   "scripts": {
-    "start": "react-scripts start",
-    "start:3000": "PORT=3000 react-scripts start",
-    "start:3001": "PORT=3001 react-scripts start",
-    "start:8080": "PORT=8080 react-scripts start",
-    "build": "DISABLE_ESLINT_PLUGIN=true CI=false PUBLIC_URL=/ GENERATE_SOURCEMAP=false react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "dev": "next dev",
+    "prerender:docs": "node scripts/prerender/prerender-docs.mjs",
+    "build": "npm run prerender:docs && next build",
+    "build:static": "npm run prerender:docs && NEXT_STATIC_EXPORT=1 next build",
+    "start": "next start",
+    "start:3001": "PORT=3001 next start",
+    "lint": "next lint"
   },
   "browserslist": {
     "production": [

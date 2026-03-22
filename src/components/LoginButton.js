@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
+import Link from 'next/link';
 import './LoginButton.css';
 import { API_BASE_URL } from '../config/api';
 
@@ -413,22 +413,22 @@ const LoginButton = ({ onLoginSuccess }) => {
               </div>
             </div>
             <div className="user-dropdown-divider"></div>
-            <NavLink
-              to="/user/credits/recharge"
+            <Link
+              href="/user/credits/recharge"
               className="user-dropdown-item"
               onClick={() => setShowUserMenu(false)}
             >
               <span>{t('common.rechargeCredits')}</span>
               <span className="external-link-icon">→</span>
-            </NavLink>
-            <NavLink
-              to="/user/credits"
+            </Link>
+            <Link
+              href="/user/credits"
               className="user-dropdown-item"
               onClick={() => setShowUserMenu(false)}
             >
               <span>{t('credits.pageTitle')}</span>
               <span className="external-link-icon">→</span>
-            </NavLink>
+            </Link>
             <button 
               className="user-dropdown-item logout-item" 
               onClick={handleLogout}

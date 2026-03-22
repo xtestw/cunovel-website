@@ -8,6 +8,11 @@
 
 # Production
 /build
+.next
+out
+
+# 文档预渲染（npm run prerender:docs / npm run build 生成）
+public/docs/**/*.html
 
 # IDE and Editor files
 .idea/

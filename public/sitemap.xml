@@ -438,4 +438,41 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- 预渲染静态 HTML（首包含正文，不依赖客户端执行脚本渲染文档） -->
+  <url>
+    <loc>https://cutool.online/docs/agent-skills/zh/home.html</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://cutool.online/docs/agent-skills/en/home.html</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://cutool.online/docs/agent-skills/zh/what-are-skills.html</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://cutool.online/docs/agent-skills/en/what-are-skills.html</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://cutool.online/docs/prompts-learning/zh/current/intro.html</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cutool.online/docs/prompts-learning/en/current/intro.html</loc>
+    <lastmod>2026-03-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset> 
