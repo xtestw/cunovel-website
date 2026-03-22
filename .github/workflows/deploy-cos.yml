@@ -24,7 +24,8 @@ jobs:
         run: yarn install --frozen-lockfile --registry https://registry.npmjs.org/
 
       # Next.js 静态导出 → out/（与 package.json build:static 一致）
-      # AI 日报详情为客户端请求 API，构建期不再枚举日报路径。若 prerender 等脚本需指定 API，可在此步骤加 env：NEXT_PUBLIC_API_BASE_URL
+      # 首页 / 登录 / 积分 / 核验与订单 / AI 日报 / AI 教程等均在浏览器内请求 API（见 src/config/api.js），构建期不会拉取这些业务数据。
+      # 若预发或自建环境需指向非生产 API，在此步骤增加 env：NEXT_PUBLIC_API_BASE_URL
       - name: Build static site
         run: yarn build:static
 

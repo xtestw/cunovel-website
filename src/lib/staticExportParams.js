@@ -1,3 +1,8 @@
+/**
+ * 仅用于 `output: 'export'` 的 `generateStaticParams`：枚举**本地可穷举**的工具路径与文档 slug。
+ *
+ * 凡依赖登录态、订单历史、今日日报等**后端接口**的页面，不得在此按记录预生成路径（参见 `src/config/api.js` 注释）。
+ */
 import fs from 'fs';
 import path from 'path';
 
