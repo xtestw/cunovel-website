@@ -21,7 +21,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --registry https://registry.npmjs.org/
 
       # Next.js 静态导出 → out/（与 package.json build:static 一致）
       # 若需在构建期指定 API：在仓库 Secrets 添加 NEXT_PUBLIC_API_BASE_URL，并在下方步骤增加 env 块，例如：
