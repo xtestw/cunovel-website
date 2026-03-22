@@ -142,7 +142,7 @@ function Home() {
 
   const tutorialLinks = [
     { to: '/prompt-tutorial/intro', key: 'promptTutorial' },
-    { to: '/agent-skill', key: 'agentSkill' },
+    { to: '/agent-skill/intro', key: 'agentSkill' },
   ];
 
   const aiToolLinks = [

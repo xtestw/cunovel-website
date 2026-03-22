@@ -24,11 +24,11 @@ jobs:
         run: npm ci
 
       # Next.js 静态导出 → out/（与 package.json build:static 一致）
+      # 若需在构建期指定 API：在仓库 Secrets 添加 NEXT_PUBLIC_API_BASE_URL，并在下方步骤增加 env 块，例如：
+      #   env:
+      #     NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
       - name: Build static site
         run: npm run build:static
-        env:
-          # 构建期会请求 API 生成 ai-daily 等静态路径；需要时在仓库 Secrets 添加并取消下行注释
-          # NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
 
       - name: Configure COS CLI
         run: |

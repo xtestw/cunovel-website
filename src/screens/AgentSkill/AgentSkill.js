@@ -303,7 +303,7 @@ const AgentSkill = () => {
     return keywordsMap[actualPath] || (isZh ? 'Agent Skill,AI Agent,AI教程' : 'Agent Skill,AI Agent,AI Tutorial');
   };
   
-  const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}${pathname}` : 'https://cutool.online/agent-skill';
+  const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}${pathname}` : 'https://cutool.online/agent-skill/intro';
   const seoTitle = getSEOTitle();
   const seoDescription = getSEODescription();
   const seoKeywords = getSEOKeywords();

@@ -9,7 +9,7 @@ function Navbar() {
         <Link href="/">CuTool</Link>
       </div>
       <div className="navbar-links">
-        <Link href="/tools">在线工具</Link>
+        <Link href="/tools/json/formatter">在线工具</Link>
         <Link href="/ai-nav">AI导航</Link>
       </div>
     </nav>
