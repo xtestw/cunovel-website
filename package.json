@@ -51,8 +51,8 @@
   "scripts": {
     "dev": "next dev",
     "prerender:docs": "node scripts/prerender/prerender-docs.mjs",
-    "build": "npm run prerender:docs && next build",
-    "build:static": "npm run prerender:docs && NEXT_STATIC_EXPORT=1 next build",
+    "build": "node scripts/prerender/prerender-docs.mjs && next build",
+    "build:static": "node scripts/prerender/prerender-docs.mjs && NEXT_STATIC_EXPORT=1 next build",
     "start": "next start",
     "start:3001": "PORT=3001 next start",
     "lint": "next lint"
