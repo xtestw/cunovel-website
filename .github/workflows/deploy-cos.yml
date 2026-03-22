@@ -9,55 +9,54 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '22'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build project
-      run: npm run build
-      env:
-        CI: false
-        DISABLE_ESLINT_PLUGIN: true
-        GENERATE_SOURCEMAP: false
-        
-    - name: Configure COS CLI
-      run: |
-        pip install coscmd cos-python-sdk-v5
-        coscmd config -a ${{ secrets.TENCENT_SECRET_ID }} -s ${{ secrets.TENCENT_SECRET_KEY }} -b ${{ secrets.COS_BUCKET_NAME }} -r ${{ secrets.COS_REGION }}
-        
-    - name: Upload to COS
-      run: |
-        # 先上传所有文件
-        echo "📤 上传所有文件..."
-        cd build
-        coscmd upload -rs ./ / --skipmd5
-        
-    - name: Set HTML Content-Type
-      run: |
-        # 使用 Python 脚本更新 HTML 文件的 Content-Type
-        echo "📤 更新 HTML 文件 Content-Type..."
-        python3 scripts/set_html_content_type.py
-      env:
-        TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
-        TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
-        COS_BUCKET_NAME: ${{ secrets.COS_BUCKET_NAME }}
-        COS_REGION: ${{ secrets.COS_REGION }}
-        
-    - name: Deployment Summary
-      run: |
-        echo "✅ 部署完成！"
-        echo "📦 存储桶: ${{ secrets.COS_BUCKET_NAME }}"
-        echo "🌍 地域: ${{ secrets.COS_REGION }}"
-        echo ""
-        echo "⚠️  请记得在腾讯云 CDN 控制台刷新缓存"
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Next.js 静态导出 → out/（与 package.json build:static 一致）
+      - name: Build static site
+        run: npm run build:static
+        env:
+          # 构建期会请求 API 生成 ai-daily 等静态路径；需要时在仓库 Secrets 添加并取消下行注释
+          # NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+
+      - name: Configure COS CLI
+        run: |
+          pip install coscmd cos-python-sdk-v5
+          coscmd config -a ${{ secrets.TENCENT_SECRET_ID }} -s ${{ secrets.TENCENT_SECRET_KEY }} -b ${{ secrets.COS_BUCKET_NAME }} -r ${{ secrets.COS_REGION }}
+
+      - name: Upload to COS
+        run: |
+          echo "📤 上传 Next 静态导出目录 out/ ..."
+          cd out
+          coscmd upload -rs ./ / --skipmd5
+
+      - name: Set HTML Content-Type
+        run: |
+          echo "📤 更新 HTML 文件 Content-Type..."
+          python3 scripts/set_html_content_type.py
+        env:
+          TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
+          TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
+          COS_BUCKET_NAME: ${{ secrets.COS_BUCKET_NAME }}
+          COS_REGION: ${{ secrets.COS_REGION }}
+          STATIC_EXPORT_DIR: out
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ 部署完成！（静态站点来自 out/）"
+          echo "📦 存储桶: ${{ secrets.COS_BUCKET_NAME }}"
+          echo "🌍 地域: ${{ secrets.COS_REGION }}"
+          echo ""
+          echo "⚠️  next.config 的 redirects/headers 在静态导出不生效，请在 CDN 配置跳转与 /docs 的 Content-Type"
+          echo "⚠️  请记得在腾讯云 CDN 控制台刷新缓存"

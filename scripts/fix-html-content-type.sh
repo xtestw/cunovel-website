@@ -25,14 +25,14 @@ fi
 echo "📤 重新上传 HTML 文件并设置正确的 Content-Type..."
 echo ""
 
-# 检查 build 目录是否存在
-if [ ! -d "build" ]; then
-    echo "❌ build 目录不存在"
-    echo "请先运行: npm run build"
+STATIC_DIR="${STATIC_EXPORT_DIR:-out}"
+if [ ! -d "$STATIC_DIR" ]; then
+    echo "❌ 目录不存在: $STATIC_DIR"
+    echo "请先运行: npm run build:static"
     exit 1
 fi
 
-cd build
+cd "$STATIC_DIR"
 
 # 查找所有 HTML 文件并重新上传
 find . -name "*.html" -type f | while read file; do

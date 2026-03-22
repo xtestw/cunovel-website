@@ -3,6 +3,7 @@
 设置 COS 中 HTML 文件的 Content-Type
 使用方法: python3 scripts/set_html_content_type.py
 需要环境变量: TENCENT_SECRET_ID, TENCENT_SECRET_KEY, COS_BUCKET_NAME, COS_REGION
+可选: STATIC_EXPORT_DIR（默认自动选 out/ 或 build/）
 """
 
 import os
@@ -26,10 +27,18 @@ def main():
     config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key)
     client = CosS3Client(config)
     
-    # 查找所有 HTML 文件
-    build_dir = 'build'
-    if not os.path.exists(build_dir):
-        build_dir = '.'
+    # 查找所有 HTML 文件（优先 Next 静态导出 out/，其次旧 CRA build/）
+    build_dir = os.environ.get('STATIC_EXPORT_DIR', '').strip()
+    if not build_dir:
+        if os.path.isdir('out'):
+            build_dir = 'out'
+        elif os.path.isdir('build'):
+            build_dir = 'build'
+        else:
+            build_dir = '.'
+    elif not os.path.isdir(build_dir):
+        print(f"❌ 错误: STATIC_EXPORT_DIR 不是目录: {build_dir}")
+        sys.exit(1)
     
     html_files = []
     for root, dirs, files in os.walk(build_dir):

@@ -43,7 +43,19 @@ stop_frontend() {
         fi
     done
     
-    # 查找react-scripts进程
+    # Next.js dev / start
+    for pattern in "next dev" "next start"; do
+        PIDS=$(pgrep -f "$pattern" 2>/dev/null || true)
+        if [ ! -z "$PIDS" ]; then
+            print_info "发现 $pattern 相关进程，正在停止..."
+            echo "$PIDS" | xargs kill 2>/dev/null || true
+            sleep 1
+            echo "$PIDS" | xargs kill -9 2>/dev/null || true
+            print_success "已停止"
+        fi
+    done
+
+    # 旧版 CRA（若仍存在）
     REACT_PIDS=$(pgrep -f "react-scripts" 2>/dev/null || true)
     if [ ! -z "$REACT_PIDS" ]; then
         print_info "发现 react-scripts 进程，正在停止..."

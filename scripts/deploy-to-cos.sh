@@ -11,11 +11,12 @@ set -e
 echo "=== 开始部署到腾讯云 COS ==="
 echo ""
 
-# 检查是否已构建
-if [ ! -d "build" ]; then
-    echo "❌ build 目录不存在，开始构建..."
-    npm run build
+# 检查是否已静态导出（Next.js → out/）
+if [ ! -d "out" ]; then
+    echo "❌ out 目录不存在，开始执行静态构建..."
+    npm run build:static
 fi
+STATIC_DIR="out"
 
 # 检查 coscmd 是否安装
 if ! command -v coscmd &> /dev/null; then
@@ -31,11 +32,10 @@ if ! coscmd info &> /dev/null; then
     exit 1
 fi
 
-echo "📦 上传 build 目录到 COS..."
+echo "📦 上传 $STATIC_DIR 目录到 COS..."
 echo ""
 
-# 进入 build 目录
-cd build
+cd "$STATIC_DIR"
 
 # 上传所有文件到根目录，并设置正确的 Content-Type
 # -r: 递归上传
