@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
       - name: Checkout code
@@ -36,9 +37,9 @@ jobs:
 
       - name: Upload to COS
         run: |
-          echo "📤 上传 Next 静态导出目录 out/ ..."
+          echo "📤 上传 Next 静态导出目录 out/ …"
           cd out
-          coscmd upload -rs ./ / --skipmd5
+          bash ../scripts/cos-sync-out.sh
 
       - name: Set HTML Content-Type
         run: |

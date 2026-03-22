@@ -8,6 +8,8 @@
 
 set -e
 
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
 echo "=== 开始部署到腾讯云 COS ==="
 echo ""
 
@@ -51,9 +53,9 @@ find . -name "*.html" -type f | while read file; do
     coscmd upload "$file" "/$rel_path" --header "Content-Type:text/html; charset=utf-8"
 done
 
-# 上传其他文件（保持原有的 Content-Type 自动识别）
-echo "📤 上传其他文件..."
-coscmd upload -rs ./ / --skipmd5
+# 其余文件：先 wasm 再大文件易触发 UserNetworkTooSlow，见 scripts/cos-sync-out.sh
+echo "📤 同步其余文件（含重试）..."
+bash "$REPO_ROOT/scripts/cos-sync-out.sh"
 
 echo ""
 echo "✅ 部署完成！"
