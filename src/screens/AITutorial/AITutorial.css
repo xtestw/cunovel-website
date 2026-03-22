@@ -1,0 +1,191 @@
+.ai-tutorial-container {
+  min-height: calc(100vh - 64px);
+  background: #f5f5f5;
+  padding: 24px;
+}
+
+.ai-tutorial-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+}
+
+.error {
+  color: #ff4d4f;
+}
+
+.page-title {
+  font-size: 32px;
+  color: #333;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #1890ff;
+}
+
+.category-filter {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  padding: 8px 16px;
+  border: 1px solid #e8e8e8;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.category-btn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.category-btn.active {
+  background: #1890ff;
+  color: white;
+  border-color: #1890ff;
+}
+
+.tutorial-list {
+  display: grid;
+  gap: 24px;
+}
+
+.tutorial-item {
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 24px;
+  transition: all 0.3s;
+}
+
+.tutorial-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #1890ff;
+  transform: translateY(-2px);
+}
+
+.tutorial-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f0f7ff;
+  color: #1890ff;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.tutorial-title {
+  font-size: 24px;
+  color: #333;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.tutorial-link {
+  color: #1890ff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.tutorial-link:hover {
+  color: #40a9ff;
+  text-decoration: underline;
+}
+
+.tutorial-description {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.8;
+  margin: 0 0 16px 0;
+}
+
+.tutorial-content {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.8;
+  margin: 0 0 16px 0;
+}
+
+.tutorial-content p {
+  margin: 0 0 12px 0;
+}
+
+.tutorial-content ul,
+.tutorial-content ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.tutorial-content li {
+  margin: 8px 0;
+}
+
+.tutorial-link-button {
+  display: inline-block;
+  color: #1890ff;
+  text-decoration: none;
+  font-size: 14px;
+  margin-top: 12px;
+  transition: all 0.3s;
+}
+
+.tutorial-link-button:hover {
+  color: #40a9ff;
+  transform: translateX(4px);
+}
+
+.tutorial-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 4px 12px;
+  background: #f5f5f5;
+  color: #666;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  font-size: 16px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ai-tutorial-container {
+    padding: 16px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .tutorial-item {
+    padding: 16px;
+  }
+
+  .tutorial-title {
+    font-size: 20px;
+  }
+}
+

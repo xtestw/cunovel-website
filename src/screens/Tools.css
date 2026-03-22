@@ -1,0 +1,50 @@
+.tools-page {
+  padding: 2rem;
+}
+
+.tools-page h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.tools-tabs {
+  display: flex;
+  gap: 1rem;
+  padding: 0 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.tool-tab {
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  color: #666;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tool-tab:hover {
+  color: #333;
+  border-bottom-color: #ddd;
+}
+
+.tool-tab.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
+.tool-icon {
+  font-size: 1.2rem;
+}
+
+.tool-content {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  min-height: 400px;
+} 
