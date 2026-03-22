@@ -1,17 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../../config/api';
 import { getPublicOrigin } from '../../config/publicUrl';
+import {
+  aiDailyArticleCanonical,
+  aiDailyDayHref,
+} from '../../lib/aiDailyRoutes';
 import './AIDaily.css';
 
 const NewsDetail = () => {
-  const params = useParams();
-  const date = params?.date;
-  const newsId = params?.newsId;
+  const searchParams = useSearchParams();
+  const date = searchParams.get('date');
+  const newsId = searchParams.get('newsId');
   const router = useRouter();
   const { i18n } = useTranslation();
   const [news, setNews] = useState(null);
@@ -69,6 +73,14 @@ const NewsDetail = () => {
   };
 
   useEffect(() => {
+    if (!date || newsId === null || newsId === '') {
+      setLoading(false);
+      setNews(null);
+      setError('缺少日期或新闻参数');
+      return;
+    }
+    setLoading(true);
+    setError(null);
     fetchNewsDetail();
   }, [date, newsId, i18n.language]);
 
@@ -117,17 +129,19 @@ const NewsDetail = () => {
         <meta property="og:title" content={`${news.title} | AI日报`} />
         <meta property="og:description" content={news.summary || news.title || 'AI行业新闻详情'} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`${origin}/ai-daily/${date}/news/${newsId}`} />
-        {news.link && <meta property="og:url" content={news.link} />}
+        <meta property="og:url" content={aiDailyArticleCanonical(origin, date, newsId)} />
         <meta name="article:published_time" content={news.date || date} />
         {news.tags && news.tags.length > 0 && (
           <meta name="article:tag" content={news.tags.join(',')} />
         )}
-        <link rel="canonical" href={`${origin}/ai-daily/${date}/news/${newsId}`} />
+        <link rel="canonical" href={aiDailyArticleCanonical(origin, date, newsId)} />
       </Helmet>
       <div className="ai-daily-container">
         <div className="ai-daily-content">
-          <button onClick={() => router.push(date ? `/ai-daily/${date}` : '/ai-daily')} className="back-button">
+          <button
+            onClick={() => router.push(date ? aiDailyDayHref(date) : '/ai-daily')}
+            className="back-button"
+          >
             ← 返回
           </button>
           

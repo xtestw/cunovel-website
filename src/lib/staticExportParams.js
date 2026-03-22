@@ -1,17 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-/** 构建期拉取日报列表（与 src/config/api 服务端分支一致，不读 window） */
-function buildTimeApiBase() {
-  return (
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    process.env.REACT_APP_API_BASE_URL ||
-    (process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3003/api'
-      : 'https://api.cutool.online/api')
-  );
-}
-
 /** 与 Tools 内嵌组件路由一致（不含仅外链的工具） */
 export function getToolsStaticParams() {
   return [
@@ -70,51 +59,4 @@ export function getPromptTutorialStaticParams() {
     walkMarkdownSlugs(base, [], outSet);
   }
   return [...outSet].map((s) => ({ slug: JSON.parse(s) }));
-}
-
-export async function getAiDailyDateParams() {
-  try {
-    const base = buildTimeApiBase();
-    const r = await fetch(
-      `${base}/ai-daily/history?lang=zh&page=1&pageSize=300`,
-      { cache: 'no-store' }
-    );
-    if (!r.ok) return [];
-    const data = await r.json();
-    const list = Array.isArray(data?.data)
-      ? data.data
-      : Array.isArray(data)
-        ? data
-        : [];
-    const dates = [
-      ...new Set(
-        list.map((item) => item?.date).filter(Boolean)
-      ),
-    ];
-    return dates.map((date) => ({ date: String(date) }));
-  } catch {
-    return [];
-  }
-}
-
-export async function getAiDailyNewsParams() {
-  const dateParams = await getAiDailyDateParams();
-  const base = buildTimeApiBase();
-  const out = [];
-  for (const { date } of dateParams) {
-    try {
-      const r = await fetch(`${base}/ai-daily/${date}?lang=zh`, {
-        cache: 'no-store',
-      });
-      if (!r.ok) continue;
-      const daily = await r.json();
-      const n = Array.isArray(daily?.news) ? daily.news.length : 0;
-      for (let i = 0; i < n; i++) {
-        out.push({ date: String(date), newsId: String(i) });
-      }
-    } catch {
-      /* 单日失败则跳过 */
-    }
-  }
-  return out;
 }

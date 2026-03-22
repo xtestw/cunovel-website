@@ -70,7 +70,7 @@ subprocess.run([
     sys.executable,
     '../data-push/google_push.py',
     '--single-url',
-    f'https://cutool.online/ai-daily/{today}'
+    f'https://cutool.online/ai-daily/day?date={today}'
 ])
 ```
 

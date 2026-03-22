@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { API_BASE_URL } from '../../config/api';
+import { aiDailyArticleHref } from '../../lib/aiDailyRoutes';
 import './Home.css';
 
 const WEEKDAY_ZH = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -257,7 +258,7 @@ function Home() {
                     <button
                       type="button"
                       className="home-news-link"
-                      onClick={() => router.push(`/ai-daily/${todayDaily.date}/news/${index}`)}
+                      onClick={() => router.push(aiDailyArticleHref(todayDaily.date, index))}
                     >
                       {item.title}
                     </button>

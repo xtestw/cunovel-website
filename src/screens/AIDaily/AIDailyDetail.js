@@ -1,16 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../../config/api';
 import { getPublicOrigin } from '../../config/publicUrl';
+import {
+  aiDailyArticleHref,
+  aiDailyDayCanonical,
+} from '../../lib/aiDailyRoutes';
 import './AIDaily.css';
 
 const AIDailyDetail = () => {
-  const params = useParams();
-  const date = params?.date;
+  const searchParams = useSearchParams();
+  const date = searchParams.get('date');
   const router = useRouter();
   const { i18n } = useTranslation();
   const [daily, setDaily] = useState(null);
@@ -42,6 +46,14 @@ const AIDailyDetail = () => {
   };
 
   useEffect(() => {
+    if (!date) {
+      setLoading(false);
+      setDaily(null);
+      setError('缺少日期参数');
+      return;
+    }
+    setLoading(true);
+    setError(null);
     fetchDailyDetail();
   }, [date, i18n.language]);
 
@@ -90,8 +102,8 @@ const AIDailyDetail = () => {
         <meta property="og:title" content={`AI日报 - ${daily.date} | CUTool`} />
         <meta property="og:description" content={`${daily.date}的AI行业新闻和动态`} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`${origin}/ai-daily/${daily.date}`} />
-        <link rel="canonical" href={`${origin}/ai-daily/${daily.date}`} />
+        <meta property="og:url" content={aiDailyDayCanonical(origin, daily.date)} />
+        <link rel="canonical" href={aiDailyDayCanonical(origin, daily.date)} />
       </Helmet>
       <div className="ai-daily-container">
         <div className="ai-daily-content">
@@ -116,7 +128,7 @@ const AIDailyDetail = () => {
                   <div key={index} className="news-item">
                     <h3 className="news-item-title">
                       <button
-                        onClick={() => router.push(`/ai-daily/${daily.date}/news/${index}`)}
+                        onClick={() => router.push(aiDailyArticleHref(daily.date, index))}
                         className="news-link-button-title"
                         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit', color: '#1890ff', textAlign: 'left' }}
                       >
@@ -128,7 +140,7 @@ const AIDailyDetail = () => {
                     )}
                     <div className="news-actions">
                       <button
-                        onClick={() => router.push(`/ai-daily/${daily.date}/news/${index}`)}
+                        onClick={() => router.push(aiDailyArticleHref(daily.date, index))}
                         className="news-link-button"
                         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit', color: '#1890ff' }}
                       >

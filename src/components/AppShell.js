@@ -68,9 +68,8 @@ export default function AppShell({ children }) {
 
   const isTodayDailyActive =
     pathname === '/ai-daily' ||
-    (pathname.startsWith('/ai-daily/') &&
-      pathname !== '/ai-daily/history' &&
-      /^\/ai-daily\/\d{4}-\d{2}-\d{2}/.test(pathname));
+    pathname.startsWith('/ai-daily/day') ||
+    pathname.startsWith('/ai-daily/article');
 
   return (
     <div className="App">

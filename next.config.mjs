@@ -22,6 +22,16 @@ if (isStaticExport) {
     { source: '/prompt-tutorial', destination: '/prompt-tutorial/intro', permanent: false },
     { source: '/agent-skill', destination: '/agent-skill/intro', permanent: false },
     { source: '/token-calculator', destination: '/token-calculator/text', permanent: false },
+    {
+      source: '/ai-daily/:date(\\d{4}-\\d{2}-\\d{2})/news/:newsId',
+      destination: '/ai-daily/article?date=:date&newsId=:newsId',
+      permanent: true,
+    },
+    {
+      source: '/ai-daily/:date(\\d{4}-\\d{2}-\\d{2})',
+      destination: '/ai-daily/day?date=:date',
+      permanent: true,
+    },
     { source: '/json_format.html', destination: '/tools/json/formatter', permanent: true },
     { source: '/diff.html', destination: '/tools/text/compare', permanent: true },
     { source: '/regexr.html', destination: '/tools/text/regex', permanent: true },

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../../config/api';
 import { getPublicOrigin } from '../../config/publicUrl';
+import { aiDailyDayHref } from '../../lib/aiDailyRoutes';
 import './AIDaily.css';
 
 const AIDailyHistory = () => {
@@ -207,7 +208,7 @@ const AIDailyHistory = () => {
                         </div>
                       )}
                       <button
-                        onClick={() => router.push(`/ai-daily/${daily.date}`)}
+                        onClick={() => router.push(aiDailyDayHref(daily.date))}
                         className="history-link"
                         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit', color: '#1890ff' }}
                       >

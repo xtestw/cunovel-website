@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../../config/api';
 import { getPublicOrigin } from '../../config/publicUrl';
+import { aiDailyArticleHref } from '../../lib/aiDailyRoutes';
 import './AIDaily.css';
 
 const AIDaily = () => {
@@ -101,7 +102,11 @@ const AIDaily = () => {
           "@type": "NewsArticle",
           "headline": item.title,
           "description": item.summary,
-          "url": item.link || `${origin}/ai-daily/${todayDaily?.date}/news/${index}`
+          "url":
+            item.link ||
+            (todayDaily?.date != null
+              ? `${origin}${aiDailyArticleHref(todayDaily.date, index)}`
+              : `${origin}/ai-daily`)
         }
       })) || []
     }
@@ -149,7 +154,7 @@ const AIDaily = () => {
                     <div key={index} className="news-item">
                       <h3 className="news-item-title">
                         <button
-                          onClick={() => router.push(`/ai-daily/${todayDaily.date}/news/${index}`)}
+                          onClick={() => router.push(aiDailyArticleHref(todayDaily.date, index))}
                           className="news-link-button-title"
                           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit', color: '#1890ff', textAlign: 'left' }}
                         >
@@ -161,7 +166,7 @@ const AIDaily = () => {
                       )}
                       <div className="news-actions">
                         <button
-                          onClick={() => router.push(`/ai-daily/${todayDaily.date}/news/${index}`)}
+                          onClick={() => router.push(aiDailyArticleHref(todayDaily.date, index))}
                           className="news-link-button"
                           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit', color: '#1890ff' }}
                         >
