@@ -1,0 +1,25 @@
+[
+  { "Regex": true,  "Path": "/tools/*",            "ForwardUri": "/tools/$1.html",            "FullMatch": false },
+  { "Regex": true,  "Path": "/prompt-tutorial/*",  "ForwardUri": "/prompt-tutorial/$1.html",  "FullMatch": false },
+  { "Regex": true,  "Path": "/agent-skill/*",      "ForwardUri": "/agent-skill/$1.html",      "FullMatch": false },
+  { "Regex": true,  "Path": "/token-calculator/*", "ForwardUri": "/token-calculator/$1.html", "FullMatch": false },
+  { "Regex": true,  "Path": "/ai-daily/*",         "ForwardUri": "/ai-daily/$1.html",         "FullMatch": false },
+  { "Regex": true,  "Path": "/vehicle-verify/*",   "ForwardUri": "/vehicle-verify/$1.html",   "FullMatch": false },
+  { "Regex": true,  "Path": "/phone-verify/*",     "ForwardUri": "/phone-verify/$1.html",     "FullMatch": false },
+  { "Regex": true,  "Path": "/bank-card-verify/*", "ForwardUri": "/bank-card-verify/$1.html", "FullMatch": false },
+  { "Regex": true,  "Path": "/user/credits/*",     "ForwardUri": "/user/credits/$1.html",     "FullMatch": false },
+
+  { "Regex": false, "Path": "/about-us",           "ForwardUri": "/about-us.html",            "FullMatch": true  },
+  { "Regex": false, "Path": "/contact-us",         "ForwardUri": "/contact-us.html",          "FullMatch": true  },
+  { "Regex": false, "Path": "/privacy-policy",     "ForwardUri": "/privacy-policy.html",      "FullMatch": true  },
+  { "Regex": false, "Path": "/terms-of-service",   "ForwardUri": "/terms-of-service.html",    "FullMatch": true  },
+  { "Regex": false, "Path": "/ai-daily",           "ForwardUri": "/ai-daily.html",            "FullMatch": true  },
+  { "Regex": false, "Path": "/ai-nav",             "ForwardUri": "/ai-nav.html",              "FullMatch": true  },
+  { "Regex": false, "Path": "/ai-tutorial",        "ForwardUri": "/ai-tutorial.html",         "FullMatch": true  },
+  { "Regex": false, "Path": "/chrome-plugin",      "ForwardUri": "/chrome-plugin.html",       "FullMatch": true  },
+  { "Regex": false, "Path": "/vehicle-verify",     "ForwardUri": "/vehicle-verify.html",      "FullMatch": true  },
+  { "Regex": false, "Path": "/phone-verify",       "ForwardUri": "/phone-verify.html",        "FullMatch": true  },
+  { "Regex": false, "Path": "/bank-card-verify",   "ForwardUri": "/bank-card-verify.html",    "FullMatch": true  },
+  { "Regex": false, "Path": "/verify-result",      "ForwardUri": "/verify-result.html",       "FullMatch": true  },
+  { "Regex": false, "Path": "/user/credits",       "ForwardUri": "/user/credits.html",        "FullMatch": true  }
+]

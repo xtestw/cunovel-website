@@ -1,0 +1,258 @@
+.blog-container {
+  display: flex;
+  min-height: calc(100vh - 160px);
+}
+
+.blog-sidebar {
+  width: 280px;
+  min-width: 0;
+  border-right: 1px solid #f0f0f0;
+  background: #fafafa;
+  transition: width 0.2s ease;
+}
+
+.blog-sidebar.closed {
+  width: 0;
+  overflow: hidden;
+}
+
+.blog-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  min-width: 0;
+}
+
+.blog-sidebar-header h2 {
+  margin: 0;
+  font-size: 18px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.blog-sidebar-toggle {
+  flex-shrink: 0;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.blog-sidebar-content {
+  padding: 10px;
+  min-width: 0;
+}
+
+.blog-sidebar-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #595959;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.blog-sidebar-item:hover {
+  background: #f5f5f5;
+}
+
+.blog-sidebar-item.active {
+  color: #1890ff;
+  background: #e6f7ff;
+}
+
+.blog-main {
+  flex: 1;
+  padding: 24px;
+  min-width: 0;
+}
+
+.blog-markdown-content {
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 24px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.blog-markdown-content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e0e0e0;
+  color: #1a1a1a;
+}
+
+.blog-markdown-content h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 32px;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+}
+
+.blog-markdown-content h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+
+.blog-markdown-content h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+
+.blog-markdown-content p {
+  margin-bottom: 16px;
+  color: #4a4a4a;
+}
+
+.blog-markdown-content ul,
+.blog-markdown-content ol {
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+.blog-markdown-content li {
+  margin-bottom: 8px;
+  color: #4a4a4a;
+}
+
+.blog-markdown-content li > p {
+  margin-bottom: 8px;
+}
+
+.blog-markdown-content code {
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 0.9em;
+  color: #e83e8c;
+}
+
+.blog-markdown-content pre {
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.blog-markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.blog-markdown-content blockquote {
+  border-left: 4px solid #1890ff;
+  padding-left: 16px;
+  margin: 16px 0;
+  color: #666;
+  font-style: italic;
+}
+
+.blog-markdown-content a {
+  color: #1890ff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.blog-markdown-content a:hover {
+  color: #40a9ff;
+  text-decoration: underline;
+}
+
+.blog-markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.blog-markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.blog-markdown-content table th,
+.blog-markdown-content table td {
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  text-align: left;
+}
+
+.blog-markdown-content table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.blog-markdown-content hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 24px 0;
+}
+
+@media (max-width: 768px) {
+  .blog-markdown-content h1 {
+    font-size: 24px;
+  }
+
+  .blog-markdown-content h2 {
+    font-size: 20px;
+  }
+
+  .blog-markdown-content h3 {
+    font-size: 18px;
+  }
+}
+
+.blog-state {
+  color: #595959;
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.blog-back-button,
+.blog-sidebar-open-button {
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .blog-sidebar {
+    position: fixed;
+    z-index: 10;
+    height: 100%;
+  }
+}

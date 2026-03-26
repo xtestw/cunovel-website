@@ -1,0 +1,53 @@
+name: Apply Tencent CDN Origin Rules
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "plan (dry-run) or apply"
+        required: true
+        default: "plan"
+        type: choice
+        options:
+          - plan
+          - apply
+      cdn_domain:
+        description: "CDN acceleration domain (e.g. www.cutool.online)"
+        required: true
+        default: "www.cutool.online"
+        type: string
+
+jobs:
+  apply-rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Tencent Cloud SDK
+        run: |
+          python -m pip install --upgrade pip
+          pip install tencentcloud-sdk-python
+
+      - name: Plan or apply origin path rules
+        env:
+          TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
+          TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
+        run: |
+          python scripts/apply_cdn_origin_path_rules.py \
+            --domain "${{ inputs.cdn_domain }}" \
+            --rules-file "config/cdn/origin-path-rules.json" \
+            --mode "${{ inputs.mode }}"
+
+      - name: Reminder
+        if: ${{ inputs.mode == 'apply' }}
+        run: |
+          echo "✅ 已提交 CDN 配置更新。"
+          echo "请到 CDN 控制台刷新缓存：/tools/* /prompt-tutorial/* /agent-skill/* /ai-daily/*"
