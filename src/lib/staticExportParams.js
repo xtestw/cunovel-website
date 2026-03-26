@@ -65,3 +65,11 @@ export function getPromptTutorialStaticParams() {
   }
   return [...outSet].map((s) => ({ slug: JSON.parse(s) }));
 }
+
+export function getBlogStaticParams() {
+  const outSet = new Set();
+  outSet.add(JSON.stringify([]));
+  const base = path.join(process.cwd(), 'public/docs/blog');
+  walkMarkdownSlugs(base, [], outSet);
+  return [...outSet].map((s) => ({ slug: JSON.parse(s) }));
+}

@@ -92,11 +92,11 @@ export default function AppShell({ children }) {
               {t('common.home')}
             </Link>
             <Link
-              href="/tools/json/formatter"
+              href="/blog/intro"
               className="nav-item"
-              style={{ color: pathname.startsWith('/tools') ? '#1890ff' : '#595959' }}
+              style={{ color: pathname.startsWith('/blog') ? '#1890ff' : '#595959' }}
             >
-              {t('common.toolbox')}
+              {t('common.blog')}
             </Link>
             <div className="nav-item nav-item-dropdown">
               <Link
@@ -123,60 +123,43 @@ export default function AppShell({ children }) {
                 </Link>
               </div>
             </div>
-            <Link
-              href="/prompt-tutorial/intro"
-              className="nav-item"
-              style={{ color: pathname.startsWith('/prompt-tutorial') ? '#1890ff' : '#595959' }}
-            >
-              {t('common.promptTutorial')}
-            </Link>
-            <div className="nav-item nav-item-dropdown">
-              <div
-                className={`nav-item-link ${pathname.startsWith('/agent-skill') ? 'active' : ''}`}
-                style={{
-                  color: pathname.startsWith('/agent-skill') ? '#1890ff' : '#595959',
-                  cursor: 'pointer',
-                }}
-              >
-                {t('common.aiAgent')}
-              </div>
-              <div className="nav-dropdown-menu">
-                <Link
-                  href="/agent-skill/intro"
-                  className={`nav-dropdown-item ${pathname.startsWith('/agent-skill') ? 'active' : ''}`}
-                >
-                  {t('common.agentSkill')}
-                </Link>
-              </div>
-            </div>
             <div className="nav-item nav-item-dropdown">
               <div
                 className={`nav-item-link ${
-                  pathname.startsWith('/token-calculator') || pathname.startsWith('/ai-nav') ? 'active' : ''
+                  pathname.startsWith('/prompt-tutorial') || pathname.startsWith('/agent-skill') ? 'active' : ''
                 }`}
                 style={{
                   color:
-                    pathname.startsWith('/token-calculator') || pathname.startsWith('/ai-nav')
+                    pathname.startsWith('/prompt-tutorial') || pathname.startsWith('/agent-skill')
                       ? '#1890ff'
                       : '#595959',
                   cursor: 'pointer',
                 }}
               >
-                {t('common.aiTools')}
+                {t('common.aiTutorial')}
               </div>
               <div className="nav-dropdown-menu">
                 <Link
-                  href="/token-calculator/text"
-                  className={`nav-dropdown-item ${pathname.startsWith('/token-calculator') ? 'active' : ''}`}
+                  href="/prompt-tutorial/intro"
+                  className={`nav-dropdown-item ${pathname.startsWith('/prompt-tutorial') ? 'active' : ''}`}
                 >
-                  {t('common.tokenCalculator')}
+                  {t('common.promptTutorial')}
                 </Link>
-                <Link
-                  href="/ai-nav"
-                  className={`nav-dropdown-item ${pathname.startsWith('/ai-nav') ? 'active' : ''}`}
+                <div
+                  className={`nav-dropdown-nested ${
+                    pathname.startsWith('/agent-skill') ? 'nav-dropdown-nested-active' : ''
+                  }`}
                 >
-                  {t('common.aiNav')}
-                </Link>
+                  <div className="nav-dropdown-nested-label">{t('common.aiAgent')}</div>
+                  <div className="nav-dropdown-nested-menu">
+                    <Link
+                      href="/agent-skill/intro"
+                      className={`nav-dropdown-item ${pathname.startsWith('/agent-skill') ? 'active' : ''}`}
+                    >
+                      {t('common.agentSkill')}
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
             {i18n.language.startsWith('zh') && (
@@ -231,6 +214,43 @@ export default function AppShell({ children }) {
                 </div>
               </div>
             )}
+            <Link
+              href="/tools/json/formatter"
+              className="nav-item"
+              style={{ color: pathname.startsWith('/tools') ? '#1890ff' : '#595959' }}
+            >
+              {t('common.toolbox')}
+            </Link>
+            <div className="nav-item nav-item-dropdown">
+              <div
+                className={`nav-item-link ${
+                  pathname.startsWith('/token-calculator') || pathname.startsWith('/ai-nav') ? 'active' : ''
+                }`}
+                style={{
+                  color:
+                    pathname.startsWith('/token-calculator') || pathname.startsWith('/ai-nav')
+                      ? '#1890ff'
+                      : '#595959',
+                  cursor: 'pointer',
+                }}
+              >
+                {t('common.aiTools')}
+              </div>
+              <div className="nav-dropdown-menu">
+                <Link
+                  href="/token-calculator/text"
+                  className={`nav-dropdown-item ${pathname.startsWith('/token-calculator') ? 'active' : ''}`}
+                >
+                  {t('common.tokenCalculator')}
+                </Link>
+                <Link
+                  href="/ai-nav"
+                  className={`nav-dropdown-item ${pathname.startsWith('/ai-nav') ? 'active' : ''}`}
+                >
+                  {t('common.aiNav')}
+                </Link>
+              </div>
+            </div>
             <div className="nav-item nav-item-dropdown">
               <div
                 className={`nav-item-link ${pathname.startsWith('/chrome-plugin') ? 'active' : ''}`}
