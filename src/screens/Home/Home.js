@@ -144,6 +144,7 @@ function Home() {
   const tutorialLinks = [
     { to: '/prompt-tutorial/intro', key: 'promptTutorial' },
     { to: '/agent-skill/intro', key: 'agentSkill' },
+    { to: '/hello-agents/intro', key: 'helloAgents' },
   ];
 
   const aiToolLinks = [

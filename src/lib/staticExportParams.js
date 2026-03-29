@@ -73,3 +73,32 @@ export function getBlogStaticParams() {
   walkMarkdownSlugs(base, [], outSet);
   return [...outSet].map((s) => ({ slug: JSON.parse(s) }));
 }
+
+function collectHelloAgentsSlugsFromNav(navPath, outSet) {
+  if (!fs.existsSync(navPath)) return;
+  const raw = fs.readFileSync(navPath, 'utf8');
+  const data = JSON.parse(raw);
+  const items = data.items || [];
+  for (const it of items) {
+    if (it.type === 'doc' && it.slug) outSet.add(it.slug);
+    if (it.type === 'category' && Array.isArray(it.items)) {
+      for (const sub of it.items) {
+        if (sub.slug) outSet.add(sub.slug);
+      }
+    }
+  }
+}
+
+/** 与 public/docs/hello-agents/{zh,en}/navigation.json 中的 slug 一致 */
+export function getHelloAgentsStaticParams() {
+  const slugs = new Set();
+  for (const lang of ['zh', 'en']) {
+    const navPath = path.join(process.cwd(), 'public/docs/hello-agents', lang, 'navigation.json');
+    collectHelloAgentsSlugsFromNav(navPath, slugs);
+  }
+  const out = [{ slug: [] }];
+  for (const s of slugs) {
+    out.push({ slug: [s] });
+  }
+  return out;
+}

@@ -21,6 +21,7 @@ if (isStaticExport) {
     { source: '/tools', destination: '/tools/json/formatter', permanent: false },
     { source: '/prompt-tutorial', destination: '/prompt-tutorial/intro', permanent: false },
     { source: '/agent-skill', destination: '/agent-skill/intro', permanent: false },
+    { source: '/hello-agents', destination: '/hello-agents/intro', permanent: false },
     { source: '/token-calculator', destination: '/token-calculator/text', permanent: false },
     {
       source: '/ai-daily/:date(\\d{4}-\\d{2}-\\d{2})/news/:newsId',

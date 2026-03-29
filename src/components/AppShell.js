@@ -126,11 +126,17 @@ export default function AppShell({ children }) {
             <div className="nav-item nav-item-dropdown">
               <div
                 className={`nav-item-link ${
-                  pathname.startsWith('/prompt-tutorial') || pathname.startsWith('/agent-skill') ? 'active' : ''
+                  pathname.startsWith('/prompt-tutorial') ||
+                  pathname.startsWith('/agent-skill') ||
+                  pathname.startsWith('/hello-agents')
+                    ? 'active'
+                    : ''
                 }`}
                 style={{
                   color:
-                    pathname.startsWith('/prompt-tutorial') || pathname.startsWith('/agent-skill')
+                    pathname.startsWith('/prompt-tutorial') ||
+                    pathname.startsWith('/agent-skill') ||
+                    pathname.startsWith('/hello-agents')
                       ? '#1890ff'
                       : '#595959',
                   cursor: 'pointer',
@@ -147,7 +153,9 @@ export default function AppShell({ children }) {
                 </Link>
                 <div
                   className={`nav-dropdown-nested ${
-                    pathname.startsWith('/agent-skill') ? 'nav-dropdown-nested-active' : ''
+                    pathname.startsWith('/agent-skill') || pathname.startsWith('/hello-agents')
+                      ? 'nav-dropdown-nested-active'
+                      : ''
                   }`}
                 >
                   <div className="nav-dropdown-nested-label">{t('common.aiAgent')}</div>
@@ -157,6 +165,12 @@ export default function AppShell({ children }) {
                       className={`nav-dropdown-item ${pathname.startsWith('/agent-skill') ? 'active' : ''}`}
                     >
                       {t('common.agentSkill')}
+                    </Link>
+                    <Link
+                      href="/hello-agents/intro"
+                      className={`nav-dropdown-item ${pathname.startsWith('/hello-agents') ? 'active' : ''}`}
+                    >
+                      {t('common.helloAgents')}
                     </Link>
                   </div>
                 </div>
