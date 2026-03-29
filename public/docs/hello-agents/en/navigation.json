@@ -1,0 +1,52 @@
+{
+  "items": [
+    { "type": "doc", "slug": "intro", "title": "Hello-Agents", "file": "README_EN.md" },
+    { "type": "doc", "slug": "preface", "title": "Preface", "file": "Preface.md" },
+    {
+      "type": "category",
+      "title": "Part I: Fundamentals of Agents and Language Models",
+      "items": [
+        { "slug": "chapter1", "title": "Chapter 1 Introduction to Agents", "file": "chapter1/Chapter1-Introduction-to-Agents.md" },
+        { "slug": "chapter2", "title": "Chapter 2 History of Agents", "file": "chapter2/Chapter2-History-of-Agents.md" },
+        { "slug": "chapter3", "title": "Chapter 3 Fundamentals of Large Language Models", "file": "chapter3/Chapter3-Fundamentals-of-Large-Language-Models.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "Part II: Building Your Large Language Model Agent",
+      "items": [
+        { "slug": "chapter4", "title": "Chapter 4 Building Classic Agent Paradigms", "file": "chapter4/Chapter4-Building-Classic-Agent-Paradigms.md" },
+        { "slug": "chapter5", "title": "Chapter 5 Building Agents with Low-Code Platforms", "file": "chapter5/Chapter5-Building-Agents-with-Low-Code-Platforms.md" },
+        { "slug": "chapter6", "title": "Chapter 6 Framework Development Practice", "file": "chapter6/Chapter6-Framework-Development-Practice.md" },
+        { "slug": "chapter7", "title": "Chapter 7 Building Your Agent Framework", "file": "chapter7/Chapter7-Building-Your-Agent-Framework.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "Part III: Advanced Knowledge Extension",
+      "items": [
+        { "slug": "chapter8", "title": "Chapter 8 Memory and Retrieval", "file": "chapter8/Chapter8-Memory-and-Retrieval.md" },
+        { "slug": "chapter9", "title": "Chapter 9 Context Engineering", "file": "chapter9/Chapter9-Context-Engineering.md" },
+        { "slug": "chapter10", "title": "Chapter 10 Agent Communication Protocols", "file": "chapter10/Chapter10-Agent-Communication-Protocols.md" },
+        { "slug": "chapter11", "title": "Chapter 11 Agentic-RL", "file": "chapter11/Chapter11-Agentic-RL.md" },
+        { "slug": "chapter12", "title": "Chapter 12 Agent Performance Evaluation", "file": "chapter12/Chapter12-Agent-Performance-Evaluation.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "Part IV: Comprehensive Case Studies",
+      "items": [
+        { "slug": "chapter13", "title": "Chapter 13 Intelligent Travel Assistant", "file": "chapter13/Chapter13-Intelligent-Travel-Assistant.md" },
+        { "slug": "chapter14", "title": "Chapter 14 Automated Deep Research Agent", "file": "chapter14/Chapter14-Automated-Deep-Research-Agent.md" },
+        { "slug": "chapter15", "title": "Chapter 15 Building Cyber Town", "file": "chapter15/Chapter15-Building-Cyber-Town.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "Part V: Graduation Project and Future Outlook",
+      "items": [
+        { "slug": "chapter16", "title": "Chapter 16 Graduation Project", "file": "chapter16/Chapter16-Graduation-Project.md" }
+      ]
+    }
+  ]
+}

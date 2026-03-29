@@ -1,0 +1,52 @@
+{
+  "items": [
+    { "type": "doc", "slug": "intro", "title": "Hello-Agents", "file": "README.md" },
+    { "type": "doc", "slug": "preface", "title": "前言", "file": "前言.md" },
+    {
+      "type": "category",
+      "title": "第一部分：智能体与语言模型基础",
+      "items": [
+        { "slug": "chapter1", "title": "第一章 初识智能体", "file": "chapter1/第一章 初识智能体.md" },
+        { "slug": "chapter2", "title": "第二章 智能体发展史", "file": "chapter2/第二章 智能体发展史.md" },
+        { "slug": "chapter3", "title": "第三章 大语言模型基础", "file": "chapter3/第三章 大语言模型基础.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "第二部分：构建你的大语言模型智能体",
+      "items": [
+        { "slug": "chapter4", "title": "第四章 智能体经典范式构建", "file": "chapter4/第四章 智能体经典范式构建.md" },
+        { "slug": "chapter5", "title": "第五章 基于低代码平台的智能体搭建", "file": "chapter5/第五章 基于低代码平台的智能体搭建.md" },
+        { "slug": "chapter6", "title": "第六章 框架开发实践", "file": "chapter6/第六章 框架开发实践.md" },
+        { "slug": "chapter7", "title": "第七章 构建你的 Agent 框架", "file": "chapter7/第七章 构建你的Agent框架.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "第三部分：高级知识扩展",
+      "items": [
+        { "slug": "chapter8", "title": "第八章 记忆与检索", "file": "chapter8/第八章 记忆与检索.md" },
+        { "slug": "chapter9", "title": "第九章 上下文工程", "file": "chapter9/第九章 上下文工程.md" },
+        { "slug": "chapter10", "title": "第十章 智能体通信协议", "file": "chapter10/第十章 智能体通信协议.md" },
+        { "slug": "chapter11", "title": "第十一章 Agentic-RL", "file": "chapter11/第十一章 Agentic-RL.md" },
+        { "slug": "chapter12", "title": "第十二章 智能体性能评估", "file": "chapter12/第十二章 智能体性能评估.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "第四部分：综合案例进阶",
+      "items": [
+        { "slug": "chapter13", "title": "第十三章 智能旅行助手", "file": "chapter13/第十三章 智能旅行助手.md" },
+        { "slug": "chapter14", "title": "第十四章 自动化深度研究智能体", "file": "chapter14/第十四章 自动化深度研究智能体.md" },
+        { "slug": "chapter15", "title": "第十五章 构建赛博小镇", "file": "chapter15/第十五章 构建赛博小镇.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "第五部分：毕业设计及未来展望",
+      "items": [
+        { "slug": "chapter16", "title": "第十六章 毕业设计", "file": "chapter16/第十六章 毕业设计.md" }
+      ]
+    }
+  ]
+}
