@@ -23,10 +23,6 @@
 
 &emsp;&emsp;Hello-Agents is a **systematic agent learning tutorial** from the Datawhale community. Currently, Agent construction is mainly divided into two schools: one is software engineering-type Agents like Dify, Coze, and n8n, which are essentially process-driven software development with LLMs serving as data processing backends; the other is AI-native Agents, truly AI-driven Agents. This tutorial aims to lead you to deeply understand and build the latter—true AI Native Agents. The tutorial will guide you to penetrate framework appearances, start from the core principles of agents, delve into their core architecture, understand their classic paradigms, and ultimately build your own multi-agent applications with your own hands. We believe that the best way to learn is through hands-on practice. We hope this tutorial can become your starting point for exploring the world of agents, enabling you to transform from a "user" of large language models to a "builder" of agent systems.
 
-## 🌐 Online Reading
-
-**[🌐 International Access](https://datawhalechina.github.io/hello-agents/)** | **[🚀 Domestic Acceleration](https://hello-agents.datawhale.cc)**
-
 ### ✨ What Will You Gain?
 
 - 📖 **Datawhale Open Source Free** - Learn all content of this project completely free, grow together with the community

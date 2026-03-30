@@ -8,6 +8,9 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
+import { remarkMath, rehypeKatex } from '@/lib/markdownKatex';
+import { rehypeHighlightPlugin } from '@/lib/markdownCodeHighlight';
+import { extractPrerenderedBody } from '../../utils/prerenderedDoc';
 import '../AgentSkill/AgentSkill.css';
 
 function encodePublicDocSegments(file) {
@@ -32,6 +35,8 @@ const HelloAgents = () => {
   const [slugToFile, setSlugToFile] = useState(() => new Map());
   const [slugToTitle, setSlugToTitle] = useState(() => new Map());
   const [content, setContent] = useState('');
+  /** 预渲染 HTML 正文（与 prerender-docs 生成的 .html 一致时优先使用） */
+  const [renderHtml, setRenderHtml] = useState(null);
   const [currentDocFile, setCurrentDocFile] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -130,8 +135,24 @@ const HelloAgents = () => {
         if (!file) {
           throw new Error('No document mapping');
         }
-        const url = `/docs/hello-agents/${lang}/${encodePublicDocSegments(file)}`;
-        const response = await fetch(url);
+        const mdUrl = `/docs/hello-agents/${lang}/${encodePublicDocSegments(file)}`;
+        const htmlFile = file.replace(/\.md$/i, '.html');
+        const htmlUrl = `/docs/hello-agents/${lang}/${encodePublicDocSegments(htmlFile)}`;
+
+        const htmlRes = await fetch(htmlUrl);
+        if (htmlRes.ok) {
+          const htmlText = await htmlRes.text();
+          const fragment = extractPrerenderedBody(htmlText);
+          if (fragment) {
+            setRenderHtml(fragment);
+            setContent('');
+            setCurrentDocFile(file);
+            return;
+          }
+        }
+
+        setRenderHtml(null);
+        const response = await fetch(mdUrl);
         if (!response.ok) {
           throw new Error('Document not found');
         }
@@ -142,6 +163,7 @@ const HelloAgents = () => {
         console.error(err);
         setError(err.message);
         setContent('');
+        setRenderHtml(null);
         setCurrentDocFile('');
       } finally {
         setLoading(false);
@@ -259,11 +281,13 @@ const HelloAgents = () => {
                 {isZh ? '返回首页' : 'Back to Home'}
               </button>
             </div>
+          ) : renderHtml !== null ? (
+            <div className="markdown-content" dangerouslySetInnerHTML={{ __html: renderHtml }} />
           ) : (
             <div className="markdown-content">
               <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeKatex, rehypeHighlightPlugin]}
                 components={{
                   img: ({ node, ...props }) => (
                     <img

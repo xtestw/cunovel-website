@@ -2,6 +2,9 @@ import Script from 'next/script';
 import Providers from '@/components/Providers';
 import AppShell from '@/components/AppShell';
 import './globals.css';
+import 'katex/dist/katex.min.css';
+import 'highlight.js/styles/github.css';
+import '@/styles/markdown-code-overrides.css';
 
 export const metadata = {
   metadataBase: new URL('https://cutool.online'),

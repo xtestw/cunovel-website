@@ -8,6 +8,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
+import { remarkMath, rehypeKatex } from '@/lib/markdownKatex';
+import { rehypeHighlightPlugin } from '@/lib/markdownCodeHighlight';
 import { extractPrerenderedBody } from '../../utils/prerenderedDoc';
 import './AgentSkill.css';
 
@@ -392,8 +394,8 @@ const AgentSkill = () => {
           ) : (
             <div className="markdown-content">
               <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeKatex, rehypeHighlightPlugin]}
                 components={{
                   img: ({ node, ...props }) => {
                     let src = props.src || '';

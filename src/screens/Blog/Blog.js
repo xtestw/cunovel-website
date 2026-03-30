@@ -5,6 +5,9 @@ import { Helmet } from 'react-helmet-async';
 import { usePathname, useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
+import { remarkMath, rehypeKatex } from '@/lib/markdownKatex';
+import { rehypeHighlightPlugin } from '@/lib/markdownCodeHighlight';
 import './Blog.css';
 
 const BLOG_SIDEBAR = [
@@ -108,7 +111,12 @@ export default function Blog() {
             </div>
           ) : (
             <div className="blog-markdown-content">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeSanitize, rehypeKatex, rehypeHighlightPlugin]}
+              >
+                {content}
+              </ReactMarkdown>
             </div>
           )}
         </div>

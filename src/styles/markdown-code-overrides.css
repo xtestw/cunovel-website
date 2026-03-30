@@ -1,0 +1,49 @@
+/**
+ * 与 highlight.js `github` 主题配合。
+ */
+.markdown-content pre,
+.blog-markdown-content pre {
+  margin: 0 0 18px;
+  background: #f6f8fa;
+  border: 1px solid #e1e4e8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.markdown-content pre code,
+.blog-markdown-content pre code {
+  background: transparent !important;
+}
+
+/* 未指定语言的围栏：等宽块 */
+.markdown-content pre code:not(.hljs),
+.blog-markdown-content pre code:not(.hljs) {
+  display: block;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #24292e;
+  border: none;
+  border-radius: 0;
+  font-weight: 400;
+}
+
+/* 行内 code */
+.markdown-content :not(pre) code:not(.hljs),
+.blog-markdown-content :not(pre) code:not(.hljs) {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+  font-weight: 500;
+  background: #eff1f3;
+  color: #0550ae;
+  padding: 0.2em 0.45em;
+  border-radius: 4px;
+  border: 1px solid #d0d7de;
+}
+
+.markdown-content .katex-display,
+.blog-markdown-content .katex-display {
+  margin: 1em 0;
+}

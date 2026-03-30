@@ -9,9 +9,12 @@ import { fileURLToPath } from 'url';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
+import rehypeKatex from 'rehype-katex';
+import rehypeHighlight from 'rehype-highlight';
 import rehypeStringify from 'rehype-stringify';
 import { visit } from 'unist-util-visit';
 
@@ -19,10 +22,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 const PUBLIC = path.join(ROOT, 'public');
 const CSS_PATH = path.join(__dirname, 'markdown-standalone.css');
+const KATEX_CSS_PATH = path.join(ROOT, 'node_modules/katex/dist/katex.min.css');
+const HIGHLIGHT_CSS_PATH = path.join(ROOT, 'node_modules/highlight.js/styles/github.min.css');
+const MD_CODE_OVERRIDES_PATH = path.join(ROOT, 'src/styles/markdown-code-overrides.css');
 
 const SITE_ORIGIN = (process.env.SITE_ORIGIN || 'https://cutool.online').replace(/\/$/, '');
 
-const DOC_ROOTS = [path.join(PUBLIC, 'docs', 'agent-skills'), path.join(PUBLIC, 'docs', 'prompts-learning')];
+const DOC_ROOTS = [
+  path.join(PUBLIC, 'docs', 'agent-skills'),
+  path.join(PUBLIC, 'docs', 'prompts-learning'),
+  /** 中文章节与英文章节分目录；跳过 _ 前缀文件（如 _sidebar.md） */
+  path.join(PUBLIC, 'docs', 'hello-agents', 'zh'),
+  path.join(PUBLIC, 'docs', 'hello-agents', 'en'),
+];
 
 function escapeHtml(s) {
   return String(s)
@@ -153,10 +165,15 @@ async function markdownToHtmlFragment(markdown, docWebDir) {
   const file = await unified()
     .use(remarkParse)
     .use(remarkGfm)
+    .use(remarkMath)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeResolveUrls(docWebDir))
     .use(rehypeSanitize)
+    .use(rehypeKatex)
+    .use(rehypeHighlight, {
+      plainText: ['math', 'mermaid', 'text', 'txt', 'plaintext', 'markdown'],
+    })
     .use(rehypeStringify)
     .process(markdown);
   return String(file).trim();
@@ -168,7 +185,7 @@ function walkFiles(dir, acc = []) {
   for (const e of entries) {
     const full = path.join(dir, e.name);
     if (e.isDirectory()) walkFiles(full, acc);
-    else if (/\.(md|mdx)$/i.test(e.name)) acc.push(full);
+    else if (/\.(md|mdx)$/i.test(e.name) && !e.name.startsWith('_')) acc.push(full);
   }
   return acc;
 }
@@ -204,8 +221,42 @@ ${bodyHtml}
 `;
 }
 
+/** 内联 KaTeX 样式并把字体指向 CDN，避免 standalone HTML 中 url(fonts/...) 失效 */
+function loadKatexCssForStandalone() {
+  try {
+    if (!fs.existsSync(KATEX_CSS_PATH)) return '';
+    const raw = fs.readFileSync(KATEX_CSS_PATH, 'utf8');
+    const ver = JSON.parse(fs.readFileSync(path.join(ROOT, 'node_modules/katex/package.json'), 'utf8')).version;
+    const base = `https://cdn.jsdelivr.net/npm/katex@${ver}/dist`;
+    return raw.replace(/url\(fonts\//g, `url(${base}/fonts/`);
+  } catch {
+    return '';
+  }
+}
+
+function loadHighlightAndOverridesCss() {
+  const parts = [];
+  try {
+    if (fs.existsSync(HIGHLIGHT_CSS_PATH)) {
+      parts.push(fs.readFileSync(HIGHLIGHT_CSS_PATH, 'utf8'));
+    }
+  } catch {
+    /* ignore */
+  }
+  try {
+    if (fs.existsSync(MD_CODE_OVERRIDES_PATH)) {
+      parts.push(fs.readFileSync(MD_CODE_OVERRIDES_PATH, 'utf8'));
+    }
+  } catch {
+    /* ignore */
+  }
+  return parts.join('\n');
+}
+
 async function main() {
-  const inlineCss = fs.readFileSync(CSS_PATH, 'utf8');
+  const katexCss = loadKatexCssForStandalone();
+  const hlCss = loadHighlightAndOverridesCss();
+  const inlineCss = [fs.readFileSync(CSS_PATH, 'utf8'), katexCss, hlCss].filter(Boolean).join('\n');
   const files = DOC_ROOTS.flatMap((d) => walkFiles(d));
   if (files.length === 0) {
     console.warn('[prerender-docs] No .md/.mdx found under docs roots.');
