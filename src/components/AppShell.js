@@ -128,7 +128,8 @@ export default function AppShell({ children }) {
                 className={`nav-item-link ${
                   pathname.startsWith('/prompt-tutorial') ||
                   pathname.startsWith('/agent-skill') ||
-                  pathname.startsWith('/hello-agents')
+                  pathname.startsWith('/hello-agents') ||
+                  pathname.startsWith('/claude-tutorial')
                     ? 'active'
                     : ''
                 }`}
@@ -136,7 +137,8 @@ export default function AppShell({ children }) {
                   color:
                     pathname.startsWith('/prompt-tutorial') ||
                     pathname.startsWith('/agent-skill') ||
-                    pathname.startsWith('/hello-agents')
+                    pathname.startsWith('/hello-agents') ||
+                    pathname.startsWith('/claude-tutorial')
                       ? '#1890ff'
                       : '#595959',
                   cursor: 'pointer',
@@ -151,9 +153,16 @@ export default function AppShell({ children }) {
                 >
                   {t('common.promptTutorial')}
                 </Link>
+                <Link
+                  href="/claude-tutorial/intro"
+                  className={`nav-dropdown-item ${pathname.startsWith('/claude-tutorial') ? 'active' : ''}`}
+                >
+                  {t('common.claudeCodeTutorial')}
+                </Link>
                 <div
                   className={`nav-dropdown-nested ${
-                    pathname.startsWith('/agent-skill') || pathname.startsWith('/hello-agents')
+                    pathname.startsWith('/agent-skill') ||
+                    pathname.startsWith('/hello-agents')
                       ? 'nav-dropdown-nested-active'
                       : ''
                   }`}

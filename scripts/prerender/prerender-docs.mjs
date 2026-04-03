@@ -34,6 +34,8 @@ const DOC_ROOTS = [
   /** 中文章节与英文章节分目录；跳过 _ 前缀文件（如 _sidebar.md） */
   path.join(PUBLIC, 'docs', 'hello-agents', 'zh'),
   path.join(PUBLIC, 'docs', 'hello-agents', 'en'),
+  path.join(PUBLIC, 'docs', 'claude-tutorial', 'zh'),
+  path.join(PUBLIC, 'docs', 'claude-tutorial', 'en'),
 ];
 
 function escapeHtml(s) {

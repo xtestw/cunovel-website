@@ -102,3 +102,17 @@ export function getHelloAgentsStaticParams() {
   }
   return out;
 }
+
+/** 与 public/docs/claude-tutorial/{zh,en}/navigation.json 中的 slug 一致 */
+export function getClaudeTutorialStaticParams() {
+  const slugs = new Set();
+  for (const lang of ['zh', 'en']) {
+    const navPath = path.join(process.cwd(), 'public/docs/claude-tutorial', lang, 'navigation.json');
+    collectHelloAgentsSlugsFromNav(navPath, slugs);
+  }
+  const out = [{ slug: [] }];
+  for (const s of slugs) {
+    out.push({ slug: [s] });
+  }
+  return out;
+}

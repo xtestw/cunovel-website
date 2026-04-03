@@ -1,7 +1,7 @@
 {
-  "name": "CuTool - 开发者在线工具箱",
+  "name": "CuTool - 开发者工具与 AI 教程",
   "short_name": "CuTool",
-  "description": "为开发者提供的在线工具箱，包含时间戳转换、代码格式化、AI导航等实用工具",
+  "description": "在线开发者工具与 AI 资源：JSON/代码格式化、时间戳；AI 日报与导航、Token 计算；Prompt、Agent Skill、Hello-Agents、Claude Code 教程等",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

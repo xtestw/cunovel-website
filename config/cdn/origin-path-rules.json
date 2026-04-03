@@ -3,6 +3,7 @@
   { "Regex": true,  "Path": "/prompt-tutorial/*",  "ForwardUri": "/prompt-tutorial/$1.html",  "FullMatch": false },
   { "Regex": true,  "Path": "/agent-skill/*",      "ForwardUri": "/agent-skill/$1.html",      "FullMatch": false },
   { "Regex": true,  "Path": "/hello-agents/*",     "ForwardUri": "/hello-agents/$1.html",     "FullMatch": false },
+  { "Regex": true,  "Path": "/claude-tutorial/*",  "ForwardUri": "/claude-tutorial/$1.html",  "FullMatch": false },
   { "Regex": true,  "Path": "/token-calculator/*", "ForwardUri": "/token-calculator/$1.html", "FullMatch": false },
   { "Regex": true,  "Path": "/ai-daily/*",         "ForwardUri": "/ai-daily/$1.html",         "FullMatch": false },
   { "Regex": true,  "Path": "/vehicle-verify/*",   "ForwardUri": "/vehicle-verify/$1.html",   "FullMatch": false },

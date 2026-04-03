@@ -1,0 +1,91 @@
+{
+  "items": [
+    {
+      "type": "doc",
+      "slug": "intro",
+      "title": "Introduction",
+      "file": "README.md"
+    },
+    {
+      "type": "category",
+      "title": "📖 Chapter 1: Overview",
+      "items": [
+        { "slug": "1-1-what-is-claude-code", "title": "1.1 What Claude Code Is", "file": "ch01-overview/01-what-is-claude-code.md" },
+        { "slug": "1-2-tech-stack", "title": "1.2 Tech Stack and Runtime Environment", "file": "ch01-overview/02-tech-stack.md" },
+        { "slug": "1-3-codebase-map", "title": "1.3 Source Map (1,987 Files)", "file": "ch01-overview/03-codebase-map.md" },
+        { "slug": "1-4-vim-mode", "title": "1.4 Vim Mode: Built-in Terminal Editor", "file": "ch01-overview/04-vim-mode.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🏗️ Chapter 2: Architecture",
+      "items": [
+        { "slug": "2-1-six-layer-architecture", "title": "2.1 Six-Layer Architecture", "file": "ch02-architecture/01-six-layer-architecture.md" },
+        { "slug": "2-2-feature-gates", "title": "2.2 Three-Layer Feature Gates", "file": "ch02-architecture/02-feature-gates.md" },
+        { "slug": "2-3-global-state", "title": "2.3 Global State Management", "file": "ch02-architecture/03-global-state.md" },
+        { "slug": "2-4-ink-tui", "title": "2.4 React + Ink Terminal Rendering", "file": "ch02-architecture/04-ink-tui.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "⚙️ Chapter 3: Core Engine",
+      "items": [
+        { "slug": "3-1-conversation-lifecycle", "title": "3.1 Full Conversation Lifecycle", "file": "ch03-core-engine/01-conversation-lifecycle.md" },
+        { "slug": "3-2-query-loop", "title": "3.2 query.ts Main Loop Deep Dive", "file": "ch03-core-engine/02-query-loop.md" },
+        { "slug": "3-3-query-engine", "title": "3.3 QueryEngine Deep Dive", "file": "ch03-core-engine/03-query-engine.md" },
+        { "slug": "3-4-system-prompt", "title": "3.4 System Prompt Construction", "file": "ch03-core-engine/04-system-prompt.md" },
+        { "slug": "3-5-context-compact", "title": "3.5 Context Compaction: Three Strategies", "file": "ch03-core-engine/05-context-compact.md" },
+        { "slug": "3-6-hooks-system", "title": "3.6 Hooks: Intervening in AI Decision Flow", "file": "ch03-core-engine/06-hooks-system.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🔧 Chapter 4: Tool System",
+      "items": [
+        { "slug": "4-1-tool-abstraction", "title": "4.1 Tool Abstraction Design", "file": "ch04-tools/01-tool-abstraction.md" },
+        { "slug": "4-2-core-tools", "title": "4.2 Core Tools: Bash/FileEdit/Agent", "file": "ch04-tools/02-core-tools.md" },
+        { "slug": "4-3-permission-system", "title": "4.3 Permission Decision Chain (7 Steps)", "file": "ch04-tools/03-permission-system.md" },
+        { "slug": "4-4-mcp-tools", "title": "4.4 MCP Protocol Integration", "file": "ch04-tools/04-mcp-tools.md" },
+        { "slug": "4-5-tool-orchestration", "title": "4.5 Tool Concurrency and Orchestration", "file": "ch04-tools/05-tool-orchestration.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🚀 Chapter 5: Hidden Features",
+      "items": [
+        { "slug": "5-1-kairos", "title": "5.1 KAIROS: Always-On Persistent Assistant", "file": "ch05-advanced/01-kairos.md" },
+        { "slug": "5-2-coordinator", "title": "5.2 Coordinator: Multi-Agent Orchestration", "file": "ch05-advanced/02-coordinator.md" },
+        { "slug": "5-3-bridge", "title": "5.3 Bridge: Remote-Control Local CLI", "file": "ch05-advanced/03-bridge.md" },
+        { "slug": "5-4-buddy", "title": "5.4 BUDDY: Desktop Pet Generation Algorithm", "file": "ch05-advanced/04-buddy.md" },
+        { "slug": "5-5-voice-proactive", "title": "5.5 Voice & Proactive Mode", "file": "ch05-advanced/05-voice-proactive.md" },
+        { "slug": "5-6-hidden-commands", "title": "5.6 Hidden Commands / CLI Flags Reference", "file": "ch05-advanced/06-hidden-commands.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🔒 Chapter 6: Engineering Practices",
+      "items": [
+        { "slug": "6-1-three-layer-gates", "title": "6.1 Three-Layer Gate Deep Dive", "file": "ch06-engineering/01-three-layer-gates.md" },
+        { "slug": "6-2-feature-flags-reference", "title": "6.2 50 Compile-Flag Reference", "file": "ch06-engineering/02-feature-flags-reference.md" },
+        { "slug": "6-3-telemetry", "title": "6.3 OpenTelemetry in Practice", "file": "ch06-engineering/03-telemetry.md" },
+        { "slug": "6-4-session-persistence", "title": "6.4 Session Persistence", "file": "ch06-engineering/04-session-persistence.md" },
+        { "slug": "6-5-services-overview", "title": "6.5 Services Layer: 26 Subservices", "file": "ch06-engineering/05-services-overview.md" },
+        { "slug": "6-6-env-vars-reference", "title": "6.6 Environment Variables Reference (70+)", "file": "ch06-engineering/06-env-vars-reference.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🎓 Chapter 7: Summary",
+      "items": [
+        { "slug": "7-summary", "title": "Tutorial Summary and Learning Path", "file": "ch07-summary.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🧠 ClaudeCode Code Walkthrough",
+      "items": [
+        { "slug": "claude-code-walkthrough", "title": "ClaudeCode Walkthrough Tutorial", "file": "claude-code-walkthrough.md" }
+      ]
+    }
+  ]
+}

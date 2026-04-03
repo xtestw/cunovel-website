@@ -145,6 +145,7 @@ function Home() {
     { to: '/prompt-tutorial/intro', key: 'promptTutorial' },
     { to: '/agent-skill/intro', key: 'agentSkill' },
     { to: '/hello-agents/intro', key: 'helloAgents' },
+    { to: '/claude-tutorial/intro', key: 'claudeCodeTutorial' },
   ];
 
   const aiToolLinks = [
