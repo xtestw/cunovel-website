@@ -36,6 +36,8 @@ const DOC_ROOTS = [
   path.join(PUBLIC, 'docs', 'hello-agents', 'en'),
   path.join(PUBLIC, 'docs', 'claude-tutorial', 'zh'),
   path.join(PUBLIC, 'docs', 'claude-tutorial', 'en'),
+  path.join(PUBLIC, 'docs', 'openclaw-tutorial', 'zh'),
+  path.join(PUBLIC, 'docs', 'openclaw-tutorial', 'en'),
 ];
 
 function escapeHtml(s) {

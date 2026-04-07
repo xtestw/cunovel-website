@@ -116,3 +116,32 @@ export function getClaudeTutorialStaticParams() {
   }
   return out;
 }
+
+function walkOpenclawMarkdownSlugs(dir, parts, outSet) {
+  if (!fs.existsSync(dir)) return;
+  for (const name of fs.readdirSync(dir)) {
+    if (name.startsWith('_') || name.startsWith('.')) continue;
+    const full = path.join(dir, name);
+    const st = fs.statSync(full);
+    if (st.isDirectory()) {
+      walkOpenclawMarkdownSlugs(full, [...parts, name], outSet);
+    } else if (name.endsWith('.md')) {
+      const segment = name.replace(/\.md$/i, '');
+      if (segment === 'README' && parts.length === 0) {
+        outSet.add(JSON.stringify(['intro']));
+      } else {
+        outSet.add(JSON.stringify([...parts, segment]));
+      }
+    }
+  }
+}
+
+/** 与 public/docs/openclaw-tutorial/{zh,en} 下 Markdown 路径一致（README → intro） */
+export function getOpenclawTutorialStaticParams() {
+  const outSet = new Set();
+  for (const lang of ['zh', 'en']) {
+    const base = path.join(process.cwd(), 'public/docs/openclaw-tutorial', lang);
+    walkOpenclawMarkdownSlugs(base, [], outSet);
+  }
+  return [...outSet].map((s) => ({ slug: JSON.parse(s) }));
+}

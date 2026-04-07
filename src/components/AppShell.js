@@ -129,7 +129,8 @@ export default function AppShell({ children }) {
                   pathname.startsWith('/prompt-tutorial') ||
                   pathname.startsWith('/agent-skill') ||
                   pathname.startsWith('/hello-agents') ||
-                  pathname.startsWith('/claude-tutorial')
+                  pathname.startsWith('/claude-tutorial') ||
+                  pathname.startsWith('/openclaw-tutorial')
                     ? 'active'
                     : ''
                 }`}
@@ -138,7 +139,8 @@ export default function AppShell({ children }) {
                     pathname.startsWith('/prompt-tutorial') ||
                     pathname.startsWith('/agent-skill') ||
                     pathname.startsWith('/hello-agents') ||
-                    pathname.startsWith('/claude-tutorial')
+                    pathname.startsWith('/claude-tutorial') ||
+                    pathname.startsWith('/openclaw-tutorial')
                       ? '#1890ff'
                       : '#595959',
                   cursor: 'pointer',
@@ -158,6 +160,12 @@ export default function AppShell({ children }) {
                   className={`nav-dropdown-item ${pathname.startsWith('/claude-tutorial') ? 'active' : ''}`}
                 >
                   {t('common.claudeCodeTutorial')}
+                </Link>
+                <Link
+                  href="/openclaw-tutorial/intro"
+                  className={`nav-dropdown-item ${pathname.startsWith('/openclaw-tutorial') ? 'active' : ''}`}
+                >
+                  {t('common.openclawTutorial')}
                 </Link>
                 <div
                   className={`nav-dropdown-nested ${

@@ -23,6 +23,7 @@ if (isStaticExport) {
     { source: '/agent-skill', destination: '/agent-skill/intro', permanent: false },
     { source: '/hello-agents', destination: '/hello-agents/intro', permanent: false },
     { source: '/claude-tutorial', destination: '/claude-tutorial/intro', permanent: false },
+    { source: '/openclaw-tutorial', destination: '/openclaw-tutorial/intro', permanent: false },
     { source: '/token-calculator', destination: '/token-calculator/text', permanent: false },
     {
       source: '/ai-daily/:date(\\d{4}-\\d{2}-\\d{2})/news/:newsId',

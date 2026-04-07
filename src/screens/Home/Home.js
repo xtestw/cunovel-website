@@ -146,6 +146,7 @@ function Home() {
     { to: '/agent-skill/intro', key: 'agentSkill' },
     { to: '/hello-agents/intro', key: 'helloAgents' },
     { to: '/claude-tutorial/intro', key: 'claudeCodeTutorial' },
+    { to: '/openclaw-tutorial/intro', key: 'openclawTutorial' },
   ];
 
   const aiToolLinks = [
