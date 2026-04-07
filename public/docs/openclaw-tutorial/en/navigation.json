@@ -1,0 +1,69 @@
+{
+  "items": [
+    {
+      "type": "doc",
+      "slug": "intro",
+      "title": "📖 English Textbook Home",
+      "file": "README.md"
+    },
+    {
+      "type": "category",
+      "title": "🟢 Getting Started",
+      "items": [
+        { "slug": "00-intro/01-what-is-openclaw", "title": "01 · What Is OpenClaw?", "file": "00-intro/01-what-is-openclaw.md" },
+        { "slug": "00-intro/02-codebase-tour", "title": "02 · Codebase Tour", "file": "00-intro/02-codebase-tour.md" },
+        { "slug": "00-intro/03-running-locally", "title": "03 · Running Locally: Startup Flow", "file": "00-intro/03-running-locally.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🏗️ Architecture",
+      "items": [
+        { "slug": "01-architecture/01-system-layers", "title": "01 · System Architecture Layers", "file": "01-architecture/01-system-layers.md" },
+        { "slug": "01-architecture/02-gateway-core", "title": "02 · Gateway Core", "file": "01-architecture/02-gateway-core.md" },
+        { "slug": "01-architecture/03-plugin-system", "title": "03 · Plugin System", "file": "01-architecture/03-plugin-system.md" },
+        { "slug": "01-architecture/04-module-boundaries", "title": "04 · Module Boundaries & SDK Contract", "file": "01-architecture/04-module-boundaries.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🔄 Data Flow",
+      "items": [
+        { "slug": "02-flow/01-message-lifecycle", "title": "01 · Message Lifecycle", "file": "02-flow/01-message-lifecycle.md" },
+        { "slug": "02-flow/02-routing-engine", "title": "02 · Routing Engine", "file": "02-flow/02-routing-engine.md" },
+        { "slug": "02-flow/03-agent-call-loop", "title": "03 · Agent Call Loop", "file": "02-flow/03-agent-call-loop.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "⚙️ Mechanisms",
+      "items": [
+        { "slug": "03-mechanisms/01-plugin-sdk-design", "title": "01 · Plugin SDK Design", "file": "03-mechanisms/01-plugin-sdk-design.md" },
+        { "slug": "03-mechanisms/02-auth-system", "title": "02 · Authentication System", "file": "03-mechanisms/02-auth-system.md" },
+        { "slug": "03-mechanisms/03-channel-integration", "title": "03 · Channel Integration Patterns", "file": "03-mechanisms/03-channel-integration.md" },
+        { "slug": "03-mechanisms/04-memory-mcp", "title": "04 · Memory & MCP", "file": "03-mechanisms/04-memory-mcp.md" },
+        { "slug": "03-mechanisms/05-security-model", "title": "05 · Security Model", "file": "03-mechanisms/05-security-model.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🚀 Application",
+      "items": [
+        { "slug": "04-application/01-skill-system", "title": "01 · Skill System", "file": "04-application/01-skill-system.md" },
+        { "slug": "04-application/02-skill-deep-dive", "title": "02 · Writing High-Quality Skills", "file": "04-application/02-skill-deep-dive.md" },
+        { "slug": "04-application/03-multi-agent", "title": "03 · Multi-Agent Collaboration: ACP", "file": "04-application/03-multi-agent.md" },
+        { "slug": "04-application/04-agent-scope-context", "title": "04 · Agent Scope & Context", "file": "04-application/04-agent-scope-context.md" },
+        { "slug": "04-application/05-automation-cron", "title": "05 · Automation & Scheduled Tasks", "file": "04-application/05-automation-cron.md" }
+      ]
+    },
+    {
+      "type": "category",
+      "title": "🛠️ Extension",
+      "items": [
+        { "slug": "05-extension/01-write-channel-plugin", "title": "01 · Write a Channel Plugin", "file": "05-extension/01-write-channel-plugin.md" },
+        { "slug": "05-extension/02-integrate-llm-provider", "title": "02 · Integrate a New LLM Provider", "file": "05-extension/02-integrate-llm-provider.md" },
+        { "slug": "05-extension/03-create-skill", "title": "03 · Create a Skill", "file": "05-extension/03-create-skill.md" }
+      ]
+    }
+  ]
+}
